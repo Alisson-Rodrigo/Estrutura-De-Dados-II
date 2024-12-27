@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <time.h>
+#endif
 
 #define MAX_CONFIGURATIONS 81
 #define INF 1000000
@@ -10,6 +15,23 @@
 typedef struct {
     int disks[4]; // 4 discos, cada posição indica o pino (0, 1 ou 2)
 } Configuration;
+
+// Função para medir o tempo com alta precisão
+#ifdef _WIN32
+double getTime() {
+    LARGE_INTEGER frequency, start;
+    QueryPerformanceFrequency(&frequency); // Frequência do contador
+    QueryPerformanceCounter(&start);       // Contagem atual
+    return (double)start.QuadPart / frequency.QuadPart * 1e9; // Em nanosegundos
+}
+#else
+#include <sys/time.h>
+double getTime() {
+    struct timespec time;
+    clock_gettime(CLOCK_MONOTONIC, &time);
+    return (double)time.tv_sec * 1e9 + time.tv_nsec; // Em nanosegundos
+}
+#endif
 
 // Função para gerar todas as configurações possíveis
 void generateConfigurations(Configuration *configs) {
@@ -122,7 +144,7 @@ int main() {
     Configuration configs[MAX_CONFIGURATIONS];
     int graph[MAX_CONFIGURATIONS][MAX_CONFIGURATIONS];
     int choice, start, end;
-    clock_t startTime, endTime;
+    double startTime, endTime;
 
     generateConfigurations(configs);
     buildGraph(graph, configs);
@@ -146,11 +168,11 @@ int main() {
                 printf("Digite a configuração final (0 a 80): ");
                 scanf("%d", &end);
 
-                startTime = clock();
+                startTime = getTime();
                 dijkstra(graph, start, end, configs);
-                endTime = clock();
+                endTime = getTime();
 
-                printf("Tempo gasto: %.2lf segundos\n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
+                printf("Tempo gasto: %.2lf nanosegundos\n", endTime - startTime);
                 break;
             case 3:
                 printf("Saindo...\n");

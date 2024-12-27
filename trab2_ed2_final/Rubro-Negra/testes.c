@@ -128,7 +128,6 @@ void realizarExperimento(Arv_portugues *arvore, char palavras[30][50]) {
         "peixe", "montanha", "rio", "praia", "mar"
     };
 
-
     // Realizar o experimento
     realizarExperimento(arvore, palavras);
 
