@@ -1,0 +1,48 @@
+Binaria com 1000 numeros ordenados:
+N├║meros Ordenados:
+
+
+Binaria com 1000 numeros ordenados do maior para o menor:
+
+
+Binaria com 1000 numeros aleatorios:
+
+
+Binaria com 10000 numeros ordenados:
+
+
+Binaria com 10000 numeros ordenados do maior para o menor:
+
+
+Binaria com 10000 numeros aleatorios:
+
+
+Binaria com 20000 numeros ordenados:
+
+
+Binaria com 20000 numeros ordenados do maior para o menor:
+
+
+Binaria com 20000 numeros aleatorios:
+
+
+
+Binaria com 30000 numeros ordenados:
+
+
+Binaria com 30000 numeros ordenados do maior para o menor:
+
+
+Binaria com 30000 numeros aleatorios:
+
+ordenado:
+Tempo m├®dio de inser├º├úo: 5504953140 nanosegundos
+Tempo m├®dio de busca: 3169716 nanosegundos
+
+descrescente: 
+Tempo m├®dio de inser├º├úo: 5060105550 nanosegundos
+Tempo m├®dio de busca: 5069230 nanosegundos
+
+aleatorio:
+Tempo m├®dio de inser├º├úo: 10154960 nanosegundos
+Tempo m├®dio de busca: 8343 nanosegundos

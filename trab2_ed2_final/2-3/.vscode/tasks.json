@@ -1,0 +1,21 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "1",
+            "command": "sh",
+            "args": [
+                "-c",
+                "gcc -g main.c arv23.c -o main"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Task to compile all C files in debug mode and run the output."
+        }
+    ]
+}
