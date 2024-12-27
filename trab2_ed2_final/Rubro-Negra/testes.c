@@ -14,7 +14,6 @@ int inserirPalavraPortugues(Arv_portugues **arvore, char *palavraPortugues, char
     noExistente =  BuscarPalavra(arvore, palavraPortugues);
 
     if (noExistente != NULL) {
-        printf("A palavra já existe. Adicionando tradução...\n");
         AdicionarTraducaoEN(noExistente, palavraIngles, unidade);
         inseriu = 1;
     } else {
@@ -122,13 +121,12 @@ void realizarExperimento(Arv_portugues *arvore, char palavras[30][50]) {
     // Palavras para o experimento
     char palavras[30][50] = {
         "onibus", "barramento", "inseto", "bicicleta", "ventilador", 
-        "rede", "sistema", "computador", "chave", "janela", 
-        "roteador", "servidor", "celular", "impressora", "teclado", 
-        "arquivo", "disco", "tabela", "lâmpada", "quadro", 
-        "livro", "caderno", "fone", "porta", "monitor", 
-        "ponteiro", "prato", "rede social", "caixa", "guarda-chuva"
+        "casa", "livro", "escola", "tempo", "sol", 
+        "lua", "estrela", "amigo", "carro", "felicidade", 
+        "amizade", "trabalho", "lazer", "computador", "arvore",
+        "flor", "jardim", "cachorro", "gato", "passarinho", 
+        "peixe", "montanha", "rio", "praia", "mar"
     };
-
 
 
     // Realizar o experimento

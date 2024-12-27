@@ -124,14 +124,14 @@ int main() {
     Arv_pt *arvore = NULL;
 
     carregarArquivo("C:/Users/PurooLight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &arvore);
-
+    // Palavras para o experimento
     char palavras[30][50] = {
         "onibus", "barramento", "inseto", "bicicleta", "ventilador", 
-        "rede", "sistema", "computador", "chave", "janela", 
-        "roteador", "servidor", "celular", "impressora", "teclado", 
-        "arquivo", "disco", "tabela", "lâmpada", "quadro", 
-        "livro", "caderno", "fone", "porta", "monitor", 
-        "ponteiro", "prato", "rede social", "caixa", "guarda-chuva"
+        "casa", "livro", "escola", "tempo", "sol", 
+        "lua", "estrela", "amigo", "carro", "felicidade", 
+        "amizade", "trabalho", "lazer", "computador", "arvore",
+        "flor", "jardim", "cachorro", "gato", "passarinho", 
+        "peixe", "montanha", "rio", "praia", "mar"
     };
 
     realizarExperimento23(arvore, palavras);
