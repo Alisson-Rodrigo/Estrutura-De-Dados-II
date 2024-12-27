@@ -14,7 +14,7 @@ typedef struct Funcionario {
 } Funcionario;
 
 Funcionario gerar_funcionario() {
-  int numero = rand() % 100000;
+  int numero = rand() % 10;
   Funcionario funcionario;
   funcionario.salario = (float)numero;
 
