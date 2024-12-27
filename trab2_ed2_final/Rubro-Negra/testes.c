@@ -116,8 +116,8 @@ void realizarExperimento(Arv_portugues *arvore, char palavras[30][50]) {
     Arv_portugues *arvore = NULL;
 
     // Carregar o arquivo
-    //carregarArquivo("C:/Users/PurooLight/Documents/GitHub/ED2-JOB2/trab2_ed2_final/trabalhoEd2.txt", &arvore);
-    carregarArquivo("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &arvore);
+    carregarArquivo("C:/Users/PurooLight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &arvore);
+    //carregarArquivo("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &arvore);
 
     // Palavras para o experimento
     char palavras[30][50] = {

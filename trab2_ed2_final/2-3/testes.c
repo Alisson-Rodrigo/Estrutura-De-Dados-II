@@ -123,7 +123,7 @@ void realizarExperimento23(Arv_pt *arvore, char palavras[30][50]) {
 int main() {
     Arv_pt *arvore = NULL;
 
-    carregarArquivo("C:/Users/PurooLight/Documents/GitHub/ED2-JOB2/trab2_ed2_final/trabalhoEd2.txt", &arvore);
+    carregarArquivo("C:/Users/PurooLight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &arvore);
 
     char palavras[30][50] = {
         "onibus", "barramento", "inseto", "bicicleta", "ventilador", 
