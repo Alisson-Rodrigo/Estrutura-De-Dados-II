@@ -3,6 +3,7 @@
 #include <string.h>
 #include "arvbin.h"
 #include "arvrb.h"
+#include "unidade.h"
 #define RED 1
 #define BLACK 0
 
@@ -10,40 +11,48 @@ int insertPortugueseWord(RedBlackTreePT **arvore, char *palavraPortugues, char *
     int inseriu = 0;
 
     // Busca a palavra na árvore
-    RedBlackTreePT *noExistente = NULL;
-    noExistente =  SearchWordInTree(arvore, palavraPortugues);
+    RedBlackTreePT *noExistente = SearchWordInTree(arvore, palavraPortugues);
 
     if (noExistente != NULL) {
+        // Adiciona a tradução em inglês e a unidade à lista
         addEnglishTranslation(noExistente, palavraIngles, unidade);
+        noExistente->info.englishWordNode->unitValue = adicionar_unidade_ordenada(noExistente->info.englishWordNode->unitValue, criar_unidade(unidade));
         inseriu = 1;
     } else {
+        // Cria um novo nó com a unidade como lista encadeada
         Info novoInfo = createInfo(palavraPortugues, palavraIngles, unidade);
         insertRedBlackTree(arvore, &novoInfo);
         inseriu = 1;
     }
     return inseriu;
 }
-Info createInfo(char *palavra, char *palavraIngles, int unidade)
-{
+
+Info createInfo(char *palavra, char *palavraIngles, int unidade) {
     Info info;
 
+    // Inicializa a palavra em português
     info.portugueseWord = malloc(strlen(palavra) + 1);
     strcpy(info.portugueseWord, palavra);
 
+    // Inicializa a árvore binária para palavras em inglês
     info.englishWordNode = NULL;
     info.englishWordNode = insertEnglishWord(info.englishWordNode, palavraIngles, unidade);
+
+    // Inicializa a lista encadeada com a unidade
+    info.englishWordNode->unitValue = criar_unidade(unidade);
+
     return info;
 }
 
-RedBlackTreePT *createNode(Info *informacao)
-{
+RedBlackTreePT *createNode(Info *informacao) {
     RedBlackTreePT *novo = (RedBlackTreePT *)malloc(sizeof(RedBlackTreePT));
     novo->info = *informacao;
-    novo->color = 1;
+    novo->color = RED;
     novo->left = NULL;
     novo->right = NULL;
     return novo;
 }
+
 int getNodeColor(RedBlackTreePT *raiz)
 {
     int cor;
@@ -266,12 +275,16 @@ RedBlackTreePT *SearchWordInTree(RedBlackTreePT **arvore, char *palavraPortugues
 }
 
 
-void printWordsByUnit(RedBlackTreePT *arvore, int unidade)
-{
-    if (arvore)
-    {
+void printWordsByUnit(RedBlackTreePT *arvore, int unidade) {
+    if (arvore) {
         printWordsByUnit(arvore->left, unidade);
-        printTranslations(arvore->info.englishWordNode, unidade, arvore->info.portugueseWord);
+
+        // Verifica se a unidade existe na lista
+        Unidade *unidadeEncontrada = buscar_unidade(arvore->info.englishWordNode->unitValue, unidade);
+        if (unidadeEncontrada) {
+            printTranslations(arvore->info.englishWordNode, unidade, arvore->info.portugueseWord);
+        }
+
         printWordsByUnit(arvore->right, unidade);
     }
 }
@@ -309,15 +322,20 @@ void showPortugueseTranslation(RedBlackTreePT **raiz, char *palavraPortugues)
     }
 }
 
-void showRedBlackTree(RedBlackTreePT *raiz)
-{
-    if (raiz)
-    {
+void showRedBlackTree(RedBlackTreePT *raiz) {
+    if (raiz) {
         showRedBlackTree(raiz->left);
-        printf("Cor - %d\n", raiz->color);
-        printf("Palavra em Português - %s\n", raiz->info.portugueseWord);
+
+        printf("Cor: %d\n", raiz->color);
+        printf("Palavra em Português: %s\n", raiz->info.portugueseWord);
+
+        // Imprime todas as unidades associadas
+        printf("Unidades associadas: ");
+        imprimir_unidades(raiz->info.englishWordNode->unitValue);
+
         printBinaryTree(raiz->info.englishWordNode);
         printf("\n");
+
         showRedBlackTree(raiz->right);
     }
 }
