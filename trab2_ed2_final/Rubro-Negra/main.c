@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "src/arvbin.h"
-#include "src/arvrb.h"
-#include "src/remocao.h"
+#include "arvbin.c"
+#include "arvrb.c"
+#include "remocao.c"
 
 void carregarArquivo(const char *nomeArquivo, PortuguesRB **arvore)
 {
@@ -66,7 +66,7 @@ int main()
 
     PortuguesRB *raiz = NULL;
 
-    carregarArquivo("../text.txt", &raiz);
+    carregarArquivo("C:/Users/PurooLight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &raiz);
 
     int op, res;
     char palavra[50];

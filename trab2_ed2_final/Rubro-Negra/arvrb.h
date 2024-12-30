@@ -40,7 +40,7 @@ void imprimirPalavrasUnidade(PortuguesRB *arvore, char *unidade);
 
 void exibir_traducao_Portugues(PortuguesRB **raiz, char *palavraPortugues);
 
-void imprimirTraducoes(Inglesbin *node, char *unidade, char *palavraPortuguês);
+void imprimirTraducoes(Inglesbin *node, char *unidade, char *palavraPortugues);
 
 void exibirArvore(PortuguesRB *raiz);
 
