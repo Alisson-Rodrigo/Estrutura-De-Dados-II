@@ -35,9 +35,9 @@ double getTime() {
 
 // Função para gerar todas as configurações possíveis
 void generateConfigurations(Configuration *configs) {
-    int i, j;
+    int i;
     for (i = 0; i < MAX_CONFIGURATIONS; i++) {
-        for (j = 0; j < 4; j++) {
+        for (int j = 0; j < 4; j++) {
             configs[i].disks[j] = (i / (int)pow(3, j)) % 3; // Calcula a base 3
         }
     }
