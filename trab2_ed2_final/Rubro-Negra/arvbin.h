@@ -1,31 +1,24 @@
 #ifndef ARVBIN_H
 #define ARVBIN_H
 
-typedef struct EnglishBinaryTree
-{
-  char englishWord[50];
-  int unitValue;
-  struct EnglishBinaryTree *left;
-  struct EnglishBinaryTree *rigth;
-} BinaryTreeNode;
+#include "structs.h"
 
-typedef struct  RedBlackTreePT  RedBlackTreePT;
-BinaryTreeNode *initializeBinaryTreeNode(char *palavraIngles, int unidade);
+
+Inglesbin* createNode(const char* word, char *unidade);
 
 // Função para inserir uma palavra em inglês na arvore binaria de busca
-BinaryTreeNode *insertEnglishWord(BinaryTreeNode *root, char *palavraIngles, int unidade);
+int insertpalavraIngles(Inglesbin **root, Info *informacao);
 
-void addEnglishTranslation(RedBlackTreePT *raiz, char *palavraIng, int unidade);
+int ehFolhas(Inglesbin *raiz);
 
-int isLeafNodes(BinaryTreeNode *raiz);
+Inglesbin *soUmFilho(Inglesbin *raiz);
 
-BinaryTreeNode *singleChildNode(BinaryTreeNode *raiz);
+Inglesbin *menorFilho(Inglesbin *raiz);
 
-BinaryTreeNode *minimumChildNode(BinaryTreeNode *raiz);
+void printBinaryTree(Inglesbin *root);
 
-void printBinaryTree(BinaryTreeNode *root);
+int removerPalavraIngles(Inglesbin **raiz, const char *palavra);
 
-int removeEnglishWord(BinaryTreeNode **raiz, char *palavra);
-void FindEnglishTerm(RedBlackTreePT **raiz, char *palavraIngles, int unidade);
+void free_arvore_binaria(Inglesbin *raiz);
 
 #endif

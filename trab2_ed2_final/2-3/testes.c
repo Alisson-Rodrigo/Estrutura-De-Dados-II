@@ -100,9 +100,10 @@ int buscarPalavraComCaminho23(Arv_pt *arvore, char *palavraPortugues, char *cami
 void realizarExperimento23(Arv_pt *arvore, char palavras[30][50]) {
     long long inicio, fim;
     double tempoTotal = 0;
+    int i;
 
     printf("\n--- Experimento ---\n");
-    for (int i = 0; i < 30; i++) {
+    for (i = 0; i < 30; i++) {
         char caminho[2048] = "";
         inicio = getTempoNanosegundos();
 
@@ -122,13 +123,13 @@ void realizarExperimento23(Arv_pt *arvore, char palavras[30][50]) {
 int main() {
     Arv_pt *arvore = NULL;
 
-    carregarArquivo("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_segunda_provaVERSAO-REFERENCIA/Tabalho2_Ed2-main/trabalhoEd2.txt", &arvore);
-
+    carregarArquivo("C:/Users/PurooLight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &arvore);
+    // Palavras para o experimento
     char palavras[30][50] = {
         "onibus", "barramento", "inseto", "bicicleta", "ventilador", 
         "casa", "livro", "escola", "tempo", "sol", 
         "lua", "estrela", "amigo", "carro", "felicidade", 
-        "amizade", "trabalho", "lazer", "computador", "árvore",
+        "amizade", "trabalho", "lazer", "computador", "arvore",
         "flor", "jardim", "cachorro", "gato", "passarinho", 
         "peixe", "montanha", "rio", "praia", "mar"
     };
