@@ -74,36 +74,43 @@ BinaryTreeNode *minimumChildNode(BinaryTreeNode *raiz) {
     return raiz;
 }
 
-int removeEnglishWord(BinaryTreeNode **raiz, char *palavra) {
-    BinaryTreeNode *endFilho;
+int removerPalavraIngles(BinaryTreeNode **raiz, const char *palavra)
+{
+    BinaryTreeNode *endFilho = NULL;
     int existe = 0;
 
-    if (*raiz) {
-        if (strcmp(palavra, (*raiz)->englishWord) == 0) {
-            existe = 1;
-            printf("Removendo palavra: %s\n", palavra);
-
-            // Remove o nó da árvore binária
+    if (*raiz)
+    {
+        if (strcmp(palavra, (*raiz)->englishWord) == 0)
+        {
             BinaryTreeNode *aux = *raiz;
-            if (isLeafNodes(*raiz)) {
-                liberar_lista(aux->unitValue); // Libera a lista de unidades associada
+            existe = 1;
+            if (eh_Folha(*raiz))
+            {
                 free(aux);
                 *raiz = NULL;
-            } else if ((endFilho = singleChildNode(*raiz)) != NULL) {
-                liberar_lista(aux->unitValue); // Libera a lista de unidades associada
+            }
+            else if ((endFilho = soUmFilho(raiz)) != NULL)
+            {
                 free(aux);
                 *raiz = endFilho;
-            } else {
-                endFilho = minimumChildNode((*raiz)->rigth);
-                strcpy((*raiz)->englishWord, endFilho->englishWord);
-                liberar_lista((*raiz)->unitValue);
-                (*raiz)->unitValue = endFilho->unitValue; // Transfere a lista de unidades
-                removeEnglishWord(&(*raiz)->rigth, endFilho->englishWord);
             }
-        } else if (strcmp(palavra, (*raiz)->englishWord) < 0) {
-            existe = removeEnglishWord(&(*raiz)->left, palavra);
-        } else {
-            existe = removeEnglishWord(&(*raiz)->rigth, palavra);
+            else
+            {
+                endFilho = menorFilho((*raiz)->rigth);
+                strcpy((*raiz)->englishWord, endFilho->englishWord);
+                (*raiz)->unitValue = endFilho->unitValue;
+
+                removerPalavraIngles(&(*raiz)->rigth, endFilho->englishWord);
+            }
+        }
+        else if (strcmp(palavra, (*raiz)->englishWord) < 0)
+        {
+            existe = removerPalavraIngles(&(*raiz)->left, palavra);
+        }
+        else
+        {
+            existe = removerPalavraIngles(&(*raiz)->left, palavra);
         }
     }
 
