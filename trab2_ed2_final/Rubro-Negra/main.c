@@ -4,47 +4,78 @@
 #include <string.h>
 #include "arvbin.c"
 #include "arvrb.c"
+#include "unidade.c"
+#include <ctype.h>
 
-void loadFile(const char *nomeArquivo, RedBlackTreePT **arvore)
-{
+
+
+// Função para limpar caracteres indesejados
+void clearCharacters(char *str) {
+    char *end;
+
+    // Remove espaços e caracteres indesejados do final
+    end = str + strlen(str) - 1;
+    while (end > str && (isspace((unsigned char)*end) || *end == ';' || *end == ',')) {
+        *end = '\0';
+        end--;
+    }
+
+    // Remove espaços do início
+    char *start = str;
+    while (*start && isspace((unsigned char)*start)) {
+        start++;
+    }
+
+    // Copia a string limpa para o início
+    memmove(str, start, strlen(start) + 1);
+}
+
+void loadFile(const char *nomeArquivo, RedBlackTreePT **arvore) {
     FILE *arquivo = fopen(nomeArquivo, "r");
-    if (arquivo != NULL)
-    {
-        char linha[256];
+    if (arquivo == NULL) {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
 
-        int unidadeAtual = 0;
+    char linha[256];
+    int unidadeAtual = 0;
 
-        while (fgets(linha, sizeof(linha), arquivo))
-        {
-            linha[strcspn(linha, "\n")] = 0;
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        // Remove o caractere de nova linha
+        linha[strcspn(linha, "\n")] = 0;
 
-            if (linha[0] == '%')
-            {
-                // Atualiza a unidade corretamente
-                sscanf(linha, "%% Unidade %d", &unidadeAtual);
-            }
-            else
-            {
-                char palavraIngles[50], traducoesPortugues[200];
-                sscanf(linha, "%[^:]: %[^;]", palavraIngles, traducoesPortugues);
+        if (linha[0] == '%') {
+            // Atualiza a unidade atual
+            sscanf(linha, "%% Unidade %d", &unidadeAtual);
+        } else {
+            char palavraIngles[50], traducoesPortugues[200];
 
+            // Separa a palavra em inglês e suas traduções em português
+            if (sscanf(linha, "%[^:]: %[^\n]", palavraIngles, traducoesPortugues) == 2) {
+                // Limpa a palavra em inglês
+                clearCharacters(palavraIngles);
+
+                // Divide as traduções em português
                 char *traducaoPortugues = strtok(traducoesPortugues, ",;");
-                while (traducaoPortugues != NULL)
-                {
-                    while (*traducaoPortugues == ' ')
-                        traducaoPortugues++;
+                while (traducaoPortugues != NULL) {
+                    // Limpa cada tradução em português
+                    clearCharacters(traducaoPortugues);
 
+                    // Insere a palavra na árvore
                     insertPortugueseWord(arvore, traducaoPortugues, palavraIngles, unidadeAtual);
 
+                    // Próxima tradução
                     traducaoPortugues = strtok(NULL, ",;");
                 }
             }
         }
-
-        fclose(arquivo);
-        printf("Arquivo '%s' carregado com sucesso!\n", nomeArquivo);
     }
+
+    fclose(arquivo);
+    printf("Arquivo '%s' carregado com sucesso!\n", nomeArquivo);
 }
+
+
 
 void menu()
 {
@@ -88,10 +119,11 @@ int main()
         case 2:
             printf("\n--------------------------------------------------------------- \n");
             printf("Insira a palavra em portugues que deseja imprimir as palavras em ingles: ");
-            scanf("%s", word);
+            scanf(" %[^\n]", word); // Ajuste para ler palavras com espaços
             showPortugueseTranslation(&rootNode, word);
             printf("\n--------------------------------------------------------------- \n");
             break;
+
         case 3:
             printf("\n--------------------------------------------------------------- \n");
             printf("Insira a palavra em inglês que deseja remover: ");

@@ -1,13 +1,14 @@
 #ifndef ARVBIN_H
 #define ARVBIN_H
-
+#include "unidade.h"
 typedef struct EnglishBinaryTree
 {
   char englishWord[50];
-  int unitValue;
+  Unidade *unitValues; // Lista encadeada de unidades
   struct EnglishBinaryTree *left;
-  struct EnglishBinaryTree *rigth;
+  struct EnglishBinaryTree *right;
 } BinaryTreeNode;
+
 
 typedef struct  RedBlackTreePT  RedBlackTreePT;
 BinaryTreeNode *initializeBinaryTreeNode(char *palavraIngles, int unidade);

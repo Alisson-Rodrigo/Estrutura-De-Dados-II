@@ -7,7 +7,7 @@
 #include "unidade.c"
 #include <ctype.h>
 
-void limparCaracteres(char *str)
+void clearCharacters(char *str)
 {
     char *end = str + strlen(str) - 1;
 
@@ -56,7 +56,7 @@ void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
             if (sscanf(linha, "%[^:]: %[^\n]", palavraIngles, traducoesPortugues) == 2)
             {
                
-                limparCaracteres(palavraIngles);
+                clearCharacters(palavraIngles);
 
                 char *traducaoPortugues = strtok(traducoesPortugues, ",");
                 while (traducaoPortugues != NULL)
@@ -66,7 +66,7 @@ void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
                         traducaoPortugues++;
 
                     
-                    limparCaracteres(traducaoPortugues);
+                    clearCharacters(traducaoPortugues);
 
 
                     inserirPalavraPortugues(arvore, traducaoPortugues, palavraIngles, unidadeAtual);
