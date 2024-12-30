@@ -5,82 +5,95 @@
 
 Portugues23 *BuscarPalavra(Portugues23 **no, const char *palavraPortugues)
 {
-    Portugues23 *inserida = NULL; // Inicializa o retorno como NULL
+    Portugues23 *resultado = NULL;
 
     if (no != NULL && *no != NULL)
     {
+        printf("Comparando '%s' com '%s'\n", palavraPortugues, (*no)->info1.portugueseWord);
+
         if (strcmp(palavraPortugues, (*no)->info1.portugueseWord) == 0)
         {
-            inserida = (*no); // Palavra encontrada, retorna o nó
+            resultado = *no;
         }
-        else if ((*no)->nInfos == 2 && strcmp(palavraPortugues, (*no)->info2.portugueseWord) == 0)
+        else if ((*no)->nInfos == 2)
         {
-            inserida = (*no);
+            printf("Comparando '%s' com '%s'\n", palavraPortugues, (*no)->info2.portugueseWord);
+
+            if (strcmp(palavraPortugues, (*no)->info2.portugueseWord) == 0)
+            {
+                resultado = *no;
+            }
         }
-        else
+
+        if (resultado == NULL)
         {
-            // Continua a busca nos filhos
             if (strcmp(palavraPortugues, (*no)->info1.portugueseWord) < 0)
             {
-                inserida = BuscarPalavra(&(*no)->esq, palavraPortugues);
+                resultado = BuscarPalavra(&(*no)->esq, palavraPortugues);
             }
             else if ((*no)->nInfos == 1 || strcmp(palavraPortugues, (*no)->info2.portugueseWord) < 0)
             {
-                inserida = BuscarPalavra(&(*no)->cent, palavraPortugues);
+                resultado = BuscarPalavra(&(*no)->cent, palavraPortugues);
             }
             else
             {
-                inserida = BuscarPalavra(&(*no)->dir, palavraPortugues);
+                resultado = BuscarPalavra(&(*no)->dir, palavraPortugues);
             }
         }
     }
 
-    return inserida;
+    return resultado;
 }
 
 void adicionarTraducao(Portugues23 *no, const char *palavraPortugues, const char *palavraIngles, int unidade)
 {
     if (strcmp(palavraPortugues, (no)->info1.portugueseWord) == 0)
     {
-        adicionarTraducaoEmIngles(&(no)->info1, palavraIngles, unidade);
+        // Adiciona a tradução e associa a unidade como uma lista
+        no->info1.palavraIngles = insertpalavraIngles(no->info1.palavraIngles, palavraIngles, unidade);
     }
     else if (no->nInfos == 2 && strcmp(palavraPortugues, no->info2.portugueseWord) == 0)
     {
-        adicionarTraducaoEmIngles(&(no)->info2, palavraIngles, unidade);
+        // Adiciona a tradução e associa a unidade como uma lista
+        no->info2.palavraIngles = insertpalavraIngles(no->info2.palavraIngles, palavraIngles, unidade);
     }
 }
 
-int inserirPalavraPortugues(Portugues23 **arvore, char *palavraPortugues, char *palavraIngles, int unidade) {
+int inserirPalavraPortugues(Portugues23 **arvore, char *palavraPortugues, char *palavraIngles, int unidade)
+{
     Info promove;
     Portugues23 *pai = NULL;
     int inseriu;
 
     // Busca a palavra na árvore
-    Portugues23 *noExistente = NULL;
-    noExistente =  BuscarPalavra(arvore, palavraPortugues);
+    Portugues23 *noExistente = BuscarPalavra(arvore, palavraPortugues);
 
-    if (noExistente != NULL) {
+    if (noExistente != NULL)
+    {
         printf("A palavra já existe. Adicionando tradução...\n");
+        // Adiciona a nova tradução em inglês e a unidade associada
         adicionarTraducao(noExistente, palavraPortugues, palavraIngles, unidade);
         inseriu = 1;
-    } else {
+    }
+    else
+    {
+        // Cria um novo Info com a tradução e a unidade associada
         Info novoInfo = createInfo(palavraPortugues, palavraIngles, unidade);
+        // Insere o novo Info na árvore 2-3
         inserirArv23(arvore, &novoInfo, &promove, &pai);
         inseriu = 0;
     }
+
     return inseriu;
 }
 
-Info createInfo(char *palavra, char *palavraIngles, int unidade)
+Info createInfo(char *palavraPortugues, char *palavraIngles, int unidade)
 {
-    Info info;
-
-    info.portugueseWord = malloc(strlen(palavra) + 1);
-    strcpy(info.portugueseWord, palavra);
-
-    info.palavraIngles = NULL;
-    info.palavraIngles = insertpalavraIngles(info.palavraIngles, palavraIngles, unidade);
-    return info;
+    Info novoInfo;
+    novoInfo.portugueseWord = strdup(palavraPortugues); // Armazena a palavra em português
+    novoInfo.palavraIngles = NULL;
+    novoInfo.palavraIngles = insertpalavraIngles(novoInfo.palavraIngles, palavraIngles, unidade);
+    return novoInfo;
 }
 
 Portugues23 *criaNo(const Info *informacao, Portugues23 *filhoesq, Portugues23 *filhocen)
@@ -122,7 +135,7 @@ Portugues23 *quebraNo(Portugues23 **no, const Info *informacao, Info *promove, P
     if (strcmp(informacao->portugueseWord, (*no)->info2.portugueseWord) > 0)
     {
         *promove = (*no)->info2;
-        if(filho)
+        if (filho)
             maior = criaNo(informacao, (*no)->dir, *filho);
         else
             maior = criaNo(informacao, (*no)->dir, NULL);
@@ -130,7 +143,7 @@ Portugues23 *quebraNo(Portugues23 **no, const Info *informacao, Info *promove, P
     else if (strcmp(informacao->portugueseWord, (*no)->info1.portugueseWord) > 0)
     {
         *promove = *informacao;
-        if(filho)
+        if (filho)
             maior = criaNo(&(*no)->info2, *filho, (*no)->dir);
         else
             maior = criaNo(&(*no)->info2, NULL, (*no)->dir);
@@ -140,7 +153,7 @@ Portugues23 *quebraNo(Portugues23 **no, const Info *informacao, Info *promove, P
         *promove = (*no)->info1;
         maior = criaNo(&(*no)->info2, (*no)->cent, (*no)->dir);
         (*no)->info1 = *informacao;
-        if(filho)
+        if (filho)
             (*no)->cent = *filho;
         else
             (*no)->cent = NULL;
@@ -154,7 +167,6 @@ int ehFolha(const Portugues23 *no)
 {
     return (no->esq == NULL);
 }
-
 
 Portugues23 *inserirArv23(Portugues23 **no, Info *informacao, Info *promove, Portugues23 **pai)
 {
@@ -227,8 +239,6 @@ Portugues23 *inserirArv23(Portugues23 **no, Info *informacao, Info *promove, Por
     return maiorNo;
 }
 
-
-
 // ############################################## FUNÇOES PARA EXIBIR ##############################################
 
 void exibir_tree23(const Portugues23 *raiz)
@@ -261,66 +271,130 @@ void exibir_tree23(const Portugues23 *raiz)
     }
 }
 
-void imprimirPalavrasUnidade(Portugues23 *arvore, int unidade)
+void imprimirPalavrasUnidade(Portugues23 *arvore, int unidade, int *unidadeImpressa)
 {
     if (arvore)
     {
-        imprimirPalavrasUnidade(arvore->esq, unidade);
-        imprimirTraducoes(arvore->info1.palavraIngles, unidade, arvore->info1.portugueseWord);
+        // Percorre a subárvore esquerda
+        imprimirPalavrasUnidade(arvore->esq, unidade, unidadeImpressa);
 
-        imprimirPalavrasUnidade(arvore->cent, unidade);
+        // Imprime o cabeçalho da unidade uma vez
+        if (!(*unidadeImpressa))
+        {
+            printf("%% Unidade %d\n", unidade); // Cabeçalho da unidade
+            *unidadeImpressa = 1;               // Marca como já impresso
+        }
+
+        // Imprime as traduções associadas à unidade para a primeira palavra do nó
+        if (arvore->info1.palavraIngles != NULL)
+        {
+            imprimirTraducoesNoFormato(arvore->info1.palavraIngles, unidade, arvore->info1.portugueseWord);
+        }
+
+        // Percorre a subárvore central
+        imprimirPalavrasUnidade(arvore->cent, unidade, unidadeImpressa);
+
+        // Se houver o segundo elemento no nó, imprime também suas traduções
+        if (arvore->nInfos == 2 && arvore->info2.palavraIngles != NULL)
+        {
+            imprimirTraducoesNoFormato(arvore->info2.palavraIngles, unidade, arvore->info2.portugueseWord);
+        }
+
+        // Percorre a subárvore direita, se existir
         if (arvore->nInfos == 2)
         {
-            imprimirTraducoes(arvore->info2.palavraIngles, unidade, arvore->info2.portugueseWord);
+            imprimirPalavrasUnidade(arvore->dir, unidade, unidadeImpressa);
         }
-        imprimirPalavrasUnidade(arvore->dir, unidade);
     }
 }
 
-void imprimirTraducoes(Inglesbin *node, int unidade, const char *palavraPortugues)
+void imprimirTraducoesNoFormato(Inglesbin *node, int unidade, const char *palavraPortugues)
 {
     if (node)
     {
-        if (node->unidade == unidade)
+        // Percorre a subárvore esquerda
+        imprimirTraducoesNoFormato(node->esq, unidade, palavraPortugues);
+
+        // Verifica se a unidade está associada à palavra em inglês
+        if (buscar_unidade(node->unidades, unidade)) // Verifica se a unidade está presente na lista
         {
-            printf("Palavra em Português: %s\n", palavraPortugues);
-            printf("Palavra em inglês: %s\n", node->palavraIngles);
+            // Remove o ';' no final de palavraPortugues, se existir
+            char palavraFormatada[256];
+            strcpy(palavraFormatada, palavraPortugues);
+            size_t len = strlen(palavraFormatada);
+            if (len > 0 && palavraFormatada[len - 1] == ';')
+            {
+                palavraFormatada[len - 1] = '\0';
+            }
+
+            printf("%s: %s;\n", palavraFormatada, node->palavraIngles); // Formata corretamente
         }
-        imprimirTraducoes(node->esq, unidade, palavraPortugues);
-        imprimirTraducoes(node->dir, unidade, palavraPortugues);
+
+        // Percorre a subárvore direita
+        imprimirTraducoesNoFormato(node->dir, unidade, palavraPortugues);
+    }
+}
+
+void exibirTodasTraducoes(Portugues23 *raiz, const char *palavraPortugues)
+{
+    if (raiz == NULL)
+    {
+        printf("A palavra '%s' não foi encontrada.\n", palavraPortugues);
+        return;
+    }
+
+    // Verifica o nó info1
+    if (strcmp(raiz->info1.portugueseWord, palavraPortugues) == 0)
+    {
+        printf("Traduções para '%s':\n", palavraPortugues);
+        exibirTraducoesIngles(raiz->info1.palavraIngles);
+        return; // Evita loop desnecessário
+    }
+
+    // Verifica o nó info2 (se existir)
+    if (raiz->nInfos == 2 && strcmp(raiz->info2.portugueseWord, palavraPortugues) == 0)
+    {
+        printf("Traduções para '%s':\n", palavraPortugues);
+        exibirTraducoesIngles(raiz->info2.palavraIngles);
+        return; // Evita loop desnecessário
+    }
+
+    // Busca recursiva
+    if (strcmp(palavraPortugues, raiz->info1.portugueseWord) < 0)
+    {
+        exibirTodasTraducoes(raiz->esq, palavraPortugues);
+    }
+    else if (raiz->nInfos == 1 || strcmp(palavraPortugues, raiz->info2.portugueseWord) < 0)
+    {
+        exibirTodasTraducoes(raiz->cent, palavraPortugues);
+    }
+    else
+    {
+        exibirTodasTraducoes(raiz->dir, palavraPortugues);
     }
 }
 
 void exibir_traducao_Portugues(Portugues23 **raiz, const char *palavraPortugues)
 {
-    Portugues23 *resultado = NULL;
-    if (raiz != NULL)
+    Portugues23 *resultado = BuscarPalavra(raiz, palavraPortugues);
+    if (resultado)
     {
-        resultado = BuscarPalavra(raiz, palavraPortugues);
-        if (resultado)
-        {
-            printf("Traduções em inglês para a palavra '%s':\n", palavraPortugues);
+        printf("Traduções em inglês para a palavra '%s':\n", palavraPortugues);
 
-            if (strcmp(palavraPortugues, resultado->info1.portugueseWord) == 0)
-            {
-                printBinaryTree(resultado->info1.palavraIngles);
-            }
-            else
-            {
-                printBinaryTree(resultado->info2.palavraIngles);
-            }
-        }
-        else
+        if (strcmp(palavraPortugues, resultado->info1.portugueseWord) == 0)
         {
-            printf("A palavra '%s' não foi encontrada na árvore.\n", palavraPortugues);
+            printBinaryTree(resultado->info1.palavraIngles);
+        }
+        else if (resultado->nInfos == 2 && strcmp(palavraPortugues, resultado->info2.portugueseWord) == 0)
+        {
+            printBinaryTree(resultado->info2.palavraIngles);
         }
     }
+    else
+    {
+        printf("A palavra '%s' não foi encontrada na árvore.\n", palavraPortugues);
+    }
 }
-
-
-
-// ############################################# REMOÇÃO ############################################
-
 
 void menorInfoDir(Portugues23 *Raiz, Portugues23 **no, Portugues23 **paiNo)
 {
@@ -545,8 +619,8 @@ int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor)
 
 void freeInfo2_3(Info *info)
 {
-  free_arvore_binaria(info->palavraIngles);
-  free(info->portugueseWord);
+    free_arvore_binaria(info->palavraIngles);
+    free(info->portugueseWord);
 }
 
 void freeTree(Portugues23 *no)

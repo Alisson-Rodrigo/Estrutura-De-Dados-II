@@ -65,7 +65,7 @@ int main()
 
     RedBlackTreePT *rootNode = NULL;
 
-    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &rootNode);
+    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/trabalhoEd2.txt", &rootNode);
 
     int op;
     char word[50];

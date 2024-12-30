@@ -16,7 +16,7 @@ typedef struct Portugues23{
     struct Portugues23 *esq;
     int nInfos;
 } Portugues23;
-
+typedef struct Inglesbin Inglesbin;
 Portugues23 *BuscarPalavra(Portugues23 **no, const char *palavraPortugues);
 int inserirPalavraPortugues(Portugues23 **arvore, char *palavraPortugues, char *palavraIngles, int unidade);
 void adicionarTraducaoEmIngles(Info *info, const char *palavraIng, int unidade);
@@ -33,7 +33,8 @@ void freeInfo2_3(Info *info);
 void freeTree(Portugues23 *no);
 
 void exibir_tree23(const Portugues23 *raiz);
-void imprimirPalavrasUnidade(Portugues23 *arvore, int unidade);
+void imprimirPalavrasUnidade(Portugues23 *arvore, int unidade, int *unidadeImpressa);
+
 void exibir_traducao_Portugues(Portugues23 **raiz, const char *palavraPortugues);
 void imprimirTraducoes(Inglesbin *node, int unidade, const char *palavraPortugues);
 
@@ -41,6 +42,6 @@ void menorInfoDir(Portugues23 *Raiz, Portugues23 **no, Portugues23 **paiNo);
 void maiorInfoEsq(Portugues23 *Raiz, Portugues23 **no, Portugues23 **paiNo);
 int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor);
 
-
+void imprimirTraducoesNoFormato(Inglesbin *node, int unidade, const char *palavraPortugues);
 
 #endif

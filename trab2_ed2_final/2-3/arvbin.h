@@ -1,14 +1,18 @@
 #ifndef ARVBIN_H
 #define ARVBIN_H
 #include "arv23.h"
+#include "unidade.h"
 
-typedef struct Inglesbin{
+
+typedef struct Inglesbin {
     char *palavraIngles;
-    struct Inglesbin *dir,*esq;
-    int unidade;
+    struct Inglesbin *dir, *esq;
+    Unidade *unidades; // Lista ligada de unidades
 } Inglesbin;
 
-typedef struct Portugues23 Portugues23; 
+typedef struct Portugues23 Portugues23;
+
+
 
 Inglesbin* createNode(const char* word, int unit);
 
@@ -29,5 +33,5 @@ int removerPalavraIngles(Inglesbin **raiz, char *palavra);
 void BuscarPalavraIngles(Portugues23 **raiz, char *palavraIngles, int unidade, Portugues23 **pai);
 
 void free_arvore_binaria(Inglesbin *raiz);
-
+void exibirTraducoesIngles(Inglesbin *raiz);
 #endif

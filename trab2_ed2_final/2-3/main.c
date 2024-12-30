@@ -4,6 +4,7 @@
 #include <string.h>
 #include "arv23.c"
 #include "arvbin.c"
+#include "unidade.c"
 
 void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
 {
@@ -14,34 +15,50 @@ void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
         return;
     }
 
-    char linha[256];
-
-    int unidadeAtual = 0;
+    char linha[256];      // Para armazenar cada linha do arquivo
+    int unidadeAtual = 0; // Unidade atual lida do arquivo
 
     while (fgets(linha, sizeof(linha), arquivo))
     {
-        linha[strcspn(linha, "\n")] = 0;
+        linha[strcspn(linha, "\n")] = 0; // Remove o caractere de nova linha
 
-        if (linha[0] == '%')
+        if (linha[0] == '%') // Identifica linhas que definem a unidade
         {
-            // Atualiza a unidade corretamente
-            sscanf(linha, "%% Unidade %d", &unidadeAtual);
+            // Atualiza a unidade usando sscanf para capturar o número após "Unidade"
+            if (sscanf(linha, "%% Unidade %d", &unidadeAtual) != 1)
+            {
+                printf("Erro ao interpretar a unidade na linha: %s\n", linha);
+            }
         }
-        else
+        else // Processa as linhas de palavras e traduções
         {
             char palavraIngles[50], traducoesPortugues[200];
-            sscanf(linha, "%[^:]: %[^;]", palavraIngles, traducoesPortugues);
-            
-            char *traducaoPortugues = strtok(traducoesPortugues, ",;");
-            while(traducaoPortugues != NULL)
-            {
-                while (*traducaoPortugues == ' ') 
-                    traducaoPortugues++;
 
-                inserirPalavraPortugues(arvore, traducaoPortugues, palavraIngles, unidadeAtual);
-                traducaoPortugues = strtok(NULL, ",;");    
+            // Divide a linha em palavra em inglês e traduções em português
+            if (sscanf(linha, "%[^:]: %[^\n]", palavraIngles, traducoesPortugues) == 2)
+            {
+                // Usa strtok para separar as traduções por vírgula
+                char *traducaoPortugues = strtok(traducoesPortugues, ",");
+                while (traducaoPortugues != NULL)
+                {
+                    // Remove espaços em branco extras no início da tradução
+                    while (*traducaoPortugues == ' ')
+                        traducaoPortugues++;
+
+                    // Insere a palavra em português e a tradução em inglês na árvore
+                    inserirPalavraPortugues(arvore, traducaoPortugues, palavraIngles, unidadeAtual);
+
+                    // Formata o print no formato "Palavra Português: Inglês"
+                    printf("Palavra Português: %s - Inglês: %s\n", traducaoPortugues, palavraIngles);
+
+                    // Continua para a próxima tradução
+                    traducaoPortugues = strtok(NULL, ",");
+                }
             }
-            
+            else
+            {
+                printf("Erro ao interpretar a linha: %s\n", linha);
+            }
         }
     }
 
@@ -49,7 +66,8 @@ void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
     printf("Arquivo '%s' carregado com sucesso!\n", nomeArquivo);
 }
 
-void menu(){
+void menu()
+{
     printf("\n------------------------------------------------------------------------------------------------- \n");
     printf("\nMenu de opções:\n");
     printf("1 - Informar uma unidade e imprimir todas as palavras em português e as equivalentes em inglês.\n");
@@ -60,7 +78,6 @@ void menu(){
     printf("0 - Sair\n");
     printf("Escolha uma opção: \n");
     printf("\n------------------------------------------------------------------------------------------------- \n");
-    
 }
 
 int main()
@@ -71,7 +88,7 @@ int main()
     char palavra[50];
     int unidade;
     int removido;
-    carregarArquivo("C:/Users/PurooLight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &raiz);
+    carregarArquivo("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/trabalhoEd2.txt", &raiz);
     int op, res;
     do
     {
@@ -84,18 +101,26 @@ int main()
             printf("\n--------------------------------------------------------------- \n");
             printf("Insira a unidade que deseja imprimir as palavras: ");
             scanf("%d", &unidade);
-            imprimirPalavrasUnidade(raiz, unidade);
+
+            // Variável de controle para a impressão do cabeçalho
+            int unidadeImpressa = 0;
+
+            // Chama a função para imprimir palavras da unidade
+            imprimirPalavrasUnidade(raiz, unidade, &unidadeImpressa);
+
             printf("\n--------------------------------------------------------------- \n");
             break;
+
         case 2:
             printf("\n--------------------------------------------------------------- \n");
-            printf("Insira a palavra em portugues que deseja imprimir as palavras em ingles: ");
+            printf("Insira a palavra em português que deseja imprimir as palavras em inglês: ");
             scanf("%s", palavra);
-            exibir_traducao_Portugues(&raiz, palavra);
+            exibir_traducao_Portugues(&raiz, palavra); // Chama a função para exibir traduções da palavra
             printf("\n--------------------------------------------------------------- \n");
             break;
+
         case 3:
-        printf("\n--------------------------------------------------------------- \n");
+            printf("\n--------------------------------------------------------------- \n");
             printf("Insira a palavra em ingles que deseja remover: ");
             scanf("%s", palavra);
             printf("Insira a unidade da palavra que deseja remover: ");
@@ -108,7 +133,7 @@ int main()
             printf("Insira a palavra em portugues que deseja remover: ");
             scanf("%s", palavra);
             removido = remover23(&pai, &raiz, palavra);
-            if(removido)
+            if (removido)
                 printf("A palavra %s foi removida com sucesso!\n\n", palavra);
             printf("\n--------------------------------------------------------------- \n");
             break;
