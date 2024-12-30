@@ -7,8 +7,8 @@ typedef struct Inglesbin{
     struct Inglesbin *dir,*esq;
     int unidade;
 } Inglesbin;
-typedef struct Portugues23 Portugues23; 
 
+typedef struct Portugues23 Portugues23; 
 
 Inglesbin* createNode(const char* word, int unit);
 
