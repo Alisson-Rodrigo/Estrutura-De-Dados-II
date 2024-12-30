@@ -1,140 +1,149 @@
 #include "arvbin.h"
-#include "lista_encadeada.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-Inglesbin *createNode(const char *palavraIngles, char *unidade)
+#include "arvrb.h"
+BinaryTreeNode *initializeBinaryTreeNode(char *palavraIngles, int unidade)
 {
-    Inglesbin *novoNo = (Inglesbin *)malloc(sizeof(Inglesbin));
+    BinaryTreeNode *novoNo = (BinaryTreeNode *)malloc(sizeof(BinaryTreeNode));
     if (novoNo != NULL)
     {
-        novoNo->palavraIngles = (char *)malloc(strlen(palavraIngles) + 1);
-        strcpy(novoNo->palavraIngles, palavraIngles);
-        novoNo->unidades = NULL;
-        inserir_lista_encadeada_unidade(&(novoNo->unidades), unidade);
-        novoNo->esq = novoNo->dir = NULL;
+        strcpy(novoNo->englishWord, palavraIngles);
+        novoNo->unitValue = unidade;
+        novoNo->left = novoNo->rigth = NULL;
     }
     return novoNo;
 }
 
 // Função para inserir uma palavra em inglês na arvore binaria de busca
-int insertpalavraIngles(Inglesbin **root, Info *informacao)
+BinaryTreeNode *insertEnglishWord(BinaryTreeNode *root, char *palavraIngles, int unidade)
 {
-    int result = 0;
-    if ((*root) == NULL)
+    BinaryTreeNode *result;
+    if (root == NULL)
     {
-        Inglesbin *new = createNode(informacao->palavraIngles->palavraIngles, informacao->palavraIngles->unidades->nome_unidade);
-        *root = new;
-        result = 1;
+        result = initializeBinaryTreeNode(palavraIngles, unidade);
     }
-    else if (strcmp(informacao->palavraIngles->palavraIngles, (*root)->palavraIngles) < 0)
-        result = insertpalavraIngles(&(*root)->esq, informacao);
-    else if (strcmp(informacao->palavraIngles->palavraIngles, (*root)->palavraIngles) > 0)
-        result = insertpalavraIngles(&(*root)->dir, informacao);
     else
-        result = inserir_lista_encadeada_unidade(&((*root)->unidades), informacao->palavraIngles->unidades->nome_unidade);
-    
+    {
+        if (strcmp(palavraIngles, root->englishWord) < 0)
+        {
+            root->left = insertEnglishWord(root->left, palavraIngles, unidade);
+        }
+        else if (strcmp(palavraIngles, root->englishWord) > 0)
+        {
+            root->rigth = insertEnglishWord(root->rigth, palavraIngles, unidade);
+        }
+        result = root;
+    }
     return result;
 }
 
-void printBinaryTree(Inglesbin *root)
+void addEnglishTranslation(RedBlackTreePT *raiz, char *palavraIng, int unidade)
+{
+    raiz->info.englishWordNode = insertEnglishWord(raiz->info.englishWordNode, palavraIng, unidade);
+}
+
+
+void printBinaryTree(BinaryTreeNode *root)
 {
     if (root != NULL)
     {
-        printBinaryTree(root->esq); // Percorre a árvore à esquerda
+        printBinaryTree(root->left); // Percorre a árvore à esquerda
+        printf("\n");
         // Imprime a tradução de inglês associada à palavra em português
-        printf("Palavra em Inglês: %s \n", root->palavraIngles);
-        show_lista_encadeada_unidade(root->unidades);
-        printBinaryTree(root->dir); // Percorre a árvore à direita
+        printf("Palavra em Inglês: %s = Unidade: %d\n", root->englishWord, root->unitValue);
+        printBinaryTree(root->rigth); // Percorre a árvore à direita
     }
 }
 
-int ehFolhas(Inglesbin *raiz)
+int isLeafNodes(BinaryTreeNode *raiz)
 {
-    return (raiz->esq == NULL && raiz->dir == NULL);
+    return (raiz->left == NULL && raiz->rigth == NULL);
 }
 
-Inglesbin *soUmFilho(Inglesbin *raiz)
+BinaryTreeNode *singleChildNode(BinaryTreeNode *raiz)
 {
-    Inglesbin *aux;
+    BinaryTreeNode *aux;
     aux = NULL;
 
-    if (raiz->dir == NULL)
+    if (raiz->rigth == NULL)
     {
-        aux = raiz->esq;
+        aux = raiz->left;
     }
-    else if (raiz->esq == NULL)
+    else if (raiz->left == NULL)
     {
-        aux = raiz->dir;
+        aux = raiz->rigth;
     }
 
     return aux;
 }
 
-Inglesbin *menorFilho(Inglesbin *raiz)
+BinaryTreeNode *minimumChildNode(BinaryTreeNode *raiz)
 {
-    Inglesbin *aux;
+    BinaryTreeNode *aux;
     aux = raiz;
 
     if (raiz)
     {
-        if (raiz->esq)
-            aux = menorFilho(raiz->esq);
+        if (raiz->left)
+            aux = minimumChildNode(raiz->left);
     }
 
     return aux;
 }
 
-int removerPalavraIngles(Inglesbin **raiz, const char *palavra)
+int removeEnglishWord(BinaryTreeNode **raiz, char *palavra)
 {
-    Inglesbin *endFilho;
+    BinaryTreeNode *endFilho;
     int existe = 0;
 
     if (*raiz)
     {
-        if (strcmp(palavra, (*raiz)->palavraIngles) == 0)
+        if (strcmp(palavra, (*raiz)->englishWord) == 0)
         {
             existe = 1;
-            if (ehFolhas(*raiz))
+            printf("removendo palavra: %s\n", palavra);
+            BinaryTreeNode *aux = *raiz;
+            if (isLeafNodes(*raiz))
             {
-                free_arvore_binaria(*raiz);
+                free(aux);
                 *raiz = NULL;
             }
-            else if ((endFilho = soUmFilho(*raiz)) != NULL)
+            else if ((endFilho = singleChildNode(*raiz)) != NULL)
             {
-                free_arvore_binaria(*raiz);
+                free(aux);
                 *raiz = endFilho;
             }
             else
             {
-                endFilho = menorFilho((*raiz)->dir);
-                strcpy((*raiz)->palavraIngles, endFilho->palavraIngles);
-                (*raiz)->unidades = endFilho->unidades;
+                endFilho = minimumChildNode((*raiz)->rigth);
+                strcpy((*raiz)->englishWord, endFilho->englishWord);
+                (*raiz)->unitValue = endFilho->unitValue;
 
-                removerPalavraIngles(&(*raiz)->dir, endFilho->palavraIngles);
+                removeEnglishWord(&(*raiz)->rigth, endFilho->englishWord);
             }
         }
-        else if (strcmp(palavra, (*raiz)->palavraIngles) < 0)
+        else if (strcmp(palavra, (*raiz)->englishWord) < 0)
         {
-            existe = removerPalavraIngles(&(*raiz)->esq, palavra);
+            existe = removeEnglishWord(&(*raiz)->left, palavra);
         }
         else
         {
-            existe = removerPalavraIngles(&(*raiz)->dir, palavra);
+            existe = removeEnglishWord(&(*raiz)->rigth, palavra);
         }
     }
 
     return existe;
 }
 
-void free_arvore_binaria(Inglesbin *raiz)
+void FindEnglishTerm(RedBlackTreePT **raiz, char *palavraIngles, int unidade)
 {
-    if (raiz)
+    if (*raiz != NULL)
     {
-        free_arvore_binaria(raiz->esq);
-        free_arvore_binaria(raiz->dir);
-        free(raiz->palavraIngles);
-        free(raiz);
+        FindEnglishTerm(&(*raiz)->left, palavraIngles, unidade);
+
+        if ((*raiz)->info.englishWordNode != NULL && (*raiz)->info.englishWordNode->unitValue == unidade)
+            removeEnglishWord(&(*raiz)->info.englishWordNode, palavraIngles);
+        FindEnglishTerm(&(*raiz)->right, palavraIngles, unidade);
     }
 }

@@ -1,317 +1,352 @@
-#include "arvrb.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "arvbin.h"
+#include "arvrb.h"
 #define RED 1
 #define BLACK 0
 
-int inserirPalavraPortugues(PortuguesRB **arvore, char *palavraPortugues, char *palavraIngles, char *unidade)
-{
+int insertPortugueseWord(RedBlackTreePT **arvore, char *palavraPortugues, char *palavraIngles, int unidade) {
     int inseriu = 0;
 
-    Info novoInfo = criaInfo(palavraPortugues, palavraIngles, unidade);
-    inseriu = inserirArvRB(arvore, &novoInfo);
+    // Busca a palavra na árvore
+    RedBlackTreePT *noExistente = NULL;
+    noExistente =  SearchWordInTree(arvore, palavraPortugues);
 
+    if (noExistente != NULL) {
+        addEnglishTranslation(noExistente, palavraIngles, unidade);
+        inseriu = 1;
+    } else {
+        Info novoInfo = createInfo(palavraPortugues, palavraIngles, unidade);
+        insertRedBlackTree(arvore, &novoInfo);
+        inseriu = 1;
+    }
     return inseriu;
 }
-Info criaInfo(char *palavra, char *palavraIngles, char *unidade)
+Info createInfo(char *palavra, char *palavraIngles, int unidade)
 {
     Info info;
 
-    // Aloca e copia a palavra em português
-    info.palavraPortugues = malloc(strlen(palavra) + 1);
-    strcpy(info.palavraPortugues, palavra);
+    info.portugueseWord = malloc(strlen(palavra) + 1);
+    strcpy(info.portugueseWord, palavra);
 
-    // Estrutura de palavraIngles
-    info.palavraIngles = malloc(sizeof(Inglesbin));
-    info.palavraIngles->palavraIngles = malloc(strlen(palavraIngles) + 1);
-    strcpy(info.palavraIngles->palavraIngles, palavraIngles);
-
-    info.palavraIngles->unidades = NULL;
-    inserir_lista_encadeada_unidade(&(info.palavraIngles->unidades), unidade);
-
+    info.englishWordNode = NULL;
+    info.englishWordNode = insertEnglishWord(info.englishWordNode, palavraIngles, unidade);
     return info;
 }
 
-PortuguesRB *criaNo(Info *informacao)
+RedBlackTreePT *createNode(Info *informacao)
 {
-    PortuguesRB *novo = (PortuguesRB *)malloc(sizeof(PortuguesRB));
+    RedBlackTreePT *novo = (RedBlackTreePT *)malloc(sizeof(RedBlackTreePT));
     novo->info = *informacao;
-    novo->cor = 1;
-    novo->esq = NULL;
-    novo->dir = NULL;
+    novo->color = 1;
+    novo->left = NULL;
+    novo->right = NULL;
     return novo;
 }
-int cor(PortuguesRB *raiz)
+int getNodeColor(RedBlackTreePT *raiz)
 {
     int cor;
 
     if (raiz == NULL)
         cor = BLACK;
     else
-        cor = raiz->cor;
+        cor = raiz->color;
 
     return cor;
 }
 
-void troca_cor(PortuguesRB **raiz)
+void switch_node_color(RedBlackTreePT **raiz)
 {
-    (*raiz)->cor = !(*raiz)->cor;
-    if ((*raiz)->esq)
-        (*raiz)->esq->cor = !(*raiz)->esq->cor;
-    if ((*raiz)->dir)
-        (*raiz)->dir->cor = !(*raiz)->dir->cor;
+    (*raiz)->color = !(*raiz)->color;
+    if ((*raiz)->left)
+        (*raiz)->left->color = !(*raiz)->left->color;
+    if ((*raiz)->right)
+        (*raiz)->right->color = !(*raiz)->right->color;
 }
 
-void rotacao_direita(PortuguesRB **raiz)
+void rotate_right(RedBlackTreePT **raiz)
 {
-    PortuguesRB *aux = (*raiz)->esq;
-    (*raiz)->esq = aux->dir;
-    aux->dir = *raiz;
-    aux->cor = (*raiz)->cor;
-    (*raiz)->cor = RED;
+    RedBlackTreePT *aux = (*raiz)->left;
+    (*raiz)->left = aux->right;
+    aux->right = *raiz;
+    aux->color = (*raiz)->color;
+    (*raiz)->color = RED;
     (*raiz) = aux;
 }
 
-void rotacao_esquerda(PortuguesRB **raiz)
+void left_rotate(RedBlackTreePT **raiz)
 {
-    PortuguesRB *aux = (*raiz)->dir;
-    (*raiz)->dir = aux->esq;
-    aux->esq = *raiz;
-    aux->cor = (*raiz)->cor;
-    (*raiz)->cor = RED;
+    RedBlackTreePT *aux = (*raiz)->right;
+    (*raiz)->right = aux->left;
+    aux->left = *raiz;
+    aux->color = (*raiz)->color;
+    (*raiz)->color = RED;
     (*raiz) = aux;
 }
 
-void balancear(PortuguesRB **raiz)
+void balanceTree(RedBlackTreePT **raiz)
 {
     if (*raiz)
     {
-        if (cor((*raiz)->dir) == RED && cor((*raiz)->esq) == BLACK)
-            rotacao_esquerda(raiz);
-        if (cor((*raiz)->esq) == RED && cor((*raiz)->esq->esq) == RED)
-            rotacao_direita(raiz);
-        if (cor((*raiz)->esq) == RED && cor((*raiz)->dir) == RED)
-            troca_cor(raiz);
+        if (getNodeColor((*raiz)->right) == RED && getNodeColor((*raiz)->left) == BLACK)
+            left_rotate(raiz);
+        if (getNodeColor((*raiz)->left) == RED && getNodeColor((*raiz)->left->left) == RED)
+            rotate_right(raiz);
+        if (getNodeColor((*raiz)->left) == RED && getNodeColor((*raiz)->right) == RED)
+            switch_node_color(raiz);
     }
 }
 
-int inserirRB(PortuguesRB **raiz, Info *informacao)
+int insertRedBlackNode(RedBlackTreePT **raiz, Info *informacao)
 {
 
-    int inseriu = 0;
-    if (*raiz == NULL){
-        *raiz = criaNo(informacao);
-        inseriu = 1;
+    int inseriu = 1;
+    if (*raiz == NULL)
+    {
+        *raiz = createNode(informacao);
     }
-    else if (strcmp(informacao->palavraPortugues, (*raiz)->info.palavraPortugues) < 0)
-        inseriu = inserirRB(&(*raiz)->esq, informacao);
-    else if (strcmp(informacao->palavraPortugues, (*raiz)->info.palavraPortugues) > 0)
-        inseriu = inserirRB(&(*raiz)->dir, informacao);
     else
-        inseriu = insertpalavraIngles(&(*raiz)->info.palavraIngles, informacao);
-
-    balancear(&(*raiz));
+    {
+        if (strcmp(informacao->portugueseWord, (*raiz)->info.portugueseWord) < 0)
+        {
+            inseriu = insertRedBlackNode(&(*raiz)->left, informacao);
+        }
+        else
+        {
+            inseriu = insertRedBlackNode(&(*raiz)->right, informacao);
+        }
+        balanceTree(&(*raiz));
+    }
 
     return inseriu;
 }
 
-int inserirArvRB(PortuguesRB **raiz, Info *informacao)
+int insertRedBlackTree(RedBlackTreePT **raiz, Info *informacao)
 {
-    int inseriu = inserirRB(raiz, informacao);
+    int inseriu = insertRedBlackNode(raiz, informacao);
     if (inseriu)
     {
-        (*raiz)->cor = BLACK;
+        (*raiz)->color = BLACK;
     }
     return inseriu;
 }
 
-void moveEsqVermelha(PortuguesRB **raiz)
+void shiftLeftRed(RedBlackTreePT **raiz)
 {
-    troca_cor(raiz);
+    switch_node_color(raiz);
 
-    if ((*raiz)->dir && cor((*raiz)->dir->esq) == RED)
+    if ((*raiz)->right && getNodeColor((*raiz)->right->left) == RED)
     {
-        rotacao_direita(&(*raiz)->dir);
-        rotacao_esquerda((raiz));
-        troca_cor(raiz);
+        rotate_right(&(*raiz)->right);
+        left_rotate((raiz));
+        switch_node_color(raiz);
     }
 }
 
-void moveDirVermelha(PortuguesRB **raiz)
+void rotateRedRight(RedBlackTreePT **raiz)
 {
-    troca_cor(raiz);
+    switch_node_color(raiz);
 
-    if ((*raiz)->esq && cor((*raiz)->esq->esq) == RED)
+    if ((*raiz)->left && getNodeColor((*raiz)->left->left) == RED)
     {
-        rotacao_direita(raiz);
-        troca_cor(raiz);
+        rotate_right(raiz);
+        switch_node_color(raiz);
     }
 }
 
-void removeMenor(PortuguesRB **raiz)
+void removeMinimum(RedBlackTreePT **raiz)
 {
-    if (!((*raiz)->esq))
+    if (!((*raiz)->left))
     {
         free(*raiz);
         *raiz = NULL;
     }
     else
     {
-        if (cor((*raiz)->esq) == BLACK && cor((*raiz)->esq->esq) == BLACK)
-            moveEsqVermelha(raiz);
+        if (getNodeColor((*raiz)->left) == BLACK && getNodeColor((*raiz)->left->left) == BLACK)
+            shiftLeftRed(raiz);
 
-        removeMenor(&(*raiz)->esq);
-        balancear(raiz);
+        removeMinimum(&(*raiz)->left);
+        balanceTree(raiz);
     }
 }
 
-PortuguesRB *procuraMenor(PortuguesRB *raiz)
+RedBlackTreePT *findMinimum(RedBlackTreePT *raiz)
 {
-    PortuguesRB *menor;
+    RedBlackTreePT *menor;
     menor = raiz;
 
     if (raiz)
-        if (raiz->esq)
-            menor = procuraMenor(raiz->esq);
+        if (raiz->left)
+            menor = findMinimum(raiz->left);
 
     return menor;
 }
 
-int removerNoArvVP(PortuguesRB **raiz, char *valor)
+int removeNodeFromRBTree(RedBlackTreePT **raiz, char *valor)
 {
     int existe = 0;
 
     if (*raiz)
     {
-        if (strcmp(valor, (*raiz)->info.palavraPortugues) < 0)
+        if (strcmp(valor, (*raiz)->info.portugueseWord) < 0)
         {
-            if ((*raiz)->esq && cor((*raiz)->esq) == BLACK && cor((*raiz)->esq->esq) == BLACK)
-                moveEsqVermelha(raiz);
+            if ((*raiz)->left && getNodeColor((*raiz)->left) == BLACK && getNodeColor((*raiz)->left->left) == BLACK)
+                shiftLeftRed(raiz);
 
-            existe = removerNoArvVP(&(*raiz)->esq, valor);
+            existe = removeNodeFromRBTree(&(*raiz)->left, valor);
         }
         else
         {
-            if (cor((*raiz)->esq) == RED)
-                rotacao_direita(raiz);
+            if (getNodeColor((*raiz)->left) == RED)
+                rotate_right(raiz);
 
-            if (strcmp(valor, (*raiz)->info.palavraPortugues) == 0 && (*raiz)->dir == NULL)
+            if (strcmp(valor, (*raiz)->info.portugueseWord) == 0 && (*raiz)->right == NULL)
             {
                 free(*raiz);
                 *raiz = NULL;
 
                 existe = 1;
-            }
-            else
-            {
-                if ((*raiz)->dir && cor((*raiz)->dir) == BLACK && cor((*raiz)->dir->esq) == BLACK)
-                    moveDirVermelha(raiz);
+            }else{
+                if ((*raiz)->right && getNodeColor((*raiz)->right) == BLACK && getNodeColor((*raiz)->right->left) == BLACK)
+                rotateRedRight(raiz);
 
-                if (strcmp(valor, (*raiz)->info.palavraPortugues) == 0)
+                if (strcmp(valor, (*raiz)->info.portugueseWord) == 0)
                 {
-                    PortuguesRB *aux;
-                    aux = procuraMenor((*raiz)->dir);
+                    RedBlackTreePT *aux;
+                    aux = findMinimum((*raiz)->right);
                     (*raiz)->info = aux->info;
-                    removeMenor(&(*raiz)->dir);
+                    removeMinimum(&(*raiz)->right);
 
                     existe = 1;
                 }
                 else
                 {
-                    existe = removerNoArvVP(&(*raiz)->dir, valor);
+                    existe = removeNodeFromRBTree(&(*raiz)->right, valor);
                 }
             }
         }
     }
-    balancear(raiz);
+    balanceTree(raiz);
     return existe;
 }
 
-int removerArvRB(PortuguesRB **raiz, char *valor)
+int removeRBTreeNode(RedBlackTreePT **raiz, char *valor)
 {
-    int removeu = removerNoArvVP(raiz, valor);
+    int removeu = removeNodeFromRBTree(raiz, valor);
     if (removeu)
     {
-        (*raiz)->cor = BLACK;
+        (*raiz)->color = BLACK;
     }
     return removeu;
 }
 
-PortuguesRB *BuscarPalavra(PortuguesRB **arvore, char *palavraPortugues)
+
+RedBlackTreePT *SearchWordInTree(RedBlackTreePT **arvore, char *palavraPortugues)
 {
-    PortuguesRB *atual = NULL;
+    RedBlackTreePT *atual = NULL;
 
     if (*arvore != NULL)
     {
-        if (strcmp(palavraPortugues, (*arvore)->info.palavraPortugues) == 0)
+        if (strcmp(palavraPortugues, (*arvore)->info.portugueseWord) == 0)
         {
             atual = *arvore;
         }
-        else if (strcmp(palavraPortugues, (*arvore)->info.palavraPortugues) < 0)
+        else if (strcmp(palavraPortugues, (*arvore)->info.portugueseWord) < 0)
         {
-            atual = BuscarPalavra(&(*arvore)->esq, palavraPortugues);
+            atual = SearchWordInTree(&(*arvore)->left, palavraPortugues);
         }
         else
         {
-            atual = BuscarPalavra(&(*arvore)->dir, palavraPortugues);
+            atual = SearchWordInTree(&(*arvore)->right, palavraPortugues);
         }
     }
     return atual;
 }
 
-void imprimirPalavrasUnidade(PortuguesRB *arvore, char *unidade)
+
+void printWordsByUnit(RedBlackTreePT *arvore, int unidade)
 {
     if (arvore)
     {
-        imprimirPalavrasUnidade(arvore->esq, unidade);
-        imprimirTraducoes(arvore->info.palavraIngles, unidade, arvore->info.palavraPortugues);
-        imprimirPalavrasUnidade(arvore->dir, unidade);
+        printWordsByUnit(arvore->left, unidade);
+        printTranslations(arvore->info.englishWordNode, unidade, arvore->info.portugueseWord);
+        printWordsByUnit(arvore->right, unidade);
     }
 }
 
-void imprimirTraducoes(Inglesbin *node, char *unidade, char *palavraPortugues)
+void printTranslations(BinaryTreeNode *node, int unidade, char *palavraPortugues)
 {
     if (node)
     {
-        if (buscar_lista_encadeada_unidade(node->unidades, unidade))
+        if (node->unitValue == unidade)
         {
-            printf("Palavra em Portugues: %s\n", palavraPortugues);
-            printf("Palavra em ingles: %s\n", node->palavraIngles);
+            printf("Palavra em Português: %s\n", palavraPortugues);
+            printf("Palavra em inglês: %s\n", node->englishWord);
         }
-        imprimirTraducoes(node->esq, unidade, palavraPortugues);
-        imprimirTraducoes(node->dir, unidade, palavraPortugues);
+        printTranslations(node->left, unidade, palavraPortugues);
+        printTranslations(node->rigth, unidade, palavraPortugues);
     }
 }
 
-void exibir_traducao_Portugues(PortuguesRB **raiz, char *palavraPortugues)
+void showPortugueseTranslation(RedBlackTreePT **raiz, char *palavraPortugues)
 {
-    PortuguesRB *resultado = NULL;
+    RedBlackTreePT *resultado = NULL;
     if (raiz != NULL)
     {
-        resultado = BuscarPalavra(raiz, palavraPortugues);
+        resultado = SearchWordInTree(raiz, palavraPortugues);
         if (resultado)
         {
-            printf("Traduções em ingles para a palavra '%s':\n", palavraPortugues);
+            printf("Traduções em inglês para a palavra '%s':\n", palavraPortugues);
 
-            if (strcmp(palavraPortugues, resultado->info.palavraPortugues) == 0)
+            if (strcmp(palavraPortugues, resultado->info.portugueseWord) == 0)
             {
-                printBinaryTree(resultado->info.palavraIngles);
+                printBinaryTree(resultado->info.englishWordNode);
             }
+
         }
     }
 }
 
-void exibirArvore(PortuguesRB *raiz)
+void showRedBlackTree(RedBlackTreePT *raiz)
 {
     if (raiz)
     {
-        exibirArvore(raiz->esq);
-        printf("Cor - %d\n", raiz->cor);
-        printf("Palavra em Portugues - %s\n", raiz->info.palavraPortugues);
-        printBinaryTree(raiz->info.palavraIngles);
+        showRedBlackTree(raiz->left);
+        printf("Cor - %d\n", raiz->color);
+        printf("Palavra em Português - %s\n", raiz->info.portugueseWord);
+        printBinaryTree(raiz->info.englishWordNode);
         printf("\n");
-        exibirArvore(raiz->dir);
+        showRedBlackTree(raiz->right);
     }
+}
+
+RedBlackTreePT *SearchEnglishWordInRBTree(RedBlackTreePT *raiz, char *palavraIngles, int unidade) {
+    if (raiz == NULL) {
+        return NULL;
+    }
+
+    // Verifica o nó atual da árvore vermelho-preto
+    BinaryTreeNode *currentNode = raiz->info.englishWordNode;
+    while (currentNode != NULL) {
+        printf("Verificando palavra: '%s' na unidade %d\n", currentNode->englishWord, currentNode->unitValue);
+        if (currentNode->unitValue == unidade && strcmp(currentNode->englishWord, palavraIngles) == 0) {
+            printf("Palavra encontrada na árvore binária associada ao nó português: '%s'\n", raiz->info.portugueseWord);
+            return raiz; // Retorna o nó vermelho-preto
+        }
+
+        if (strcmp(palavraIngles, currentNode->englishWord) < 0) {
+            currentNode = currentNode->left;
+        } else {
+            currentNode = currentNode->rigth;
+        }
+    }
+
+    // Percorre os nós à esquerda e à direita da árvore vermelho-preto
+    RedBlackTreePT *found = SearchEnglishWordInRBTree(raiz->left, palavraIngles, unidade);
+    if (found != NULL) {
+        return found;
+    }
+    return SearchEnglishWordInRBTree(raiz->right, palavraIngles, unidade);
 }

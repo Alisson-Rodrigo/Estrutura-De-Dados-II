@@ -1,48 +1,60 @@
 #ifndef ARVRB_H
 #define ARVRB_H
-#include "structs.h"
-#include "lista_encadeada.h"
 
-int inserirPalavraPortugues(PortuguesRB **arvore, char *palavraPortugues, char *palavraIngles, char *unidade);
+typedef struct Info
+{
+  BinaryTreeNode *englishWordNode;
+  char *portugueseWord;
+} Info;
 
-Info criaInfo(char *palavra, char *palavraIngles, char *unidade);
+typedef struct RedBlackTreePT
+{
+  Info info;
+  int color;
+  struct RedBlackTreePT *left;
+  struct RedBlackTreePT *right;
+} RedBlackTreePT;
 
-PortuguesRB *criaNo(Info *informacao);
-int cor(PortuguesRB *raiz);
+int insertPortugueseWord(RedBlackTreePT **arvore, char *palavraPortugues, char *palavraIngles, int unidade);
 
-void troca_cor(PortuguesRB **raiz);
+Info createInfo(char *palavra, char *palavraIngles, int unidade);
 
-void rotacao_direita(PortuguesRB **raiz);
+RedBlackTreePT *createNode(Info *informacao);
+int getNodeColor(RedBlackTreePT *raiz);
 
-void rotacao_esquerda(PortuguesRB **raiz);
+void switch_node_color(RedBlackTreePT **raiz);
 
-void balancear(PortuguesRB **raiz);
+void rotate_right(RedBlackTreePT **raiz);
 
-int inserirRB(PortuguesRB **raiz, Info *informacao);
+void left_rotate(RedBlackTreePT **raiz);
 
-int inserirArvRB(PortuguesRB **raiz, Info *informacao);
+void balanceTree(RedBlackTreePT **raiz);
 
-void moveEsqVermelha(PortuguesRB **raiz);
+int insertRedBlackNode(RedBlackTreePT **raiz, Info *informacao);
 
-void moveDirVermelha(PortuguesRB **raiz);
+int insertRedBlackTree(RedBlackTreePT **raiz, Info *informacao);
 
-void removeMenor(PortuguesRB **raiz);
+void shiftLeftRed(RedBlackTreePT **raiz);
 
-PortuguesRB *procuraMenor(PortuguesRB *raiz);
+void rotateRedRight(RedBlackTreePT **raiz);
 
-int removerNoArvVP(PortuguesRB **raiz, char *valor);
+void removeMinimum(RedBlackTreePT **raiz);
 
-int removerArvRB(PortuguesRB **raiz, char *valor);
+RedBlackTreePT *findMinimum(RedBlackTreePT *raiz);
 
-PortuguesRB *BuscarPalavra(PortuguesRB **arvore, char *palavraPortugues);
+int removeNodeFromRBTree(RedBlackTreePT **raiz, char *valor);
 
-void imprimirPalavrasUnidade(PortuguesRB *arvore, char *unidade);
+int removeRBTreeNode(RedBlackTreePT **raiz, char *valor);
 
-void exibir_traducao_Portugues(PortuguesRB **raiz, char *palavraPortugues);
+RedBlackTreePT *SearchWordInTree(RedBlackTreePT **arvore, char *palavraPortugues);
 
-void imprimirTraducoes(Inglesbin *node, char *unidade, char *palavraPortugues);
+void printWordsByUnit(RedBlackTreePT *arvore, int unidade);
 
-void exibirArvore(PortuguesRB *raiz);
+void showPortugueseTranslation(RedBlackTreePT **raiz, char *palavraPortugues);
+
+void printTranslations(BinaryTreeNode *node, int unidade, char *palavraPortugues);
+
+void showRedBlackTree(RedBlackTreePT *raiz);
 
 
 // void freeTree(PortuguesRB *no);
