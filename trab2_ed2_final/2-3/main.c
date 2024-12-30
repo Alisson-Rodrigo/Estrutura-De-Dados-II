@@ -5,6 +5,24 @@
 #include "arv23.c"
 #include "arvbin.c"
 #include "unidade.c"
+#include <ctype.h>
+
+void limparCaracteres(char *str)
+{
+    char *end = str + strlen(str) - 1;
+
+    while (end > str && (*end == ';' || isspace((unsigned char)*end)))
+    {
+        *end = '\0';
+        end--;
+    }
+
+
+    while (*str && isspace((unsigned char)*str))
+    {
+        str++;
+    }
+}
 
 void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
 {
@@ -15,43 +33,45 @@ void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
         return;
     }
 
-    char linha[256];      // Para armazenar cada linha do arquivo
-    int unidadeAtual = 0; // Unidade atual lida do arquivo
+    char linha[256];      
+    int unidadeAtual = 0;
 
     while (fgets(linha, sizeof(linha), arquivo))
     {
-        linha[strcspn(linha, "\n")] = 0; // Remove o caractere de nova linha
+        linha[strcspn(linha, "\n")] = 0; 
 
-        if (linha[0] == '%') // Identifica linhas que definem a unidade
+        if (linha[0] == '%') 
         {
-            // Atualiza a unidade usando sscanf para capturar o número após "Unidade"
+          
             if (sscanf(linha, "%% Unidade %d", &unidadeAtual) != 1)
             {
                 printf("Erro ao interpretar a unidade na linha: %s\n", linha);
             }
         }
-        else // Processa as linhas de palavras e traduções
+        else 
         {
             char palavraIngles[50], traducoesPortugues[200];
 
-            // Divide a linha em palavra em inglês e traduções em português
+            
             if (sscanf(linha, "%[^:]: %[^\n]", palavraIngles, traducoesPortugues) == 2)
             {
-                // Usa strtok para separar as traduções por vírgula
+               
+                limparCaracteres(palavraIngles);
+
                 char *traducaoPortugues = strtok(traducoesPortugues, ",");
                 while (traducaoPortugues != NULL)
                 {
-                    // Remove espaços em branco extras no início da tradução
+                    
                     while (*traducaoPortugues == ' ')
                         traducaoPortugues++;
 
-                    // Insere a palavra em português e a tradução em inglês na árvore
+                    
+                    limparCaracteres(traducaoPortugues);
+
+
                     inserirPalavraPortugues(arvore, traducaoPortugues, palavraIngles, unidadeAtual);
 
-                    // Formata o print no formato "Palavra Português: Inglês"
-                    printf("Palavra Português: %s - Inglês: %s\n", traducaoPortugues, palavraIngles);
 
-                    // Continua para a próxima tradução
                     traducaoPortugues = strtok(NULL, ",");
                 }
             }
@@ -63,7 +83,6 @@ void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
     }
 
     fclose(arquivo);
-    printf("Arquivo '%s' carregado com sucesso!\n", nomeArquivo);
 }
 
 void menu()
@@ -89,7 +108,7 @@ int main()
     int unidade;
     int removido;
     carregarArquivo("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/trabalhoEd2.txt", &raiz);
-    int op, res;
+    int op;
     do
     {
         menu();

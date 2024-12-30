@@ -9,8 +9,6 @@ Portugues23 *BuscarPalavra(Portugues23 **no, const char *palavraPortugues)
 
     if (no != NULL && *no != NULL)
     {
-        printf("Comparando '%s' com '%s'\n", palavraPortugues, (*no)->info1.portugueseWord);
-
         if (strcmp(palavraPortugues, (*no)->info1.portugueseWord) == 0)
         {
             resultado = *no;
@@ -638,25 +636,3 @@ void freeTree(Portugues23 *no)
     }
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
-
-/* (i) informar uma unidade e então imprima todas as palavras da unidade em português seguida das
-equivalentes em inglês */
-
-/*-----------------------------------------------------------------------------------------------------*/
-
-/* (ii) informar uma palavraPortugues em português e então imprima todas as palavras em inglês equivalente à palavraPortugues em
-português dada, independente da unidade */
-
-/*-----------------------------------------------------------------------------------------------------*/
-
-/* (iii) informar uma palavraPortugues em inglês e a unidade a qual a mesma pertence removÊ-la das arvores binarias
-das quais ela pertence. Caso ela seja a única palavraPortugues em uma das arvores binarias, remover tambem da
-arvore 2-3 */
-
-/*-----------------------------------------------------------------------------------------------------*/
-
-/* (iv)informar uma palavraPortugues em português e a unidade a qual a mesma pertence e então removê-la, para isto
-deve remover a palavraPortugues em inglês da arvore binaria correspondente a palavraPortugues em português da mesma
-unidade. Caso ela seja a única palavraPortugues na arvore binaria, a palavraPortugues em português deve ser removida da
-arvore 2-3 */
