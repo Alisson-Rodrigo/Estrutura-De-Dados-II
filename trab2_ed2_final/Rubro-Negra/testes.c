@@ -1,7 +1,7 @@
 #include <time.h>
 #include <stdio.h>
-#include "portugues.c"
-#include "ingles.c"
+#include "arv23.c"
+#include "arvbin.c"
 #include <windows.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,9 +11,10 @@ int inserirPalavraPortugues(Arv_portugues **arvore, char *palavraPortugues, char
 
     // Busca a palavra na árvore
     Arv_portugues *noExistente = NULL;
-    noExistente =  BuscarPalavra(arvore, palavraPortugues);
+    noExistente =  SearchWordInTree(arvore, palavraPortugues);
 
     if (noExistente != NULL) {
+        printf("A palavra já existe. Adicionando tradução...\n");
         AdicionarTraducaoEN(noExistente, palavraIngles, unidade);
         inseriu = 1;
     } else {
@@ -93,10 +94,9 @@ LONGLONG getTempoNanosegundos() {
 void realizarExperimento(Arv_portugues *arvore, char palavras[30][50]) {
     LONGLONG inicio, fim;
     double tempoTotal = 0;
-    int i;
 
     printf("\n--- Experimento ---\n");
-    for (i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; i++) {
         char caminho[2048] = "";
         inicio = getTempoNanosegundos();
 
@@ -115,15 +115,14 @@ void realizarExperimento(Arv_portugues *arvore, char palavras[30][50]) {
     Arv_portugues *arvore = NULL;
 
     // Carregar o arquivo
-    carregarArquivo("C:/Users/PurooLight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &arvore);
-    //carregarArquivo("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &arvore);
+    carregarArquivo("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_segunda_provaVERSAO-REFERENCIA/Tabalho2_Ed2-main/trabalhoEd2.txt", &arvore);
 
     // Palavras para o experimento
-    char palavras[30][50] = {
+     char palavras[30][50] = {
         "onibus", "barramento", "inseto", "bicicleta", "ventilador", 
         "casa", "livro", "escola", "tempo", "sol", 
         "lua", "estrela", "amigo", "carro", "felicidade", 
-        "amizade", "trabalho", "lazer", "computador", "arvore",
+        "amizade", "trabalho", "lazer", "computador", "árvore",
         "flor", "jardim", "cachorro", "gato", "passarinho", 
         "peixe", "montanha", "rio", "praia", "mar"
     };
