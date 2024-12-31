@@ -141,15 +141,12 @@ int main()
             // Inicializa o contador de remoções
             int totalRemovido = 0;
 
-            // Chama a função para remover a palavra na unidade informada
+            // Chama a função para remover a palavra e unidade
             removeWordByUnit(&rootNode, word, unit, &totalRemovido, &rootNode);
 
-            if (totalRemovido > 0)
-            {
-                printf("Palavra '%s' na unidade %d removida de %d ocorrência(s) e os nós correspondentes da Árvore Rubro-Negra foram tratados, se necessário.\n", word, unit, totalRemovido);
-            }
-            else
-            {
+            if (totalRemovido > 0) {
+                printf("Palavra '%s' na unidade %d removida de %d ocorrência(s).\n", word, unit, totalRemovido);
+            } else {
                 printf("A palavra '%s' na unidade %d não foi encontrada em nenhuma árvore.\n", word, unit);
             }
 
