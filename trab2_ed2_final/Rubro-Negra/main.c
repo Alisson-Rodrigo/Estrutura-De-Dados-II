@@ -93,6 +93,7 @@ void menu()
     printf("3 - Informar uma palavra em inglês e a unidade, removê-la da árvore binária e da árvore 2-3.\n");
     printf("4 - Informar uma palavra em português e a unidade, removê-la da árvore binária e da árvore 2-3.\n");
     printf("5 - Imprimir a arvore completa\n");
+    printf("6 - Exibir arvore binária dada a palavra em português\n");
     printf("0 - Sair\n");
     printf("Escolha uma opção: \n");
     printf("\n------------------------------------------------------------------------------------------------- \n");
@@ -168,6 +169,13 @@ int main()
         case 5:
             printf("\n--------------------------------------------------------------- \n");
             showRedBlackTree(rootNode);
+            printf("\n--------------------------------------------------------------- \n");
+            break;
+        case 6:
+            printf("\n--------------------------------------------------------------- \n");
+            printf("Insira a palavra em portugues que deseja exibir a arvore binaria: ");
+            scanf("%s", word);
+            exibir_arvorebianria_dada_palavra_portuguesa(rootNode, word);
             printf("\n--------------------------------------------------------------- \n");
             break;
         case 0:

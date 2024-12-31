@@ -478,3 +478,16 @@ void removeWordByUnit(RedBlackTreePT **node, char *wordToRemove, int unit, int *
         removeWordByUnit(&(*node)->right, wordToRemove, unit, removidos, rootNode);
     }
 }
+
+void exibir_arvorebianria_dada_palavra_portuguesa(RedBlackTreePT *raiz, char *palavraPortugues)
+{
+    if (raiz)
+    {
+        exibir_arvorebianria_dada_palavra_portuguesa(raiz->left, palavraPortugues);
+        if (strcmp(raiz->info.portugueseWord, palavraPortugues) == 0)
+        {
+            exibir_arvorebinaria(raiz->info.englishWordNode);
+        }
+        exibir_arvorebianria_dada_palavra_portuguesa(raiz->right, palavraPortugues);
+    }
+}

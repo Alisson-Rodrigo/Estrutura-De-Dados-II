@@ -206,3 +206,23 @@ void FindEnglishTerm(RedBlackTreePT **raiz, char *palavraIngles, int unidade) {
         FindEnglishTerm(&(*raiz)->right, palavraIngles, unidade);
     }
 }
+
+void exibir_arvorebinaria(BinaryTreeNode *raiz) {
+    if (raiz != NULL) {
+        exibir_arvorebinaria(raiz->left);
+
+        // Imprime a palavra em inglês
+        printf("Palavra em inglês: %s\n", raiz->englishWord);
+
+        // Imprime as unidades associadas (caso necessário para depuração)
+        Unidade *currentUnit = raiz->unitValues;
+        printf("Unidades: ");
+        while (currentUnit != NULL) {
+            printf("%d ", currentUnit->unidade);
+            currentUnit = currentUnit->prox;
+        }
+        printf("\n");
+
+        exibir_arvorebinaria(raiz->right);
+    }
+}
