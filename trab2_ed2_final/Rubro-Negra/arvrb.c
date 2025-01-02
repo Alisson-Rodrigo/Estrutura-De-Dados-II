@@ -282,15 +282,54 @@ RedBlackTreePT *SearchWordInTree(RedBlackTreePT **arvore, char *palavraPortugues
 }
 
 
-void printWordsByUnit(RedBlackTreePT *arvore, int unidade)
-{
-    if (arvore)
-    {
+void printWordsByUnit(RedBlackTreePT *arvore, int unidade) {
+    static int cabecalhoExibido = 0; // Controla se o cabeçalho já foi exibido
+
+    if (arvore) {
+        // Percorre a subárvore esquerda
         printWordsByUnit(arvore->left, unidade);
-        printTranslations(arvore->info.englishWordNode, unidade, arvore->info.portugueseWord);
+
+        // Processa o nó atual
+        BinaryTreeNode *node = arvore->info.englishWordNode;
+
+        // Percorre a árvore binária associada
+        while (node != NULL) {
+            Unidade *currentUnit = node->unitValues;
+
+            // Verifica todas as unidades associadas à palavra
+            while (currentUnit != NULL) {
+                if (currentUnit->unidade == unidade) {
+                    if (!cabecalhoExibido) {
+                        printf("%% Unidade %d\n", unidade); // Cabeçalho exibido apenas uma vez
+                        cabecalhoExibido = 1;
+                    }
+                    printf("%s: %s;\n", node->englishWord, arvore->info.portugueseWord); // Palavra e significado
+                    break; // Sai da lista de unidades ao encontrar a unidade desejada
+                }
+                currentUnit = currentUnit->prox;
+            }
+
+            // Movimenta para o próximo nó da árvore binária
+            if (node->left != NULL) {
+                node = node->left;
+            } else if (node->right != NULL) {
+                node = node->right;
+            } else {
+                node = NULL;
+            }
+        }
+
+        // Percorre a subárvore direita
         printWordsByUnit(arvore->right, unidade);
     }
+
+    if (arvore == NULL) {
+        cabecalhoExibido = 0; // Redefine o controle do cabeçalho após finalizar a função
+    }
 }
+
+
+
 
 void printTranslations(BinaryTreeNode *node, int unidade, char *palavraPortugues) {
     if (node) {
