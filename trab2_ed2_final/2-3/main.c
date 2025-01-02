@@ -120,13 +120,10 @@ int main()
             printf("\n--------------------------------------------------------------- \n");
             printf("Insira a unidade que deseja imprimir as palavras: ");
             scanf("%d", &unidade);
-
             // Variável de controle para a impressão do cabeçalho
             int unidadeImpressa = 0;
-
             // Chama a função para imprimir palavras da unidade
             imprimirPalavrasUnidade(raiz, unidade, &unidadeImpressa);
-
             printf("\n--------------------------------------------------------------- \n");
             break;
 
