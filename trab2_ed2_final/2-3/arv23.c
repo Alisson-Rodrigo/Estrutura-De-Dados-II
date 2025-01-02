@@ -416,107 +416,203 @@ void maiorInfoEsq(Portugues23 *Raiz, Portugues23 **no, Portugues23 **paiNo)
         *no = Raiz;
 }
 
-int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor) {
+int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor)
+{
     int removeu = 0;
-    Portugues23 *no = NULL, *paiNo = NULL;
+    Portugues23 *no = NULL, *no1, *paiNo = NULL, *paiNo1 = NULL, **aux;
+    aux = (Portugues23 **)malloc(sizeof(Portugues23 *));
+    no1 = (Portugues23 *)malloc(sizeof(Portugues23));
 
-    if (*Raiz != NULL) {
-        // Verifica se o nó é uma folha
-        if (ehFolha(*Raiz)) {
-            if ((*Raiz)->nInfos == 2) { // Nó folha com duas informações
-                if (strcmp(valor, (*Raiz)->info2.portugueseWord) == 0) {
+    if (*Raiz != NULL)
+    {
+        if (ehFolha(*Raiz) == 1)
+        {
+            if ((*Raiz)->nInfos == 2)
+            {
+                if (strcmp(valor, (*Raiz)->info2.portugueseWord) == 0)
+                { // quando é folha, tem duas informações e o numero ta na segunda posição
                     (*Raiz)->info2.palavraIngles = NULL;
                     (*Raiz)->info2.portugueseWord = NULL;
                     (*Raiz)->nInfos = 1;
                     removeu = 1;
-                } else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0) {
+                }
+                else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0)
+                { // quando é folha, tem duas informações e o numero ta na primeira posição do nó
                     (*Raiz)->info1 = (*Raiz)->info2;
                     (*Raiz)->info2.palavraIngles = NULL;
                     (*Raiz)->info2.portugueseWord = NULL;
                     (*Raiz)->nInfos = 1;
                     removeu = 1;
                 }
-            } else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0) { // Nó folha com uma informação
-                if (*Pai == NULL) { // Raiz única
+            }
+            else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0)
+            {
+                if (*Pai == NULL)
+                {
                     free(*Raiz);
                     *Raiz = NULL;
                     removeu = 1;
-                } else { // Reequilibra a estrutura
-                    if (*Raiz == (*Pai)->esq) { // Subárvore esquerda
-                        (*Raiz)->info1 = (*Pai)->info1;
-                        paiNo = *Pai;
-                        menorInfoDir((*Pai)->cent, &no, &paiNo);
-                        (*Pai)->info1 = no->info1;
-                        removeu = 1;
+                }
+                else if (*Raiz == (*Pai)->esq)
+                {
+                    (*Raiz)->info1 = (*Pai)->info1;
+                    paiNo = *Pai;
+                    menorInfoDir((*Pai)->cent, &no, &paiNo);
+                    (*Pai)->info1 = no->info1;
+                    removeu = 1;
 
-                        if (no->nInfos == 2) {
-                            no->info1 = no->info2;
-                            no->info2.palavraIngles = NULL;
-                            no->info2.portugueseWord = NULL;
-                            no->nInfos = 1;
-                        } else {
+                    if (no->nInfos == 2)
+                    {
+                        no->info1 = no->info2;
+                        (*Raiz)->info2.palavraIngles = NULL;
+                        (*Raiz)->info2.portugueseWord = NULL;
+                        no->nInfos = 1;
+                    }
+                    else
+                    {
+                        if (paiNo->nInfos == 1)
+                        {
                             (*Raiz)->info2 = no->info1;
                             (*Raiz)->nInfos = 2;
                             free(no);
+                            *Pai = *Raiz;
                         }
-                    } else if (*Raiz == (*Pai)->cent) { // Subárvore central
-                        removeu = 1;
-                        if ((*Pai)->nInfos == 1) { // Reequilibrar da esquerda
-                            if ((*Pai)->esq->nInfos == 2) {
-                                (*Raiz)->info1 = (*Pai)->info1;
-                                (*Pai)->info1 = (*Pai)->esq->info2;
-                                (*Pai)->esq->info2.palavraIngles = NULL;
-                                (*Pai)->esq->info2.portugueseWord = NULL;
-                                (*Pai)->esq->nInfos = 1;
-                            } else {
-                                (*Pai)->esq->info2 = (*Pai)->info1;
-                                free(*Raiz);
-                                (*Pai)->esq->nInfos = 2;
-                                *Pai = (*Pai)->esq;
-                            }
-                        } else { // Reequilibrar da direita
-                            (*Raiz)->info1 = (*Pai)->info2;
-                            paiNo = *Pai;
-                            menorInfoDir((*Pai)->dir, &no, &paiNo);
-                            (*Pai)->info2 = no->info1;
+                        else
+                        {
+                            no->info1 = paiNo->info2;
+                            paiNo1 = paiNo;
+                            menorInfoDir(paiNo->dir, &no1, &paiNo1);
+                            paiNo->info2 = no1->info1;
 
-                            if (no->nInfos == 2) {
-                                no->info1 = no->info2;
-                                no->info2.palavraIngles = NULL;
-                                no->info2.portugueseWord = NULL;
-                                no->nInfos = 1;
-                            } else {
-                                (*Raiz)->nInfos = 2;
-                                (*Raiz)->info2 = (*Pai)->info2;
-                                free(no);
+                            if (no1->nInfos == 2)
+                            {
+                                no1->info1 = no1->info2;
+                                no1->info2.palavraIngles = NULL;
+                                no1->info2.portugueseWord = NULL;
+                                no1->nInfos = 1;
+                            }
+                            else
+                            {
+                                no->info2 = paiNo->info2;
+                                no->nInfos = 2;
+                                paiNo->info2.palavraIngles = NULL;
+                                paiNo->info2.portugueseWord = NULL;
+                                paiNo->nInfos = 1;
+                                free(no1);
+                                paiNo1->dir = NULL;
                             }
                         }
                     }
                 }
+                else if ((*Raiz) == (*Pai)->cent)
+                {
+                    removeu = 1;
+                    if ((*Pai)->nInfos == 1)
+                    {
+                        if (((*Pai)->esq)->nInfos == 2)
+                        {
+                            (*Raiz)->info1 = (*Pai)->info1;
+                            (*Pai)->info1 = ((*Pai)->esq)->info2;
+                            ((*Pai)->esq)->info2.palavraIngles = NULL;
+                            ((*Pai)->esq)->info2.portugueseWord = NULL;
+                            ((*Pai)->esq)->nInfos = 1;
+                        }
+                        else
+                        {
+                            ((*Pai)->esq)->info2 = (*Pai)->info1;
+                            free(*Raiz);
+                            ((*Pai)->esq)->nInfos = 2;
+                            *aux = (*Pai)->esq;
+                            free(*Pai);
+                            *Pai = *aux;
+                        }
+                    }
+                    else
+                    {
+                        (*Raiz)->info1 = (*Pai)->info2;
+                        paiNo = *Pai;
+                        menorInfoDir((*Pai)->dir, &no, &paiNo);
+                        (*Pai)->info2 = no->info1;
+
+                        if (no->nInfos == 2)
+                        {
+                            no->info1 = no->info2;
+                            no->info2.palavraIngles = NULL;
+                            no->info2.portugueseWord = NULL;
+                            no->nInfos = 1;
+                        }
+                        else
+                        {
+                            (*Raiz)->nInfos = 2;
+                            (*Raiz)->info2 = (*Pai)->info2;
+                            (*Pai)->info2.palavraIngles = NULL;
+                            (*Pai)->info2.portugueseWord = NULL;
+                            (*Pai)->nInfos = 1;
+                            free(no);
+                            (*Pai)->dir = NULL;
+                        }
+                    }
+                }
+                else
+                {
+                    removeu = 1;
+                    paiNo = *Pai;
+                    maiorInfoEsq((*Pai)->cent, &no, &paiNo);
+
+                    if (no->nInfos == 1)
+                    {
+                        no->info2 = (*Pai)->info2;
+                        (*Pai)->info2.palavraIngles = NULL;
+                        (*Pai)->info2.portugueseWord = NULL;
+                        (*Pai)->nInfos = 1;
+                        no->nInfos = 2;
+                        free(*Raiz);
+                        *Raiz = NULL;
+                    }
+                    else
+                    {
+                        (*Raiz)->info1 = (*Pai)->info2;
+                        (*Pai)->info2 = no->info2;
+                        no->info2.palavraIngles = NULL;
+                        no->info2.portugueseWord = NULL;
+                        no->nInfos = 1;
+                    }
+                }
             }
-        } else { // Nó não é uma folha
-            if (strcmp(valor, (*Raiz)->info1.portugueseWord) < 0) {
+        }
+        else
+        { // se nao é folha
+            if (strcmp(valor, (*Raiz)->info1.portugueseWord) < 0)
                 removeu = remover23(Raiz, &(*Raiz)->esq, valor);
-            } else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0) {
+            else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0)
+            {
                 paiNo = *Raiz;
                 menorInfoDir((*Raiz)->cent, &no, &paiNo);
                 (*Raiz)->info1 = no->info1;
-                removeu = remover23(Raiz, &(*Raiz)->cent, (*Raiz)->info1.portugueseWord);
-            } else if ((*Raiz)->nInfos == 1 || strcmp(valor, (*Raiz)->info2.portugueseWord) < 0) {
+                remover23(Raiz, &(*Raiz)->cent, (*Raiz)->info1.portugueseWord);
+                removeu = 1;
+            }
+            else if (((*Raiz)->nInfos == 1) || (strcmp(valor, (*Raiz)->info1.portugueseWord) < 0))
+            {
                 removeu = remover23(Raiz, &(*Raiz)->cent, valor);
-            } else {
-                paiNo = *Raiz;
-                menorInfoDir((*Raiz)->dir, &no, &paiNo);
+            }
+            else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0)
+            {
+                paiNo = *Pai;
+                menorInfoDir((*Pai)->dir, &no, &paiNo);
                 (*Raiz)->info2 = no->info1;
-                removeu = remover23(Raiz, &(*Raiz)->dir, (*Raiz)->info2.portugueseWord);
+                remover23(Raiz, &(*Raiz)->dir, (*Raiz)->info2.portugueseWord);
+                removeu = 1;
+            }
+            else
+            {
+                removeu = remover23(Raiz, &(*Raiz)->dir, valor);
             }
         }
     }
     return removeu;
 }
 
-
-/*#########################################FREE#######################################################*/
 
 void freeInfo2_3(Info *info)
 {

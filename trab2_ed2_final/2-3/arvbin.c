@@ -120,8 +120,7 @@ Inglesbin *menorFilho(Inglesbin *raiz){
     return aux;
 }
 
-// Ajuste na função removerPalavraIngles com apenas um retorno
-int removerPalavraIngles(Inglesbin **raiz, char *palavra) {
+int removerPalavraIngles(Inglesbin **raiz, char *palavra, int unidade) {
     int existe = 0; // Indicador de sucesso da remoção
 
     if (*raiz != NULL) {
@@ -131,28 +130,33 @@ int removerPalavraIngles(Inglesbin **raiz, char *palavra) {
             existe = 1;
             printf("Removendo palavra: %s\n", palavra);
 
-            // Libera a lista de unidades associada à palavra em inglês
-            liberar_lista((*raiz)->unidades);
+            // Chama a função para remover a unidade específica da lista
+            (*raiz)->unidades = remover_unidade((*raiz)->unidades, unidade);
 
+            // Caso o nó tenha filhos
             Inglesbin *aux = *raiz;
             if (ehFolhas(*raiz)) { // Caso o nó não tenha filhos
+                free(aux->palavraIngles);
                 free(aux);
                 *raiz = NULL;
             } else if ((endFilho = soUmFilho(*raiz)) != NULL) { // Caso tenha um filho
                 *raiz = endFilho;
+                free(aux->palavraIngles);
                 free(aux);
             } else { // Caso tenha dois filhos
                 // Substitui a palavra pelo menor filho à direita
                 endFilho = menorFilho((*raiz)->dir);
-                free((*raiz)->palavraIngles);
-                (*raiz)->palavraIngles = strdup(endFilho->palavraIngles);
-                (*raiz)->unidades = endFilho->unidades;
-                removerPalavraIngles(&(*raiz)->dir, endFilho->palavraIngles);
+                free((*raiz)->palavraIngles); // Libera a palavra do nó atual
+                (*raiz)->palavraIngles = strdup(endFilho->palavraIngles); // Copia a palavra do menor filho
+                (*raiz)->unidades = endFilho->unidades; // Substitui a lista de unidades também
+                // Remover a unidade da lista de unidades do filho
+                remover_unidade(endFilho->unidades, unidade);
+                removerPalavraIngles(&(*raiz)->dir, endFilho->palavraIngles, unidade); // Remove o nó do filho
             }
         } else if (strcmp(palavra, (*raiz)->palavraIngles) < 0) {
-            existe = removerPalavraIngles(&(*raiz)->esq, palavra);
+            existe = removerPalavraIngles(&(*raiz)->esq, palavra, unidade);
         } else {
-            existe = removerPalavraIngles(&(*raiz)->dir, palavra);
+            existe = removerPalavraIngles(&(*raiz)->dir, palavra, unidade);
         }
     }
 
@@ -178,7 +182,7 @@ void removerTraducaoIngles(Portugues23 **raiz, char *palavraIngles, int unidade,
             buscar_unidade((*raiz)->info1.palavraIngles->unidades, unidade)) {
 
             printf("Debug: Comparando palavra %s com %s no primeiro elemento.\n", palavraIngles, (*raiz)->info1.palavraIngles->palavraIngles);
-            removeu = removerPalavraIngles(&(*raiz)->info1.palavraIngles, palavraIngles);
+            removeu = removerPalavraIngles(&(*raiz)->info1.palavraIngles, palavraIngles, unidade); // Passando 'unidade'
             if (removeu) {
                 printf("A palavra %s foi removida com sucesso!\n\n", palavraIngles);
                 palavraRemovida = 1;
@@ -202,7 +206,7 @@ void removerTraducaoIngles(Portugues23 **raiz, char *palavraIngles, int unidade,
             buscar_unidade((*raiz)->info2.palavraIngles->unidades, unidade)) {
 
             printf("Debug: Comparando palavra %s com %s no segundo elemento.\n", palavraIngles, (*raiz)->info2.palavraIngles->palavraIngles);
-            removeu = removerPalavraIngles(&(*raiz)->info2.palavraIngles, palavraIngles);
+            removeu = removerPalavraIngles(&(*raiz)->info2.palavraIngles, palavraIngles, unidade); // Passando 'unidade'
             if (removeu) {
                 printf("A palavra %s foi removida com sucesso!\n\n", palavraIngles);
                 palavraRemovida = 1;
