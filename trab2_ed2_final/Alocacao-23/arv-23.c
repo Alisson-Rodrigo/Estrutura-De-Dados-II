@@ -213,8 +213,6 @@ Memory *FindSpace(Memory *root, int requiredSpace)
 }
 
 
-
-
 Memory *SourceSpace(Memory *root, int requiredSpace)
 {
     return FindSpace(root, requiredSpace);

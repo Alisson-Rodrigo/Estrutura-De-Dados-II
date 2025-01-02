@@ -53,7 +53,6 @@ void cadastrar_nos(Memory **root) {
 }
 
 
-
 void concatenar_nos(Memory **root) {
     if (!root || !(*root)) return;
 
