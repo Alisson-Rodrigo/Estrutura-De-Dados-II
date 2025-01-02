@@ -690,3 +690,54 @@ void removerTraducaoIngles(Portugues23 **raiz23, char *palavraIngles, int unidad
         removerTraducaoIngles(&(*raiz23)->dir, palavraIngles, unidade, raiz23);
     }
 }
+
+void removerTraducaoPortugues(Portugues23 **raiz, char *palavraPortugues, int unidade, Portugues23 **pai) {
+    int removeu = 0;
+
+    if (*raiz == NULL) {
+        printf("Debug: Árvore vazia, nada a remover.\n");
+        return;
+    }
+
+    // Percorre subárvores
+    removerTraducaoPortugues(&(*raiz)->esq, palavraPortugues, unidade, pai);
+    removerTraducaoPortugues(&(*raiz)->cent, palavraPortugues, unidade, pai);
+    if ((*raiz)->nInfos == 2) {
+        removerTraducaoPortugues(&(*raiz)->dir, palavraPortugues, unidade, pai);
+    }
+
+    // Verifica e remove a palavra portuguesa se estiver associada à unidade
+    if (strcmp((*raiz)->info1.portugueseWord, palavraPortugues) == 0) {
+        printf("Debug: Encontrada palavra %s no primeiro elemento.\n", palavraPortugues);
+        // Remover a unidade específica
+        Unidade *novaLista = remover_unidade((*raiz)->info1.palavraIngles->unidades, unidade);
+
+        // Se não há mais unidades associadas, remova completamente
+        if (novaLista == NULL) {
+            printf("Debug: Sem unidades restantes, removendo a palavra completamente.\n");
+            removeu = remover23(pai, raiz, palavraPortugues);
+            if (removeu) {
+                printf("A palavra %s foi removida com sucesso da árvore!\n", palavraPortugues);
+            }
+        } else {
+            (*raiz)->info1.palavraIngles->unidades = novaLista;
+            printf("Debug: Unidade %d removida da palavra %s, mas ainda associada a outras unidades.\n", unidade, palavraPortugues);
+        }
+    } else if ((*raiz)->nInfos == 2 && strcmp((*raiz)->info2.portugueseWord, palavraPortugues) == 0) {
+        printf("Debug: Encontrada palavra %s no segundo elemento.\n", palavraPortugues);
+        // Remover a unidade específica
+        Unidade *novaLista = remover_unidade((*raiz)->info2.palavraIngles->unidades, unidade);
+
+        // Se não há mais unidades associadas, remova completamente
+        if (novaLista == NULL) {
+            printf("Debug: Sem unidades restantes, removendo a palavra completamente.\n");
+            removeu = remover23(pai, raiz, palavraPortugues);
+            if (removeu) {
+                printf("A palavra %s foi removida com sucesso da árvore!\n", palavraPortugues);
+            }
+        } else {
+            (*raiz)->info2.palavraIngles->unidades = novaLista;
+            printf("Debug: Unidade %d removida da palavra %s, mas ainda associada a outras unidades.\n", unidade, palavraPortugues);
+        }
+    }
+}

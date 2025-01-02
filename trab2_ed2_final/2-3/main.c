@@ -151,9 +151,9 @@ int main()
             printf("\n--------------------------------------------------------------- \n");
             printf("Insira a palavra em portugues que deseja remover: ");
             scanf("%s", palavra);
-            removido = remover23(&pai, &raiz, palavra);
-            if (removido)
-                printf("A palavra %s foi removida com sucesso!\n\n", palavra);
+            printf("Insira a unidade da palavra que deseja remover: ");
+            scanf("%d", &unidade);
+            removerTraducaoPortugues(&raiz, palavra, unidade, &pai);
             printf("\n--------------------------------------------------------------- \n");
             break;
         case 5:
