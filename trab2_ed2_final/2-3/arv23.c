@@ -419,7 +419,9 @@ void maiorInfoEsq(Portugues23 *Raiz, Portugues23 **no, Portugues23 **paiNo)
 int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor)
 {
     int removeu = 0;
-    Portugues23 *no = NULL, *no1, *paiNo = NULL, *paiNo1 = NULL;
+    Portugues23 *no = NULL, *no1, *paiNo = NULL, *paiNo1 = NULL, **aux;
+    aux = (Portugues23 **)malloc(sizeof(Portugues23 *));
+    no1 = (Portugues23 *)malloc(sizeof(Portugues23));
 
     if (*Raiz != NULL)
     {
@@ -428,16 +430,15 @@ int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor)
             if ((*Raiz)->nInfos == 2)
             {
                 if (strcmp(valor, (*Raiz)->info2.portugueseWord) == 0)
-                { 
-                    // Caso de remoção no nó folha com dois elementos
+                { // quando é folha, tem duas informações e o numero ta na segunda posição
                     (*Raiz)->info2.palavraIngles = NULL;
                     (*Raiz)->info2.portugueseWord = NULL;
                     (*Raiz)->nInfos = 1;
                     removeu = 1;
                 }
                 else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0)
-                { 
-                    (*Raiz)->info1 = (*Raiz)->info2; // Move o segundo elemento para a primeira posição
+                { // quando é folha, tem duas informações e o numero ta na primeira posição do nó
+                    (*Raiz)->info1 = (*Raiz)->info2;
                     (*Raiz)->info2.palavraIngles = NULL;
                     (*Raiz)->info2.portugueseWord = NULL;
                     (*Raiz)->nInfos = 1;
@@ -503,6 +504,55 @@ int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor)
                         }
                     }
                 }
+                else if ((*Raiz) == (*Pai)->cent)
+                {
+                    removeu = 1;
+                    if ((*Pai)->nInfos == 1)
+                    {
+                        if (((*Pai)->esq)->nInfos == 2)
+                        {
+                            (*Raiz)->info1 = (*Pai)->info1;
+                            (*Pai)->info1 = ((*Pai)->esq)->info2;
+                            ((*Pai)->esq)->info2.palavraIngles = NULL;
+                            ((*Pai)->esq)->info2.portugueseWord = NULL;
+                            ((*Pai)->esq)->nInfos = 1;
+                        }
+                        else
+                        {
+                            ((*Pai)->esq)->info2 = (*Pai)->info1;
+                            free(*Raiz);
+                            ((*Pai)->esq)->nInfos = 2;
+                            *aux = (*Pai)->esq;
+                            free(*Pai);
+                            *Pai = *aux;
+                        }
+                    }
+                    else
+                    {
+                        (*Raiz)->info1 = (*Pai)->info2;
+                        paiNo = *Pai;
+                        menorInfoDir((*Pai)->dir, &no, &paiNo);
+                        (*Pai)->info2 = no->info1;
+
+                        if (no->nInfos == 2)
+                        {
+                            no->info1 = no->info2;
+                            no->info2.palavraIngles = NULL;
+                            no->info2.portugueseWord = NULL;
+                            no->nInfos = 1;
+                        }
+                        else
+                        {
+                            (*Raiz)->nInfos = 2;
+                            (*Raiz)->info2 = (*Pai)->info2;
+                            (*Pai)->info2.palavraIngles = NULL;
+                            (*Pai)->info2.portugueseWord = NULL;
+                            (*Pai)->nInfos = 1;
+                            free(no);
+                            (*Pai)->dir = NULL;
+                        }
+                    }
+                }
                 else
                 {
                     removeu = 1;
@@ -531,12 +581,12 @@ int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor)
             }
         }
         else
-        { 
+        { // se nao é folha
             if (strcmp(valor, (*Raiz)->info1.portugueseWord) < 0)
                 removeu = remover23(Raiz, &(*Raiz)->esq, valor);
             else if (strcmp(valor, (*Raiz)->info1.portugueseWord) == 0)
             {
-                paiNo = *Pai;
+                paiNo = *Raiz;
                 menorInfoDir((*Raiz)->cent, &no, &paiNo);
                 (*Raiz)->info1 = no->info1;
                 remover23(Raiz, &(*Raiz)->cent, (*Raiz)->info1.portugueseWord);
@@ -563,7 +613,7 @@ int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor)
     return removeu;
 }
 
-
+/*#########################################FREE#######################################################*/
 
 void freeInfo2_3(Info *info)
 {
@@ -586,3 +636,57 @@ void freeTree(Portugues23 *no)
     }
 }
 
+void removerTraducaoIngles(Portugues23 **raiz23, char *palavraIngles, int unidade, Portugues23 **pai) {
+    if (*raiz23 == NULL) {
+        return; // Árvore 2-3 vazia
+    }
+
+    // Verifica na subárvore esquerda
+    removerTraducaoIngles(&(*raiz23)->esq, palavraIngles, unidade, pai);
+
+    // Verifica o primeiro elemento do nó
+    if ((*raiz23)->info1.palavraIngles != NULL) {
+        Inglesbin *traducaoEncontrada = buscarPalavraIngles((*raiz23)->info1.palavraIngles, palavraIngles);
+        if (traducaoEncontrada != NULL) {
+            // Remove a unidade associada
+            (*raiz23)->info1.palavraIngles->unidades = remover_unidade((*raiz23)->info1.palavraIngles->unidades, unidade);
+
+            // Se a lista de unidades estiver vazia, remova o nó correspondente da árvore binária
+            if ((*raiz23)->info1.palavraIngles->unidades == NULL) {
+                removerPalavraIngles(&(*raiz23)->info1.palavraIngles, palavraIngles, unidade);
+
+                // Se a árvore binária estiver completamente vazia, remova o nó da árvore 2-3
+                if ((*raiz23)->info1.palavraIngles == NULL) {
+                    remover23(pai, raiz23, (*raiz23)->info1.portugueseWord);
+                    return; // Removido da árvore 2-3
+                }
+            }
+        }
+    }
+
+    // Verifica o segundo elemento do nó, se existir
+    if ((*raiz23)->nInfos == 2 && (*raiz23)->info2.palavraIngles != NULL) {
+        Inglesbin *traducaoEncontrada = buscarPalavraIngles((*raiz23)->info2.palavraIngles, palavraIngles);
+        if (traducaoEncontrada != NULL) {
+            // Remove a unidade associada
+            (*raiz23)->info2.palavraIngles->unidades = remover_unidade((*raiz23)->info2.palavraIngles->unidades, unidade);
+
+            // Se a lista de unidades estiver vazia, remova o nó correspondente da árvore binária
+            if ((*raiz23)->info2.palavraIngles->unidades == NULL) {
+                removerPalavraIngles(&(*raiz23)->info2.palavraIngles, palavraIngles, unidade);
+
+                // Se a árvore binária estiver completamente vazia, remova o nó da árvore 2-3
+                if ((*raiz23)->info2.palavraIngles == NULL) {
+                    remover23(pai, raiz23, (*raiz23)->info2.portugueseWord);
+                    return; // Removido da árvore 2-3
+                }
+            }
+        }
+    }
+
+    // Verifica nas subárvores central e direita, se aplicável
+    removerTraducaoIngles(&(*raiz23)->cent, palavraIngles, unidade, raiz23);
+    if ((*raiz23)->nInfos == 2) {
+        removerTraducaoIngles(&(*raiz23)->dir, palavraIngles, unidade, raiz23);
+    }
+}

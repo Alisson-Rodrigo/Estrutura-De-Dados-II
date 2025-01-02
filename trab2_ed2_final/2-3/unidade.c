@@ -70,7 +70,10 @@ Unidade *adicionar_unidade_ordenada(Unidade *lista, Unidade *novo_no) {
             atual = atual->prox;
         }
 
-        if (anterior == NULL) {
+        // Verifica se a unidade já existe para evitar duplicatas.
+        if (atual != NULL && atual->unidade == novo_no->unidade) {
+            free(novo_no); // Libera o novo nó, pois já existe na lista.
+        } else if (anterior == NULL) {
             // Insere o novo nó no início da lista.
             novo_no->prox = lista;
             aux = novo_no;

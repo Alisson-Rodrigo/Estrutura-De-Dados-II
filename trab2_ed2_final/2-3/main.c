@@ -140,9 +140,10 @@ int main()
             printf("Insira a unidade da palavra que deseja remover: ");
             scanf("%d", &unidade);
 
-            // Verifica e remove a palavra em inglês da árvore binária
+            // Chama a função para remover a palavra em inglês da árvore binária e da árvore 2-3
             removerTraducaoIngles(&raiz, palavra, unidade, &pai);
 
+            printf("\nPalavra '%s' da unidade %d removida com sucesso.\n", palavra, unidade);
             printf("\n--------------------------------------------------------------- \n");
             break;
 
