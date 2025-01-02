@@ -11,7 +11,7 @@ Bicycle: bicicleta;
 Fan: ventilador;
 Network: rede de relacionamento;
 % Unidade 3
-Bus: ônibus;
+Bus: onibus;
 Bug: inseto;
 Bike: bicicleta;
 Cooler: ventilador;
