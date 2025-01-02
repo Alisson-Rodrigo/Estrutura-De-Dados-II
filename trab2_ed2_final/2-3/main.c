@@ -107,7 +107,7 @@ int main()
     char palavra[50];
     int unidade;
     int removido;
-    carregarArquivo("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/trabalhoEd2.txt", &raiz);
+    carregarArquivo("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &raiz);
     int op;
     do
     {
