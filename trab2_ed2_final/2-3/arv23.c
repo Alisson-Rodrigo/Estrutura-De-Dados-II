@@ -636,3 +636,38 @@ void freeTree(Portugues23 *no)
     }
 }
 
+int remove_palavra_ingles_unidade(Portugues23 *raiz, const char *palavraIngles, int unidade, Portugues23 **top) {
+    int confirm = 0;
+
+    if (raiz) {
+        // Verifica na subárvore esquerda
+        confirm = remove_palavra_ingles_unidade(raiz->esq, palavraIngles, unidade, top);
+
+        // Verifica na subárvore central
+        confirm = remove_palavra_ingles_unidade(raiz->cent, palavraIngles, unidade, top) || confirm;
+
+        // Se o nó tem dois elementos, verifica o segundo
+        if (raiz->nInfos == 2) {
+            confirm = remove_palavra_ingles_unidade(raiz->dir, palavraIngles, unidade, top) || confirm;
+            confirm = remove_unidade(&raiz->info2.palavraIngles, palavraIngles, unidade);
+        }
+
+        // Verifica o primeiro elemento
+        confirm = remove_unidade(&raiz->info1.palavraIngles, palavraIngles, unidade);
+
+        // Remove o nó da árvore 2-3 se a árvore binária associada ficar vazia
+        if (!raiz->info1.palavraIngles) {
+            confirm = remover23(top,raiz, raiz->info1.portugueseWord);
+        }
+
+        if (raiz->nInfos == 2 && !raiz->info2.palavraIngles) {
+            confirm = remover23(top,raiz,  raiz->info2.portugueseWord);
+        }
+    }
+
+    return confirm;
+}
+
+int Remove_palavra_ingles_unidade(Portugues23 **raiz, const char *palavraIngles, int unidade) {
+    return remove_palavra_ingles_unidade(*raiz, palavraIngles, unidade, raiz);
+}

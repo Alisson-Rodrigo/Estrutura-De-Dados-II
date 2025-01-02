@@ -120,7 +120,7 @@ Inglesbin *menorFilho(Inglesbin *raiz){
     return aux;
 }
 
-int removerPalavraIngles(Inglesbin **raiz, char *palavra)
+int removerPalavraIngles(Inglesbin **raiz, const char *palavra)
 {
     Inglesbin *endFilho;
     int existe = 0;
@@ -325,4 +325,29 @@ void exibirTraducoesIngles(Inglesbin *raiz)
         // Percorre a subárvore direita
         exibirTraducoesIngles(raiz->dir);
     }
+}
+
+int remove_unidade(Inglesbin **raiz, const char *palavraIngles, int unidade) {
+    int confirm = 0;
+
+    if (*raiz) {
+        // Comparação com a palavra atual
+        if (strcmp((*raiz)->palavraIngles, palavraIngles) == 0) {
+            // Remove a unidade associada
+            (*raiz)->unidades = remover_unidade((*raiz)->unidades, unidade);
+            
+            // Se a lista de unidades ficar vazia, remove a palavra da árvore
+            if (!(*raiz)->unidades) {
+                confirm = removerPalavraIngles(raiz, palavraIngles);
+            } else {
+                confirm = 1; // Unidade removida, mas a palavra ainda existe
+            }
+        } else if (strcmp((*raiz)->palavraIngles, palavraIngles) > 0) {
+            confirm = remove_unidade(&(*raiz)->esq, palavraIngles, unidade);
+        } else {
+            confirm = remove_unidade(&(*raiz)->dir, palavraIngles, unidade);
+        }
+    }
+
+    return confirm;
 }

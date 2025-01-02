@@ -120,10 +120,13 @@ int main()
             printf("\n--------------------------------------------------------------- \n");
             printf("Insira a unidade que deseja imprimir as palavras: ");
             scanf("%d", &unidade);
+
             // Variável de controle para a impressão do cabeçalho
             int unidadeImpressa = 0;
+
             // Chama a função para imprimir palavras da unidade
             imprimirPalavrasUnidade(raiz, unidade, &unidadeImpressa);
+
             printf("\n--------------------------------------------------------------- \n");
             break;
 
@@ -137,13 +140,21 @@ int main()
 
         case 3:
             printf("\n--------------------------------------------------------------- \n");
-            printf("Insira a palavra em ingles que deseja remover: ");
+            printf("Insira a palavra em inglês que deseja remover: ");
             scanf("%s", palavra);
             printf("Insira a unidade da palavra que deseja remover: ");
             scanf("%d", &unidade);
-            BuscarPalavraIngles(&raiz, palavra, unidade, &pai);
+
+            removido = Remove_palavra_ingles_unidade(&raiz, palavra, unidade);
+
+            if (removido) {
+                printf("A palavra '%s' foi removida com sucesso da unidade %d!\n", palavra, unidade);
+            } else {
+                printf("A palavra '%s' não foi encontrada na unidade %d.\n", palavra, unidade);
+            }
             printf("\n--------------------------------------------------------------- \n");
             break;
+
         case 4:
             printf("\n--------------------------------------------------------------- \n");
             printf("Insira a palavra em portugues que deseja remover: ");
