@@ -17,7 +17,6 @@ void clearCharacters(char *str)
         end--;
     }
 
-
     while (*str && isspace((unsigned char)*str))
     {
         str++;
@@ -33,44 +32,40 @@ void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
         return;
     }
 
-    char linha[256];      
+    char linha[256];
     int unidadeAtual = 0;
 
     while (fgets(linha, sizeof(linha), arquivo))
     {
-        linha[strcspn(linha, "\n")] = 0; 
+        linha[strcspn(linha, "\n")] = 0;
 
-        if (linha[0] == '%') 
+        if (linha[0] == '%')
         {
-          
+
             if (sscanf(linha, "%% Unidade %d", &unidadeAtual) != 1)
             {
                 printf("Erro ao interpretar a unidade na linha: %s\n", linha);
             }
         }
-        else 
+        else
         {
             char palavraIngles[50], traducoesPortugues[200];
 
-            
             if (sscanf(linha, "%[^:]: %[^\n]", palavraIngles, traducoesPortugues) == 2)
             {
-               
+
                 clearCharacters(palavraIngles);
 
                 char *traducaoPortugues = strtok(traducoesPortugues, ",");
                 while (traducaoPortugues != NULL)
                 {
-                    
+
                     while (*traducaoPortugues == ' ')
                         traducaoPortugues++;
 
-                    
                     clearCharacters(traducaoPortugues);
 
-
                     inserirPalavraPortugues(arvore, traducaoPortugues, palavraIngles, unidadeAtual);
-
 
                     traducaoPortugues = strtok(NULL, ",");
                 }
@@ -107,7 +102,7 @@ int main()
     char palavra[50];
     int unidade;
     int removido;
-    carregarArquivo("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &raiz);
+    carregarArquivo("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/trabalhoEd2.txt", &raiz);
     int op;
     do
     {
@@ -145,13 +140,9 @@ int main()
             printf("Insira a unidade da palavra que deseja remover: ");
             scanf("%d", &unidade);
 
-            removido = Remove_palavra_ingles_unidade(&raiz, palavra, unidade);
+            // Verifica e remove a palavra em inglês da árvore binária
+            removerTraducaoIngles(&raiz, palavra, unidade, &pai);
 
-            if (removido) {
-                printf("A palavra '%s' foi removida com sucesso da unidade %d!\n", palavra, unidade);
-            } else {
-                printf("A palavra '%s' não foi encontrada na unidade %d.\n", palavra, unidade);
-            }
             printf("\n--------------------------------------------------------------- \n");
             break;
 
