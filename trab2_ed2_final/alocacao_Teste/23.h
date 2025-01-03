@@ -70,3 +70,5 @@ void arvore23_exibir_ordem(Arvore23 *raiz);
 void arvore23_exibir_pos(Arvore23 *raiz);
 
 #endif
+
+
