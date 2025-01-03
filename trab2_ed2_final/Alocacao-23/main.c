@@ -24,7 +24,7 @@ int main_main() {
 
     // Define o tamanho máximo da memória
     int maximo = MEMORY_SIZE;
-    printf("\nTamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE);
+    printf("\nTamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE - 1);
 
     // Cadastrar os blocos iniciais na árvore
     int minimo = inicializar_blocos(&arvore, maximo);
