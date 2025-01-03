@@ -726,9 +726,30 @@ int TreeNode23_rebalancear(TreeNode23 **root, int info, TreeNode23 **maior)
 
 void no23_exibir(Info node)
 {
-    printf("Bloco de [%d] até [%d] - [%s]\n", node.num_start, node.num_end, node.status == LIVRE ? "Livre" : "Ocupado");
-    // printf("%d -> ", node.num_start);
+    // Verifica se o intervalo é válido
+    if (node.num_start > node.num_end) {
+        printf("Erro: Intervalo invalido no no [%d] até [%d].\n", node.num_start, node.num_end);
+        return;
+    }
+
+    // Exibe as informações do nó em um formato mais organizado
+    printf("Bloco de [%d] até [%d] - Status: %s\n",
+           node.num_start,
+           node.num_end,
+           node.status == LIVRE ? "Livre" : node.status == OCUPADO ? "Ocupado" : "Desconhecido");
+
+    // Informações adicionais para depuração
+    printf("Informacoes adicionais:\n");
+    printf("  Inicio: %d\n", node.num_start);
+    printf("  Fim: %d\n", node.num_end);
+    printf("  Status: %s\n", node.status == LIVRE ? "Livre" : node.status == OCUPADO ? "Ocupado" : "Desconhecido");
+
+    // Caso queira exibir mais informações ou mensagens de validação
+    if (node.status != LIVRE && node.status != OCUPADO) {
+        printf("  Aviso: Status desconhecido encontrado no no.\n");
+    }
 }
+
 
 void TreeNode23_exibir_ordem(TreeNode23 *root)
 {

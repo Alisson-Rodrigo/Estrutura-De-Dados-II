@@ -62,11 +62,11 @@ int main() {
                 gerenciar_bloco_memoria(&arvore, quant_nos, OCUPADO);
                 break;
             case 3:
-                printf("\nExibindo árvore [Em-Ordem]\n");
+                printf("\nExibindo Enderecos\n");
                 DisplayInfos(arvore);
                 break;
             case 4:
-                printf("\nExibindo árvore [Pré-Ordem]\n");
+                printf("\nExibindo árvore\n");
                 TreeNode23_exibir_ordem(arvore);
                 break;
             case 0:
