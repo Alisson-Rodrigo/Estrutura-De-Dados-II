@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "23-aux.c"
+#include "23.c"
 
 void limpa_buffer()
 {

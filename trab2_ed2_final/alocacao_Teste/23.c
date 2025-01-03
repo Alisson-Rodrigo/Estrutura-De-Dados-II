@@ -2,21 +2,6 @@
 #include <stdlib.h>
 #include "23.h"
 
-int eh_folha(Arvore23 no)
-{
-    return no.esquerdo == NULL;
-}
-
-static int eh_info1(Arvore23 no, int info)
-{
-    return info == no.info1.numero_inicial;
-}
-
-static int eh_info2(Arvore23 no, int info)
-{
-    return no.n_infos == 2 && info == no.info2.numero_inicial;
-}
-
 static int calcular_altura(Arvore23 *no)
 {
     int altura = -1;
@@ -133,6 +118,21 @@ static Arvore23 *no23_juntar(Arvore23 *filho1, Data info, Arvore23 *maior, Arvor
         no23_desalocar(raiz);
 
     return filho1;
+}
+
+int eh_folha(Arvore23 no)
+{
+    return no.esquerdo == NULL;
+}
+
+static int eh_info1(Arvore23 no, int info)
+{
+    return info == no.info1.numero_inicial;
+}
+
+static int eh_info2(Arvore23 no, int info)
+{
+    return no.n_infos == 2 && info == no.info2.numero_inicial;
 }
 
 Data *no23_maior_info(Arvore23 *raiz)
@@ -766,4 +766,3 @@ void arvore23_exibir_pos(Arvore23 *raiz)
         }
     }
 }
-
