@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "23.c"
+#include "23-aux.c"
 
 void limpa_buffer()
 {
@@ -312,53 +312,6 @@ int main_main()
     
     arvore23_desalocar(&arvore);
     return 0;
-}
-
-int main_teste()
-{
-    Arvore23 *arvore;
-    arvore = arvore23_criar();
-
-    // int valores[] = {19, 39, 60, 80, 100};
-    // int valores[] = {9, 19, 39, 69, 109};
-    // int valores[] = {10, 20, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130};
-    int valores[] = {20, 40, 60, 80, 100,};
-    // int valores[] = {10, 33, 35, 99};
-    // int valores[] = {8, 20, 30};
-    // int valores[] = {9};
-    int tam = sizeof(valores) / sizeof(int);
-    int inicio = 0, status = LIVRE;
-    Data no;
-
-    for(int i = 0; i < tam; i++)
-    {
-        no.numero_inicial = inicio;
-        no.numero_final = valores[i];
-        no.status = status;
-
-        arvore23_inserir(&arvore, no);
-
-        status = !status;
-        inicio = no.numero_final + 1;
-    }
-
-    arvore23_exibir_pre(arvore);
-
-    int vetor_nos[] = {21};
-    // int vetor_nos[] = {40, 70, 10};
-    int vetor_status[] = {LIVRE};
-    // int vetor_status[] = {LIVRE, OCUPADO, OCUPADO};
-    int quant1 = sizeof(vetor_nos) / sizeof(int);
-    int quant2 = sizeof(vetor_status) / sizeof(int);
-    int quant = quant1 <= quant2 ? quant1 : quant2;
-
-    for(int i = 0; i < quant; i++)
-    {
-        alocar_desalocar_no(&arvore, vetor_nos[i], vetor_status[i]);
-        printf("\n");
-        arvore23_exibir_ordem(arvore);
-        printf("\n");
-    }
 }
 
 int main()

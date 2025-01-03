@@ -766,3 +766,4 @@ void arvore23_exibir_pos(Arvore23 *raiz)
         }
     }
 }
+
