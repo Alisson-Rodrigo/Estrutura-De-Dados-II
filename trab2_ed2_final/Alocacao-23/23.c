@@ -747,7 +747,7 @@ void no23_exibir(Info node)
 
     // Caso queira exibir mais informações ou mensagens de validação
     if (node.status != LIVRE && node.status != OCUPADO) {
-        printf("  Aviso: Status desconhecido encontrado no no.\n");
+        printf("  Aviso: Status desconhecido encontrado no no\n");
     }
 }
 
@@ -769,4 +769,5 @@ void TreeNode23_exibir_ordem(TreeNode23 *root)
         }
     }
 }
+
 
