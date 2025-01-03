@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "23.h"
 
-
 void DisplayInfos(Arvore23 *root) {
     if (root == NULL) {
         return;  // Se o nó é nulo, retorna sem fazer nada.

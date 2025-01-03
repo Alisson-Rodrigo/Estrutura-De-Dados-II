@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "23.h"
 
-int cadastrar_nos(Arvore23 **arvore, int maximo) {
+int inicializar_blocos(Arvore23 **arvore, int maximo) {
     int status;
 
     // Solicita o estado inicial do nó
@@ -49,7 +49,7 @@ int cadastrar_nos(Arvore23 **arvore, int maximo) {
     return minimo;
 }
 
-Arvore23 *buscar_menor_bloco(Arvore23 **raiz, Arvore23 *no, Data *info, Data **valor_menor)
+Arvore23 *bloco_menor(Arvore23 **raiz, Arvore23 *no, Data *info, Data **valor_menor)
 {
     Arvore23 *menor, *pai;
     *valor_menor = NULL;
@@ -77,7 +77,7 @@ Arvore23 *buscar_menor_bloco(Arvore23 **raiz, Arvore23 *no, Data *info, Data **v
     return menor;
 }
 
-Arvore23 *buscar_maior_bloco(Arvore23 **raiz, Arvore23 *no, Data *info, Data **valor_maior)
+Arvore23 *bloco_maior(Arvore23 **raiz, Arvore23 *no, Data *info, Data **valor_maior)
 {
     Arvore23 *maior;
     Arvore23 *pai;
@@ -114,10 +114,10 @@ Arvore23 *buscar_maior_bloco(Arvore23 **raiz, Arvore23 *no, Data *info, Data **v
 
 
 
-Arvore23 *buscar_no_memoria(Arvore23 **arvore, int quant, int status, Data **info_escolhido) {
+Arvore23 *procurar_no(Arvore23 **arvore, int quant, int status, Data **info_escolhido) {
     Arvore23 *no;
     if (*arvore != NULL) {
-        no = buscar_no_memoria(&((*arvore)->esquerdo), quant, status, info_escolhido);
+        no = procurar_no(&((*arvore)->esquerdo), quant, status, info_escolhido);
 
         if (*info_escolhido == NULL) {
             if ((*arvore)->info1.status == status &&
@@ -125,14 +125,14 @@ Arvore23 *buscar_no_memoria(Arvore23 **arvore, int quant, int status, Data **inf
                 *info_escolhido = &((*arvore)->info1);
                 no = *arvore;
             } else {
-                no = buscar_no_memoria(&((*arvore)->centro), quant, status, info_escolhido);
+                no = procurar_no(&((*arvore)->centro), quant, status, info_escolhido);
                 if ((*arvore)->n_infos == 2) {
                     if ((*arvore)->info2.status == status &&
                         ((*arvore)->info2.numero_final - (*arvore)->info2.numero_inicial + 1) >= quant) {
                         *info_escolhido = &((*arvore)->info2);
                         no = *arvore;
                     } else if (*info_escolhido == NULL)
-                        no = buscar_no_memoria(&((*arvore)->direito), quant, status, info_escolhido);
+                        no = procurar_no(&((*arvore)->direito), quant, status, info_escolhido);
                 }
             }
         }
@@ -142,16 +142,16 @@ Arvore23 *buscar_no_memoria(Arvore23 **arvore, int quant, int status, Data **inf
     return no;
 }
 
-void concatenar_no(Arvore23 **raiz, int *numero_final, int limite, int valor_remover) {
+void juntar_no(Arvore23 **raiz, int *numero_final, int limite, int valor_remover) {
     *numero_final = limite;
     arvore23_remover(raiz, valor_remover);
 }
 
-void modificar_no(Arvore23 **raiz, Arvore23 *no, Data *info, int quant) {
+void alterar_no_arvore(Arvore23 **raiz, Arvore23 *no, Data *info, int quant) {
     Arvore23 *menor;
     Data *valor_menor = NULL;
 
-    menor = buscar_menor_bloco(raiz, no, info, &valor_menor);
+    menor = bloco_menor(raiz, no, info, &valor_menor);
 
     if (quant < (info->numero_final - info->numero_inicial + 1)) {
         if (menor == NULL) {
@@ -170,36 +170,37 @@ void modificar_no(Arvore23 **raiz, Arvore23 *no, Data *info, int quant) {
         Arvore23 *maior;
         Data *valor_maior = NULL;
 
-        maior = buscar_maior_bloco(raiz, no, info, &valor_maior);
+        maior = bloco_maior(raiz, no, info, &valor_maior);
 
         if (menor == NULL && maior == NULL) {
             info->status = !(info->status);
         } else {
             if (menor == NULL) {
                 info->status = !(info->status);
-                concatenar_no(raiz, &(info->numero_final), valor_maior->numero_final, valor_maior->numero_inicial);
+                juntar_no(raiz, &(info->numero_final), valor_maior->numero_final, valor_maior->numero_inicial);
             } else if (maior == NULL) {
-                concatenar_no(raiz, &(valor_menor->numero_final), info->numero_final, info->numero_inicial);
+                juntar_no(raiz, &(valor_menor->numero_final), info->numero_final, info->numero_inicial);
             } else {
                 int numero = valor_maior->numero_inicial;
-                concatenar_no(raiz, &(valor_menor->numero_final), valor_maior->numero_final, info->numero_inicial);
+                juntar_no(raiz, &(valor_menor->numero_final), valor_maior->numero_final, info->numero_inicial);
                 arvore23_remover(raiz, numero);
             }
         }
     }
 }
 
-int alocar_desalocar_no(Arvore23 **arvore, int quant_nos, int status) {
-    Data *info_escolhido = NULL;
-    Arvore23 *no_escolhido = buscar_no_memoria(arvore, quant_nos, status, &info_escolhido);
+int gerenciar_bloco_memoria(Arvore23 **estrutura, int quantidade, int estado) {
+    Data *bloco_selecionado = NULL;
+    Arvore23 *nodo_encontrado = procurar_no(estrutura, quantidade, estado, &bloco_selecionado);
 
-    if (info_escolhido != NULL) {
-        printf("\nNó escolhido:\n");
-        no23_exibir(*info_escolhido);
-        modificar_no(arvore, no_escolhido, info_escolhido, quant_nos);
+    if (bloco_selecionado != NULL) {
+        printf("\nBloco selecionado:\n");
+        no23_exibir(*bloco_selecionado);
+        alterar_no_arvore(estrutura, nodo_encontrado, bloco_selecionado, quantidade);
     } else {
-        printf("\nNão há nó disponível\n");
+        printf("\nNenhum bloco disponível para os critérios informados.\n");
     }
 
     return 1;
 }
+

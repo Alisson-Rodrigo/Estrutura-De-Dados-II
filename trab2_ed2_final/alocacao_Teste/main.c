@@ -27,7 +27,7 @@ int main_main() {
     printf("\nTamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE);
 
     // Cadastrar os blocos iniciais na árvore
-    int minimo = cadastrar_nos(&arvore, maximo);
+    int minimo = inicializar_blocos(&arvore, maximo);
 
     int op, quant_nos;
     do {
@@ -44,7 +44,7 @@ int main_main() {
                     }
                 } while (quant_nos < minimo || quant_nos > maximo);
 
-                alocar_desalocar_no(&arvore, quant_nos, LIVRE);
+                gerenciar_bloco_memoria(&arvore, quant_nos, LIVRE);
                 break;
 
             case 2:
@@ -58,7 +58,7 @@ int main_main() {
                     }
                 } while (quant_nos < minimo || quant_nos > maximo);
 
-                alocar_desalocar_no(&arvore, quant_nos, OCUPADO);
+                gerenciar_bloco_memoria(&arvore, quant_nos, OCUPADO);
                 break;
             case 3:
                 printf("\nExibindo árvore [Em-Ordem]\n");
