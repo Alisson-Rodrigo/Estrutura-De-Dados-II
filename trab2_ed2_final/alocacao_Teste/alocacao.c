@@ -5,47 +5,58 @@
 int inicializar_blocos(Arvore23 **estrutura_memoria, int capacidade_maxima) {
     int estado_inicial;
 
+    // Solicitação do estado inicial
     do {
-        printf("\nO bloco inicial está marcado como livre ou em uso?");
-        printf("\n[%d] - Livre", LIVRE);
-        printf("\n[%d] - Em Uso", OCUPADO);
-        printf("\nSelecione o estado: ");
+        printf("\n=== Configuração do Bloco Inicial ===\n");
+        printf("Escolha o estado do bloco inicial:\n");
+        printf("  [%d] -> Disponível\n", LIVRE);
+        printf("  [%d] -> Ocupado\n", OCUPADO);
+        printf("Digite sua escolha: ");
         scanf("%d", &estado_inicial);
-        while (getchar() != '\n'); // Limpeza do buffer de entrada
+        while (getchar() != '\n'); // Limpeza do buffer
         if (estado_inicial != LIVRE && estado_inicial != OCUPADO) {
-            printf("\nOpção inválida. Tente novamente.\n");
+            printf("\n[Erro] Escolha inválida. Por favor, tente novamente.\n");
         }
     } while (estado_inicial != LIVRE && estado_inicial != OCUPADO);
 
     Data bloco;
-    printf("\nInsira o endereço inicial do bloco: ");
-    scanf("%d", &bloco.numero_inicial);
-    while (getchar() != '\n');
-    if (bloco.numero_inicial < 0 || bloco.numero_inicial >= capacidade_maxima) {
-        printf("\nO endereço deve estar entre 0 e %d.\n", capacidade_maxima - 1);
-    }
+    // Solicitação do endereço inicial
+    do {
+        printf("\n>>> Insira o endereço inicial do bloco: ");
+        scanf("%d", &bloco.numero_inicial);
+        while (getchar() != '\n'); // Limpeza do buffer
+        if (bloco.numero_inicial < 0 || bloco.numero_inicial >= capacidade_maxima) {
+            printf("\n[Erro] O endereço inicial deve estar entre 0 e %d.\n", capacidade_maxima - 1);
+        }
+    } while (bloco.numero_inicial < 0 || bloco.numero_inicial >= capacidade_maxima);
 
     int endereco_minimo = bloco.numero_inicial;
 
+    // Configuração dos blocos subsequentes
     do {
         bloco.status = estado_inicial;
 
         do {
-            printf("\nInsira o endereço final do bloco: ");
+            printf("\n>>> Insira o endereço final do bloco (deve ser >= %d): ", bloco.numero_inicial);
             scanf("%d", &bloco.numero_final);
-            while (getchar() != '\n');
+            while (getchar() != '\n'); // Limpeza do buffer
             if (bloco.numero_final < bloco.numero_inicial || bloco.numero_final >= capacidade_maxima) {
-                printf("\nO endereço deve estar entre %d e %d.\n", bloco.numero_inicial, capacidade_maxima - 1);
+                printf("\n[Erro] O endereço final deve estar entre %d e %d.\n", bloco.numero_inicial, capacidade_maxima - 1);
             }
         } while (bloco.numero_final < bloco.numero_inicial || bloco.numero_final >= capacidade_maxima);
 
+        // Inserção do bloco na estrutura
         arvore23_inserir(estrutura_memoria, bloco);
+
+        // Atualização do próximo bloco
         bloco.numero_inicial = bloco.numero_final + 1;
         estado_inicial = !estado_inicial; // Alterna entre Livre e Ocupado
     } while (bloco.numero_final < (capacidade_maxima - 1));
 
+    printf("\n[Sucesso] Blocos inicializados com sucesso!\n");
     return endereco_minimo;
 }
+
 
 void juntar_no(Arvore23 **raiz, int *numero_final, int limite, int valor_remover) {
     *numero_final = limite;
