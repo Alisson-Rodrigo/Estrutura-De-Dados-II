@@ -4,7 +4,6 @@
 #define OCUPADO 0
 #define LIVRE 1
 
-
 typedef struct info
 {
     int num_start;
@@ -26,15 +25,13 @@ int isLeaf(TreeNode23 node);
 
 int height_size(TreeNode23 *node);
 
-TreeNode23 *no23_alocar();
+TreeNode23 *allocate_nodo();
 
-void no23_desalocar(TreeNode23 **node);
+void free_nodo(TreeNode23 **node);
 
-TreeNode23 *no23_criar(Info info, TreeNode23 *filho_left, TreeNode23 *filho_center);
+TreeNode23 *Create_nodo(Info info, TreeNode23 *filho_left, TreeNode23 *filho_center);
 
 Info *no23_maior_info(TreeNode23 *root);
-
-TreeNode23 *TreeNode23_criar();
 
 TreeNode23 *TreeNode23_buscar(TreeNode23 *root, int info);
 

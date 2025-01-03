@@ -4,23 +4,19 @@
 
 void DisplayInfos(TreeNode23 *root) {
     if (root == NULL) {
-        return;  // Se o nó é nulo, retorna sem fazer nada.
+        return;  
     }
 
-    // Percorre a subárvore esquerda primeiro.
     if (root->left) {
         DisplayInfos(root->left);
     }
 
-    // Mostra as informações do nó atual.
     printf("Começo: %d | Fim: %d | Status: %d\n", root->info1.num_start, root->info1.num_end, root->info1.status);
 
-    // Percorre a subárvore central.
     if (root->center) {
         DisplayInfos(root->center);
     }
 
-    // Se houver uma segunda informação, mostra e percorre a subárvore direita.
     if (root->n_infos == 2) {
         printf("Começo: %d | Fim: %d | Status: %d\n", root->info2.num_start, root->info2.num_end, root->info2.status);
         if (root->right) {
@@ -74,7 +70,7 @@ int confirm_remove(TreeNode23 *root)
     return confirm;
 }
 
-TreeNode23 *no23_alocar()
+TreeNode23 *allocate_nodo()
 {
     TreeNode23 *node;
     node = (TreeNode23 *)malloc(sizeof(TreeNode23));
@@ -88,16 +84,16 @@ TreeNode23 *no23_alocar()
     return node;
 }
 
-void no23_desalocar(TreeNode23 **node)
+void free_nodo(TreeNode23 **node)
 {
     free(*node);
     *node = NULL;
 }
 
-TreeNode23 *no23_criar(Info info, TreeNode23 *filho_left, TreeNode23 *filho_center)
+TreeNode23 *Create_nodo(Info info, TreeNode23 *filho_left, TreeNode23 *filho_center)
 {
     TreeNode23 *node;
-    node = no23_alocar();
+    node = allocate_nodo();
 
     node->info1 = info;
     node->left = filho_left;
@@ -107,23 +103,23 @@ TreeNode23 *no23_criar(Info info, TreeNode23 *filho_left, TreeNode23 *filho_cent
     return node;
 }
 
- TreeNode23 *SplitNode(TreeNode23 *node, Info info, Info *promove, TreeNode23 *filho_maior)
+ TreeNode23 *SplitNode(TreeNode23 *node, Info info, Info *up, TreeNode23 *filho_maior)
 {
     TreeNode23 *maior;
     if(info.num_start > node->info2.num_start)
     {
-        *promove = node->info2;
-        maior = no23_criar(info, node->right, filho_maior);
+        *up = node->info2;
+        maior = Create_nodo(info, node->right, filho_maior);
     }
     else if(info.num_start > node->info1.num_start)
     {
-        *promove = info;
-        maior = no23_criar(node->info2, filho_maior, node->right);
+        *up = info;
+        maior = Create_nodo(node->info2, filho_maior, node->right);
     }
     else
     {
-        *promove = node->info1;
-        maior = no23_criar(node->info2, node->center, node->right);
+        *up = node->info1;
+        maior = Create_nodo(node->info2, node->center, node->right);
         node->info1 = info;
         node->center = filho_maior;
     }
@@ -150,14 +146,14 @@ TreeNode23 *no23_criar(Info info, TreeNode23 *filho_left, TreeNode23 *filho_cent
     node->n_infos = 2;
 }
 
-TreeNode23 *no23_juntar(TreeNode23 *filho1, Info info, TreeNode23 *maior, TreeNode23 **root)
+TreeNode23 *no23_merge(TreeNode23 *filho1, Info info, TreeNode23 *maior, TreeNode23 **root)
 {
     add_info(filho1, info, maior);
 
     (*root)->n_infos--;
 
     if((*root)->n_infos == 0)
-        no23_desalocar(root);
+        free_nodo(root);
 
     return filho1;
 }
@@ -167,10 +163,6 @@ Info *no23_maior_info(TreeNode23 *root)
     return root->n_infos == 2 ? &(root->info2) : &(root->info1);
 }
 
-TreeNode23 *TreeNode23_criar()
-{
-    return NULL;
-}
 
 TreeNode23 *TreeNode23_buscar(TreeNode23 *root, int info)
 {
@@ -340,17 +332,17 @@ void TreeNode23_desalocar(TreeNode23 **root)
         if((*root)->n_infos == 2)
             TreeNode23_desalocar(&((*root)->right));
 
-        no23_desalocar(root);
+        free_nodo(root);
     }
 }
 
-TreeNode23 *TreeNode23_inserir_no(TreeNode23 **root, Info info, TreeNode23 *pai, Info *promove)
+TreeNode23 *TreeNode23_inserir_no(TreeNode23 **root, Info info, TreeNode23 *pai, Info *up)
 {
     TreeNode23 *maior;
     maior = NULL;
 
     if(*root == NULL)
-        *root = no23_criar(info, NULL, NULL);
+        *root = Create_nodo(info, NULL, NULL);
     else
     {
         if(isLeaf(**root))
@@ -359,10 +351,10 @@ TreeNode23 *TreeNode23_inserir_no(TreeNode23 **root, Info info, TreeNode23 *pai,
                 add_info(*root, info, NULL);
             else
             {
-                maior = SplitNode(*root, info, promove, NULL);
+                maior = SplitNode(*root, info, up, NULL);
                 if(pai == NULL)
                 {
-                    *root = no23_criar(*promove, *root, maior);
+                    *root = Create_nodo(*up, *root, maior);
                     maior = NULL;
                 }
             }
@@ -370,27 +362,27 @@ TreeNode23 *TreeNode23_inserir_no(TreeNode23 **root, Info info, TreeNode23 *pai,
         else
         {
             if(info.num_start < (*root)->info1.num_start)
-                maior = TreeNode23_inserir_no(&((*root)->left), info, *root, promove);
+                maior = TreeNode23_inserir_no(&((*root)->left), info, *root, up);
             else if((*root)->n_infos == 1 || info.num_start < (*root)->info2.num_start)
-                maior = TreeNode23_inserir_no(&((*root)->center), info, *root, promove);
+                maior = TreeNode23_inserir_no(&((*root)->center), info, *root, up);
             else
-                maior = TreeNode23_inserir_no(&((*root)->right), info, *root, promove);
+                maior = TreeNode23_inserir_no(&((*root)->right), info, *root, up);
 
             if(maior != NULL)
             {
                 if((*root)->n_infos == 1)
                 {
-                    add_info(*root, *promove, maior);
+                    add_info(*root, *up, maior);
                     maior = NULL;
                 }
                 else
                 {
                     Info promove_aux;
-                    maior = SplitNode(*root, *promove, &promove_aux, maior);
-                    *promove = promove_aux;
+                    maior = SplitNode(*root, *up, &promove_aux, maior);
+                    *up = promove_aux;
                     if(pai == NULL)
                     {
-                        *root = no23_criar(promove_aux, *root, maior);
+                        *root = Create_nodo(promove_aux, *root, maior);
                         maior = NULL;
                     }
                 }
@@ -403,8 +395,8 @@ TreeNode23 *TreeNode23_inserir_no(TreeNode23 **root, Info info, TreeNode23 *pai,
 
 TreeNode23 *TreeNode23_inserir(TreeNode23 **root, Info info)
 {
-    Info promove;
-    return TreeNode23_inserir_no(root, info, NULL, &promove);
+    Info up;
+    return TreeNode23_inserir_no(root, info, NULL, &up);
 }
 
 
@@ -481,7 +473,7 @@ int TreeNode23_remove1(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 
                 else
                 {
                     if(pai == NULL)
-                        no23_desalocar(root);
+                        free_nodo(root);
                     else
                     {
                         TreeNode23 *pai_aux;
@@ -575,7 +567,7 @@ int TreeNode23_remove2(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 
                 else
                 {
                     if(pai == NULL)
-                        no23_desalocar(root);
+                        free_nodo(root);
                     else
                     {
                         TreeNode23 *pai_aux;
@@ -686,9 +678,9 @@ int TreeNode23_remove(TreeNode23 **root, int info)
     if(*filho2 == NULL || (*filho2)->n_infos == 0)
     {
         if(*filho2 != NULL)
-            no23_desalocar(filho2);
+            free_nodo(filho2);
 
-        *maior = no23_juntar(filho1, info, *maior, root);
+        *maior = no23_merge(filho1, info, *maior, root);
         balanceou = 1;
     }
     return balanceou;

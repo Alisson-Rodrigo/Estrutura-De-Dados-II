@@ -58,7 +58,7 @@ int inicializar_blocos(TreeNode23 **estrutura_memoria, int capacidade_maxima) {
 }
 
 
-void juntar_no(TreeNode23 **root, int *num_end, int limite, int valor_remover) {
+void merge_no(TreeNode23 **root, int *num_end, int limite, int valor_remover) {
     *num_end = limite;
     TreeNode23_remove(root, valor_remover);
 }
@@ -153,12 +153,12 @@ void alterar_no_arvore(TreeNode23 **estrutura, TreeNode23 *nodo_atual, Info *inf
         } else {
             if (menor_bloco == NULL) {
                 info_atual->status = !(info_atual->status);
-                juntar_no(estrutura, &(info_atual->num_end), maior_dado->num_end, maior_dado->num_start);
+                merge_no(estrutura, &(info_atual->num_end), maior_dado->num_end, maior_dado->num_start);
             } else if (maior_bloco == NULL) {
-                juntar_no(estrutura, &(menor_dado->num_end), info_atual->num_end, info_atual->num_start);
+                merge_no(estrutura, &(menor_dado->num_end), info_atual->num_end, info_atual->num_start);
             } else {
                 int remover_endereco = maior_dado->num_start;
-                juntar_no(estrutura, &(menor_dado->num_end), maior_dado->num_end, info_atual->num_start);
+                merge_no(estrutura, &(menor_dado->num_end), maior_dado->num_end, info_atual->num_start);
                 TreeNode23_remove(estrutura, remover_endereco);
             }
         }

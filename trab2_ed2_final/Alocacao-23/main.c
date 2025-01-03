@@ -19,7 +19,7 @@ int menu() {
 }
 
 int main() {
-    TreeNode23 *arvore = TreeNode23_criar();
+    TreeNode23 *arvore = NULL;
 
     // Define o tamanho máximo da memória
     int maximo = MEMORY_SIZE;
