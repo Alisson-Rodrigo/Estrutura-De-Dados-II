@@ -33,17 +33,17 @@ TreeNode23 *Create_nodo(Info info, TreeNode23 *filho_left, TreeNode23 *filho_cen
 
 Info *no23_maior_info(TreeNode23 *root);
 
-TreeNode23 *TreeNode23_buscar(TreeNode23 *root, int info);
+TreeNode23 *Search_nodo(TreeNode23 *root, int info);
 
-TreeNode23 *TreeNode23_buscar_menor_filho(TreeNode23 *root, TreeNode23 **pai);
+TreeNode23 *Search_nodo_menor_filho(TreeNode23 *root, TreeNode23 **pai);
 
-TreeNode23 *TreeNode23_buscar_maior_filho(TreeNode23 *root, TreeNode23 **pai, Info **maior_valor);
+TreeNode23 *Search_nodo_maior_filho(TreeNode23 *root, TreeNode23 **pai, Info **maior_valor);
 
-TreeNode23 *TreeNode23_buscar_pai(TreeNode23 *root, int info);
+TreeNode23 *Search_nodo_pai(TreeNode23 *root, int info);
 
-TreeNode23 *TreeNode23_buscar_maior_pai(TreeNode23 *root, int info);
+TreeNode23 *Search_nodo_maior_pai(TreeNode23 *root, int info);
 
-TreeNode23 *TreeNode23_buscar_menor_pai(TreeNode23 *root, int info);
+TreeNode23 *Search_nodo_menor_pai(TreeNode23 *root, int info);
 
 void TreeNode23_desalocar(TreeNode23 **root);
 
