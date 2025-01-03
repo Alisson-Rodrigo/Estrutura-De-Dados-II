@@ -25,51 +25,6 @@ void DisplayInfos(TreeNode23 *root) {
     }
 }
 
-int isLeaf(TreeNode23 node)
-{
-    return node.left == NULL;
-}
-
-int isInfo1(TreeNode23 node, int info)
-{
-    return info == node.info1.num_start;
-}
-
-int isInfo2(TreeNode23 node, int info)
-{
-    return node.n_infos == 2 && info == node.info2.num_start;
-}
-
-int height_size(TreeNode23 *node)
-{
-    int height = -1;
-
-    if(node != NULL)
-        height = 1 + height_size(node->left);
-
-    return height;
-}
-
-int confirm_remove(TreeNode23 *root)
-{
-    int confirm = 0;
-
-    if(root != NULL)
-    {
-        confirm = root->n_infos == 2;
-
-        if(!confirm)
-        {
-            confirm = confirm_remove(root->center);
-
-            if(!confirm)
-                confirm = confirm_remove(root->left);
-        }
-    }
-
-    return confirm;
-}
-
 TreeNode23 *allocate_nodo()
 {
     TreeNode23 *node;
@@ -144,6 +99,52 @@ TreeNode23 *Create_nodo(Info info, TreeNode23 *filho_left, TreeNode23 *filho_cen
         node->info1 = info;
     }
     node->n_infos = 2;
+}
+
+
+int isLeaf(TreeNode23 node)
+{
+    return node.left == NULL;
+}
+
+int isInfo1(TreeNode23 node, int info)
+{
+    return info == node.info1.num_start;
+}
+
+int isInfo2(TreeNode23 node, int info)
+{
+    return node.n_infos == 2 && info == node.info2.num_start;
+}
+
+int height_size(TreeNode23 *node)
+{
+    int height = -1;
+
+    if(node != NULL)
+        height = 1 + height_size(node->left);
+
+    return height;
+}
+
+int confirm_remove(TreeNode23 *root)
+{
+    int confirm = 0;
+
+    if(root != NULL)
+    {
+        confirm = root->n_infos == 2;
+
+        if(!confirm)
+        {
+            confirm = confirm_remove(root->center);
+
+            if(!confirm)
+                confirm = confirm_remove(root->left);
+        }
+    }
+
+    return confirm;
 }
 
 TreeNode23 *no23_merge(TreeNode23 *filho1, Info info, TreeNode23 *maior, TreeNode23 **root)
