@@ -7,10 +7,10 @@
 
 typedef struct data
 {
-    int numero_inicial;
-    int numero_final;
-    int *endereco_inicial;
-    int *endereco_final;
+    int num_start;
+    int num_end;
+    int *end_start;
+    int *end_end;
     int status;
 } Data;
 
@@ -19,9 +19,9 @@ typedef struct arvore23
     Data info1;
     Data info2;
     int n_infos;
-    struct arvore23 *esquerdo;
-    struct arvore23 *centro;
-    struct arvore23 *direito;
+    struct arvore23 *left;
+    struct arvore23 *center;
+    struct arvore23 *right;
 } Arvore23;
 
 
@@ -31,7 +31,7 @@ Arvore23 *no23_alocar();
 
 void no23_desalocar(Arvore23 **no);
 
-Arvore23 *no23_criar(Data info, Arvore23 *filho_esquerdo, Arvore23 *filho_centro);
+Arvore23 *no23_criar(Data info, Arvore23 *filho_left, Arvore23 *filho_center);
 
 Data *no23_maior_info(Arvore23 *raiz);
 

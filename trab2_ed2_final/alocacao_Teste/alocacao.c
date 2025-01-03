@@ -23,43 +23,43 @@ int inicializar_blocos(Arvore23 **estrutura_memoria, int capacidade_maxima) {
     // Solicitação do endereço inicial
     do {
         printf("\n>>> Insira o endereço inicial do bloco: ");
-        scanf("%d", &bloco.numero_inicial);
+        scanf("%d", &bloco.num_start);
         while (getchar() != '\n'); // Limpeza do buffer
-        if (bloco.numero_inicial < 0 || bloco.numero_inicial >= capacidade_maxima) {
+        if (bloco.num_start < 0 || bloco.num_start >= capacidade_maxima) {
             printf("\n[Erro] O endereço inicial deve estar entre 0 e %d.\n", capacidade_maxima - 1);
         }
-    } while (bloco.numero_inicial < 0 || bloco.numero_inicial >= capacidade_maxima);
+    } while (bloco.num_start < 0 || bloco.num_start >= capacidade_maxima);
 
-    int endereco_minimo = bloco.numero_inicial;
+    int endereco_minimo = bloco.num_start;
 
     // Configuração dos blocos subsequentes
     do {
         bloco.status = estado_inicial;
 
         do {
-            printf("\n>>> Insira o endereço final do bloco (deve ser >= %d): ", bloco.numero_inicial);
-            scanf("%d", &bloco.numero_final);
+            printf("\n>>> Insira o endereço final do bloco (deve ser >= %d): ", bloco.num_start);
+            scanf("%d", &bloco.num_end);
             while (getchar() != '\n'); // Limpeza do buffer
-            if (bloco.numero_final < bloco.numero_inicial || bloco.numero_final >= capacidade_maxima) {
-                printf("\n[Erro] O endereço final deve estar entre %d e %d.\n", bloco.numero_inicial, capacidade_maxima - 1);
+            if (bloco.num_end < bloco.num_start || bloco.num_end >= capacidade_maxima) {
+                printf("\n[Erro] O endereço final deve estar entre %d e %d.\n", bloco.num_start, capacidade_maxima - 1);
             }
-        } while (bloco.numero_final < bloco.numero_inicial || bloco.numero_final >= capacidade_maxima);
+        } while (bloco.num_end < bloco.num_start || bloco.num_end >= capacidade_maxima);
 
         // Inserção do bloco na estrutura
         arvore23_inserir(estrutura_memoria, bloco);
 
         // Atualização do próximo bloco
-        bloco.numero_inicial = bloco.numero_final + 1;
+        bloco.num_start = bloco.num_end + 1;
         estado_inicial = !estado_inicial; // Alterna entre Livre e Ocupado
-    } while (bloco.numero_final < (capacidade_maxima - 1));
+    } while (bloco.num_end < (capacidade_maxima - 1));
 
     printf("\n[Sucesso] Blocos inicializados com sucesso!\n");
     return endereco_minimo;
 }
 
 
-void juntar_no(Arvore23 **raiz, int *numero_final, int limite, int valor_remover) {
-    *numero_final = limite;
+void juntar_no(Arvore23 **raiz, int *num_end, int limite, int valor_remover) {
+    *num_end = limite;
     arvore23_remover(raiz, valor_remover);
 }
 
@@ -68,23 +68,23 @@ Arvore23 *bloco_menor(Arvore23 **estrutura, Arvore23 *nodo, Data *info_dados, Da
     *menor_valor = NULL;
 
     if (eh_folha(*nodo)) {
-        if (nodo->info1.numero_inicial != info_dados->numero_inicial) {
+        if (nodo->info1.num_start != info_dados->num_start) {
             menor_bloco = nodo;
         } else {
-            menor_bloco = arvore23_buscar_menor_pai(*estrutura, info_dados->numero_inicial);
+            menor_bloco = arvore23_buscar_menor_pai(*estrutura, info_dados->num_start);
         }
 
         if (menor_bloco != NULL) {
-            if (menor_bloco->n_infos == 2 && menor_bloco->info2.numero_inicial < info_dados->numero_inicial) {
+            if (menor_bloco->n_infos == 2 && menor_bloco->info2.num_start < info_dados->num_start) {
                 *menor_valor = &(menor_bloco->info2);
             } else {
                 *menor_valor = &(menor_bloco->info1);
             }
         }
-    } else if (nodo->info1.numero_inicial == info_dados->numero_inicial) {
-        menor_bloco = arvore23_buscar_maior_filho(nodo->esquerdo, &pai_temporario, menor_valor);
+    } else if (nodo->info1.num_start == info_dados->num_start) {
+        menor_bloco = arvore23_buscar_maior_filho(nodo->left, &pai_temporario, menor_valor);
     } else {
-        menor_bloco = arvore23_buscar_maior_filho(nodo->centro, &pai_temporario, menor_valor);
+        menor_bloco = arvore23_buscar_maior_filho(nodo->center, &pai_temporario, menor_valor);
     }
 
     return menor_bloco;
@@ -95,24 +95,24 @@ Arvore23 *bloco_maior(Arvore23 **estrutura, Arvore23 *nodo, Data *info_dados, Da
     *maior_valor = NULL;
 
     if (eh_folha(*nodo)) {
-        if (nodo->n_infos == 2 && nodo->info1.numero_inicial == info_dados->numero_inicial) {
+        if (nodo->n_infos == 2 && nodo->info1.num_start == info_dados->num_start) {
             maior_bloco = nodo;
         } else {
-            maior_bloco = arvore23_buscar_maior_pai(*estrutura, info_dados->numero_inicial);
+            maior_bloco = arvore23_buscar_maior_pai(*estrutura, info_dados->num_start);
         }
 
         if (maior_bloco != NULL) {
-            if (maior_bloco->info1.numero_inicial > info_dados->numero_inicial) {
+            if (maior_bloco->info1.num_start > info_dados->num_start) {
                 *maior_valor = &(maior_bloco->info1);
             } else {
                 *maior_valor = &(maior_bloco->info2);
             }
         }
     } else {
-        if (nodo->info1.numero_inicial == info_dados->numero_inicial) {
-            maior_bloco = arvore23_buscar_menor_filho(nodo->centro, &pai_temporario);
+        if (nodo->info1.num_start == info_dados->num_start) {
+            maior_bloco = arvore23_buscar_menor_filho(nodo->center, &pai_temporario);
         } else {
-            maior_bloco = arvore23_buscar_menor_filho(nodo->direito, &pai_temporario);
+            maior_bloco = arvore23_buscar_menor_filho(nodo->right, &pai_temporario);
         }
 
         if (maior_bloco != NULL) {
@@ -129,18 +129,18 @@ void alterar_no_arvore(Arvore23 **estrutura, Arvore23 *nodo_atual, Data *info_at
 
     menor_bloco = bloco_menor(estrutura, nodo_atual, info_atual, &menor_dado);
 
-    if (tamanho < (info_atual->numero_final - info_atual->numero_inicial + 1)) {
+    if (tamanho < (info_atual->num_end - info_atual->num_start + 1)) {
         if (menor_bloco == NULL) {
             Data novo_dado;
-            novo_dado.numero_inicial = info_atual->numero_inicial;
-            novo_dado.numero_final = info_atual->numero_inicial + tamanho - 1;
+            novo_dado.num_start = info_atual->num_start;
+            novo_dado.num_end = info_atual->num_start + tamanho - 1;
             novo_dado.status = !(info_atual->status);
 
-            info_atual->numero_inicial += tamanho;
+            info_atual->num_start += tamanho;
             arvore23_inserir(estrutura, novo_dado);
         } else {
-            menor_dado->numero_final += tamanho;
-            info_atual->numero_inicial += tamanho;
+            menor_dado->num_end += tamanho;
+            info_atual->num_start += tamanho;
         }
     } else {
         Arvore23 *maior_bloco;
@@ -153,12 +153,12 @@ void alterar_no_arvore(Arvore23 **estrutura, Arvore23 *nodo_atual, Data *info_at
         } else {
             if (menor_bloco == NULL) {
                 info_atual->status = !(info_atual->status);
-                juntar_no(estrutura, &(info_atual->numero_final), maior_dado->numero_final, maior_dado->numero_inicial);
+                juntar_no(estrutura, &(info_atual->num_end), maior_dado->num_end, maior_dado->num_start);
             } else if (maior_bloco == NULL) {
-                juntar_no(estrutura, &(menor_dado->numero_final), info_atual->numero_final, info_atual->numero_inicial);
+                juntar_no(estrutura, &(menor_dado->num_end), info_atual->num_end, info_atual->num_start);
             } else {
-                int remover_endereco = maior_dado->numero_inicial;
-                juntar_no(estrutura, &(menor_dado->numero_final), maior_dado->numero_final, info_atual->numero_inicial);
+                int remover_endereco = maior_dado->num_start;
+                juntar_no(estrutura, &(menor_dado->num_end), maior_dado->num_end, info_atual->num_start);
                 arvore23_remover(estrutura, remover_endereco);
             }
         }
@@ -168,22 +168,22 @@ void alterar_no_arvore(Arvore23 **estrutura, Arvore23 *nodo_atual, Data *info_at
 Arvore23 *procurar_no(Arvore23 **arvore, int quant, int status, Data **info_escolhido) {
     Arvore23 *no;
     if (*arvore != NULL) {
-        no = procurar_no(&((*arvore)->esquerdo), quant, status, info_escolhido);
+        no = procurar_no(&((*arvore)->left), quant, status, info_escolhido);
 
         if (*info_escolhido == NULL) {
             if ((*arvore)->info1.status == status &&
-                ((*arvore)->info1.numero_final - (*arvore)->info1.numero_inicial + 1) >= quant) {
+                ((*arvore)->info1.num_end - (*arvore)->info1.num_start + 1) >= quant) {
                 *info_escolhido = &((*arvore)->info1);
                 no = *arvore;
             } else {
-                no = procurar_no(&((*arvore)->centro), quant, status, info_escolhido);
+                no = procurar_no(&((*arvore)->center), quant, status, info_escolhido);
                 if ((*arvore)->n_infos == 2) {
                     if ((*arvore)->info2.status == status &&
-                        ((*arvore)->info2.numero_final - (*arvore)->info2.numero_inicial + 1) >= quant) {
+                        ((*arvore)->info2.num_end - (*arvore)->info2.num_start + 1) >= quant) {
                         *info_escolhido = &((*arvore)->info2);
                         no = *arvore;
                     } else if (*info_escolhido == NULL)
-                        no = procurar_no(&((*arvore)->direito), quant, status, info_escolhido);
+                        no = procurar_no(&((*arvore)->right), quant, status, info_escolhido);
                 }
             }
         }
