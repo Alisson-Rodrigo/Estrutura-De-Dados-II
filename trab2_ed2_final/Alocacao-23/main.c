@@ -1,57 +1,87 @@
-#include "arv-23.c"  // Assume que todas as funções e estruturas necessárias estão definidas aqui
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>  // Para suporte a caracteres especiais e acentuação
+#include "23.c"
+#include "alocacao.c"
 
-int main() {
-    setlocale(LC_ALL, "");  // Configura o ambiente para suportar a língua local (acentuação)
-    Memory *root = NULL;  // Raiz da árvore
-    int option;
-    int size, start;
+#define MEMORY_SIZE (1024 * 1024) // Tamanho total da memória (1MB por bloco)
 
-    while (1) {
-        printf("\nMenu de Gerenciamento de Memória:\n");
-        printf("1. Cadastrar Nós\n");
-        printf("2. Exibir Estado da Memória\n");
-        printf("3. Alocar Blocos\n");
-        printf("4. Liberar Blocos\n");
-        printf("5. Sair\n");
-        printf("Escolha uma opção: ");
-        scanf("%d", &option);
+int menu() {
+    int op;
+    printf("\nMENU");
+    printf("\n1 - Alocar Nós");
+    printf("\n2 - Liberar Nós");
+    printf("\n3 - Exibir Nós Endereços)");
+    printf("\n4 - Exibir Nós Em Ordem");
+    printf("\n0 - Sair");
+    printf("\nOpção escolhida: ");
+    scanf("%d", &op);
+    while (getchar() != '\n'); // Limpa o buffer
+    return op;
+}
 
-        switch (option) {
+int main_main() {
+    Arvore23 *arvore = arvore23_criar();
+
+    // Define o tamanho máximo da memória
+    int maximo = MEMORY_SIZE;
+    printf("\nTamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE);
+
+    // Cadastrar os blocos iniciais na árvore
+    int minimo = inicializar_blocos(&arvore, maximo);
+
+    int op, quant_nos;
+    do {
+        op = menu();
+        switch (op) {
             case 1:
-                cadastrar_nos(&root);
+                // Solicitar a quantidade de nós a alocar
+                do {
+                    printf("\nQuantidade de nós a serem alocados: ");
+                    scanf("%d", &quant_nos);
+                    while (getchar() != '\n'); // Limpa o buffer
+                    if (quant_nos < minimo || quant_nos > maximo) {
+                        printf("\nDigite um número entre %d e %d\n", minimo, maximo);
+                    }
+                } while (quant_nos < minimo || quant_nos > maximo);
+
+                gerenciar_bloco_memoria(&arvore, quant_nos, LIVRE);
                 break;
+
             case 2:
-                printf("\nEstado atual da memória:\n");
-                if (root) {
-                    DisplayInfos(root);
-                } else {
-                    printf("Nenhum nó cadastrado.\n");
-                }
+                // Solicitar a quantidade de nós a liberar
+                do {
+                    printf("\nQuantidade de nós a serem liberados: ");
+                    scanf("%d", &quant_nos);
+                    while (getchar() != '\n'); // Limpa o buffer
+                    if (quant_nos < minimo || quant_nos > maximo) {
+                        printf("\nDigite um número entre %d e %d\n", minimo, maximo);
+                    }
+                } while (quant_nos < minimo || quant_nos > maximo);
+
+                gerenciar_bloco_memoria(&arvore, quant_nos, OCUPADO);
                 break;
             case 3:
-                printf("Informe a quantidade de blocos a alocar: ");
-                scanf("%d", &size);
-                alocar_blocos(&root, size);
+                printf("\nExibindo árvore [Em-Ordem]\n");
+                DisplayInfos(arvore);
                 break;
             case 4:
-                printf("Informe o endereço inicial do bloco a ser liberado: ");
-                scanf("%d", &start);
-                printf("Informe a quantidade de blocos a liberar: ");
-                scanf("%d", &size);
-                liberar_blocos(&root, start, size);
+                printf("\nExibindo árvore [Pré-Ordem]\n");
+                arvore23_exibir_ordem(arvore);
                 break;
-            case 5:
-                printf("Saindo do programa...\n");
-                // Liberar toda a memória alocada, se necessário
-                // free_memory(&root);  // Supõe que existe uma função para liberar toda a árvore
-                return 0;
+            case 0:
+                printf("\nFinalizando programa...\n");
+                break;
+
             default:
-                printf("Opção inválida! Tente novamente.\n");
-                break;
+                printf("\nOpção inválida\n");
         }
-    }
+    } while (op != 0);
+
+    arvore23_desalocar(&arvore);
+    return 0;
+}
+
+int main() {
+    main_main();
     return 0;
 }
