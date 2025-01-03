@@ -3,10 +3,9 @@
 #include "23.c"
 #include "alocacao.c"
 
+#define MEMORY_SIZE (1024 * 1024) // Tamanho total da memória (1MB por bloco)
 
-
-int menu()
-{
+int menu() {
     int op;
     printf("\nMENU");
     printf("\n[1] - Alocar Nós");
@@ -15,41 +14,51 @@ int menu()
     printf("\n[4] - Exibir Nós (Em-Ordem)");
     printf("\n[5] - Exibir Nós (Pós-Ordem)");
     printf("\n[0] - Sair");
-    leia_int("\nOpção escolhida: ", &op);
-
+    printf("\nOpção escolhida: ");
+    scanf("%d", &op);
+    while (getchar() != '\n'); // Limpa o buffer
     return op;
 }
 
-int main_main()
-{
-    Arvore23 *arvore;
-    arvore = arvore23_criar();
+int main_main() {
+    Arvore23 *arvore = arvore23_criar();
 
-    int maximo = 0;
+    // Define o tamanho máximo da memória
+    int maximo = MEMORY_SIZE;
+    printf("\nTamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE);
 
-    do
-    {
-        leia_int("Quantidade máxima de Blocos de memória: ", &maximo);
-        if(maximo <= 0)
-            printf("\nDigite uma quantidade positiva!\n\n");
-    } while(maximo <= 0);
-
+    // Cadastrar os blocos iniciais na árvore
     int minimo = cadastrar_nos(&arvore, maximo);
 
     int op, quant_nos;
-    do
-    {
+    do {
         op = menu();
-        
-        switch(op)
-        {
+        switch (op) {
             case 1:
-                leia_numero_no("\nQuantidade de nós a serem alocados: ", &quant_nos, minimo, maximo+1);
+                // Solicitar a quantidade de nós a alocar
+                do {
+                    printf("\nQuantidade de nós a serem alocados: ");
+                    scanf("%d", &quant_nos);
+                    while (getchar() != '\n'); // Limpa o buffer
+                    if (quant_nos < minimo || quant_nos > maximo) {
+                        printf("\nDigite um número entre %d e %d\n", minimo, maximo);
+                    }
+                } while (quant_nos < minimo || quant_nos > maximo);
+
                 alocar_desalocar_no(&arvore, quant_nos, LIVRE);
                 break;
 
             case 2:
-                leia_numero_no("\nQuantidade de nós a serem liberados: ", &quant_nos, minimo, maximo+1);
+                // Solicitar a quantidade de nós a liberar
+                do {
+                    printf("\nQuantidade de nós a serem liberados: ");
+                    scanf("%d", &quant_nos);
+                    while (getchar() != '\n'); // Limpa o buffer
+                    if (quant_nos < minimo || quant_nos > maximo) {
+                        printf("\nDigite um número entre %d e %d\n", minimo, maximo);
+                    }
+                } while (quant_nos < minimo || quant_nos > maximo);
+
                 alocar_desalocar_no(&arvore, quant_nos, OCUPADO);
                 break;
 
@@ -76,15 +85,12 @@ int main_main()
                 printf("\nOpção inválida\n");
         }
     } while (op != 0);
-    
+
     arvore23_desalocar(&arvore);
     return 0;
 }
 
-int main()
-{
-    //main_teste();
+int main() {
     main_main();
-
     return 0;
 }
