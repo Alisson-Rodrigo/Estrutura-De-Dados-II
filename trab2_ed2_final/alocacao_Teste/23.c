@@ -2,6 +2,35 @@
 #include <stdlib.h>
 #include "23.h"
 
+
+void DisplayInfos(Arvore23 *root) {
+    if (root == NULL) {
+        return;  // Se o nó é nulo, retorna sem fazer nada.
+    }
+
+    // Percorre a subárvore esquerda primeiro.
+    if (root->esquerdo) {
+        DisplayInfos(root->esquerdo);
+    }
+
+    // Mostra as informações do nó atual.
+    printf("Começo: %d | Fim: %d | Status: %d\n", root->info1.numero_inicial, root->info1.numero_final, root->info1.status);
+
+    // Percorre a subárvore central.
+    if (root->centro) {
+        DisplayInfos(root->centro);
+    }
+
+    // Se houver uma segunda informação, mostra e percorre a subárvore direita.
+    if (root->n_infos == 2) {
+        printf("Começo: %d | Fim: %d | Status: %d\n", root->info2.numero_inicial, root->info2.numero_final, root->info2.status);
+        if (root->direito) {
+            DisplayInfos(root->direito);
+        }
+    }
+}
+
+
 int eh_folha(Arvore23 no)
 {
     return no.esquerdo == NULL;
@@ -711,25 +740,6 @@ void no23_exibir(Data no)
     // printf("%d -> ", no.numero_inicial);
 }
 
-void arvore23_exibir_pre(Arvore23 *raiz)
-{
-    if(raiz != NULL)
-    {
-        printf("[1º] ");
-        no23_exibir(raiz->info1);
-        if(raiz->n_infos == 2)
-        {
-            printf("[2º] ");
-            no23_exibir(raiz->info2);
-        }
-
-        arvore23_exibir_pre(raiz->esquerdo);
-        arvore23_exibir_pre(raiz->centro);
-        if(raiz->n_infos == 2)
-            arvore23_exibir_pre(raiz->direito);
-    }
-}
-
 void arvore23_exibir_ordem(Arvore23 *raiz)
 {
     if(raiz != NULL)
@@ -744,25 +754,6 @@ void arvore23_exibir_ordem(Arvore23 *raiz)
             printf("[2º] ");
             no23_exibir(raiz->info2);
             arvore23_exibir_ordem(raiz->direito);
-        }
-    }
-}
-
-void arvore23_exibir_pos(Arvore23 *raiz)
-{
-    if(raiz != NULL)
-    {
-        arvore23_exibir_pos(raiz->esquerdo);
-        arvore23_exibir_pos(raiz->centro);
-        if(raiz->n_infos == 2)
-            arvore23_exibir_pos(raiz->direito);
-
-        printf("[1º] ");
-        no23_exibir(raiz->info1);
-        if(raiz->n_infos == 2)
-        {
-            printf("[2º] ");
-            no23_exibir(raiz->info2);
         }
     }
 }

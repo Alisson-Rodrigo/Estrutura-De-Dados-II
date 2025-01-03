@@ -8,12 +8,11 @@
 int menu() {
     int op;
     printf("\nMENU");
-    printf("\n[1] - Alocar Nós");
-    printf("\n[2] - Liberar Nós");
-    printf("\n[3] - Exibir Nós (Pré-Ordem)");
-    printf("\n[4] - Exibir Nós (Em-Ordem)");
-    printf("\n[5] - Exibir Nós (Pós-Ordem)");
-    printf("\n[0] - Sair");
+    printf("\n1 - Alocar Nós");
+    printf("\n2 - Liberar Nós");
+    printf("\n3 - Exibir Nós Endereços)");
+    printf("\n4 - Exibir Nós Em Ordem");
+    printf("\n0 - Sair");
     printf("\nOpção escolhida: ");
     scanf("%d", &op);
     while (getchar() != '\n'); // Limpa o buffer
@@ -61,22 +60,14 @@ int main_main() {
 
                 alocar_desalocar_no(&arvore, quant_nos, OCUPADO);
                 break;
-
             case 3:
-                printf("\nExibindo árvore [Pré-Ordem]\n");
-                arvore23_exibir_pre(arvore);
-                break;
-
-            case 4:
                 printf("\nExibindo árvore [Em-Ordem]\n");
+                DisplayInfos(arvore);
+                break;
+            case 4:
+                printf("\nExibindo árvore [Pré-Ordem]\n");
                 arvore23_exibir_ordem(arvore);
                 break;
-
-            case 5:
-                printf("\nExibindo árvore [Pós-Ordem]\n");
-                arvore23_exibir_pos(arvore);
-                break;
-
             case 0:
                 printf("\nFinalizando programa...\n");
                 break;
