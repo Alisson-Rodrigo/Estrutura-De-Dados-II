@@ -1,5 +1,5 @@
-#ifndef ARVORE23_H
-#define ARVORE23_H
+#ifndef TreeNode23_H
+#define TreeNode23_H
 
 #define OCUPADO 0
 #define LIVRE 1
@@ -14,60 +14,62 @@ typedef struct data
     int status;
 } Data;
 
-typedef struct arvore23
+typedef struct treeNode23
 {
     Data info1;
     Data info2;
     int n_infos;
-    struct arvore23 *left;
-    struct arvore23 *center;
-    struct arvore23 *right;
-} Arvore23;
+    struct treeNode23 *left;
+    struct treeNode23 *center;
+    struct treeNode23 *right;
+} TreeNode23;
 
 
-int eh_folha(Arvore23 no);
+int isLeaf(TreeNode23 no);
 
-Arvore23 *no23_alocar();
+int height_size(TreeNode23 *no);
 
-void no23_desalocar(Arvore23 **no);
+TreeNode23 *no23_alocar();
 
-Arvore23 *no23_criar(Data info, Arvore23 *filho_left, Arvore23 *filho_center);
+void no23_desalocar(TreeNode23 **no);
 
-Data *no23_maior_info(Arvore23 *raiz);
+TreeNode23 *no23_criar(Data info, TreeNode23 *filho_left, TreeNode23 *filho_center);
 
-Arvore23 *arvore23_criar();
+Data *no23_maior_info(TreeNode23 *raiz);
 
-Arvore23 *arvore23_buscar(Arvore23 *raiz, int info);
+TreeNode23 *TreeNode23_criar();
 
-Arvore23 *arvore23_buscar_menor_filho(Arvore23 *raiz, Arvore23 **pai);
+TreeNode23 *TreeNode23_buscar(TreeNode23 *raiz, int info);
 
-Arvore23 *arvore23_buscar_maior_filho(Arvore23 *raiz, Arvore23 **pai, Data **maior_valor);
+TreeNode23 *TreeNode23_buscar_menor_filho(TreeNode23 *raiz, TreeNode23 **pai);
 
-Arvore23 *arvore23_buscar_pai(Arvore23 *raiz, int info);
+TreeNode23 *TreeNode23_buscar_maior_filho(TreeNode23 *raiz, TreeNode23 **pai, Data **maior_valor);
 
-Arvore23 *arvore23_buscar_maior_pai(Arvore23 *raiz, int info);
+TreeNode23 *TreeNode23_buscar_pai(TreeNode23 *raiz, int info);
 
-Arvore23 *arvore23_buscar_menor_pai(Arvore23 *raiz, int info);
+TreeNode23 *TreeNode23_buscar_maior_pai(TreeNode23 *raiz, int info);
 
-void arvore23_desalocar(Arvore23 **raiz);
+TreeNode23 *TreeNode23_buscar_menor_pai(TreeNode23 *raiz, int info);
 
-Arvore23 *arvore23_inserir(Arvore23 **raiz, Data info);
+void TreeNode23_desalocar(TreeNode23 **raiz);
 
-int arvore23_remover1(Arvore23 **raiz, int info, Arvore23 *pai, Arvore23 **origem, Arvore23 **maior);
+TreeNode23 *TreeNode23_inserir(TreeNode23 **raiz, Data info);
 
-int arvore23_remover2(Arvore23 **raiz, int info, Arvore23 *pai, Arvore23 **origem, Arvore23 **maior);
+int TreeNode23_remover1(TreeNode23 **raiz, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior);
 
-int arvore23_remover(Arvore23 **raiz, int info);
+int TreeNode23_remover2(TreeNode23 **raiz, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior);
 
-int arvore23_rebalancear(Arvore23 **raiz, int info, Arvore23 **maior);
+int TreeNode23_remover(TreeNode23 **raiz, int info);
+
+int TreeNode23_rebalancear(TreeNode23 **raiz, int info, TreeNode23 **maior);
 
 void no23_exibir(Data no);
 
-void arvore23_exibir_pre(Arvore23 *raiz);
+void TreeNode23_exibir_pre(TreeNode23 *raiz);
 
-void arvore23_exibir_ordem(Arvore23 *raiz);
+void TreeNode23_exibir_ordem(TreeNode23 *raiz);
 
-void arvore23_exibir_pos(Arvore23 *raiz);
+void TreeNode23_exibir_pos(TreeNode23 *raiz);
 
 #endif
 

@@ -7,7 +7,6 @@
 
 int menu() {
     int op;
-    printf("\nMENU");
     printf("\n1 - Alocar Nós");
     printf("\n2 - Liberar Nós");
     printf("\n3 - Exibir Nós Endereços)");
@@ -19,14 +18,18 @@ int menu() {
     return op;
 }
 
-int main_main() {
-    Arvore23 *arvore = arvore23_criar();
+int main() {
+    TreeNode23 *arvore = TreeNode23_criar();
 
     // Define o tamanho máximo da memória
     int maximo = MEMORY_SIZE;
-    printf("\nTamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE - 1);
 
-    // Cadastrar os blocos iniciais na árvore
+    printf("---------------------------------\n");
+    printf("Alocacao de Memoria - Arvore 2-3\n");
+    printf("---------------------------------\n");
+
+    printf("Tamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE - 1);
+
     int minimo = inicializar_blocos(&arvore, maximo);
 
     int op, quant_nos;
@@ -34,11 +37,10 @@ int main_main() {
         op = menu();
         switch (op) {
             case 1:
-                // Solicitar a quantidade de nós a alocar
                 do {
                     printf("\nQuantidade de nós a serem alocados: ");
                     scanf("%d", &quant_nos);
-                    while (getchar() != '\n'); // Limpa o buffer
+                    while (getchar() != '\n'); 
                     if (quant_nos < minimo || quant_nos > maximo) {
                         printf("\nDigite um número entre %d e %d\n", minimo, maximo);
                     }
@@ -48,11 +50,10 @@ int main_main() {
                 break;
 
             case 2:
-                // Solicitar a quantidade de nós a liberar
                 do {
                     printf("\nQuantidade de nós a serem liberados: ");
                     scanf("%d", &quant_nos);
-                    while (getchar() != '\n'); // Limpa o buffer
+                    while (getchar() != '\n'); 
                     if (quant_nos < minimo || quant_nos > maximo) {
                         printf("\nDigite um número entre %d e %d\n", minimo, maximo);
                     }
@@ -66,7 +67,7 @@ int main_main() {
                 break;
             case 4:
                 printf("\nExibindo árvore [Pré-Ordem]\n");
-                arvore23_exibir_ordem(arvore);
+                TreeNode23_exibir_ordem(arvore);
                 break;
             case 0:
                 printf("\nFinalizando programa...\n");
@@ -77,11 +78,7 @@ int main_main() {
         }
     } while (op != 0);
 
-    arvore23_desalocar(&arvore);
+    TreeNode23_desalocar(&arvore);
     return 0;
 }
 
-int main() {
-    main_main();
-    return 0;
-}
