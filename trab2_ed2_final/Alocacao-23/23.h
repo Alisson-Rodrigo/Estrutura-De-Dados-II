@@ -9,8 +9,6 @@ typedef struct data
 {
     int num_start;
     int num_end;
-    int *end_start;
-    int *end_end;
     int status;
 } Data;
 
