@@ -315,9 +315,9 @@ TreeNode23 *Find_smallest_parent_node(TreeNode23 *root, int info)
     return pai;
 }
 
- int wave_movement(Info saindo, Info *entrada, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **root, TreeNode23 **maior, int (*funcao_remove)(TreeNode23 **, int, TreeNode23 *, TreeNode23 **, TreeNode23 **))
+ int wave_movement(Info saindo, Info *entrada, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **root, TreeNode23 **maior, int (*remove_node)(TreeNode23 **, int, TreeNode23 *, TreeNode23 **, TreeNode23 **))
 {
-    int removeu = funcao_remove(root, saindo.num_start, pai, origem, maior);
+    int removeu = remove_node(root, saindo.num_start, pai, origem, maior);
     *entrada = saindo;
     return removeu;
 }

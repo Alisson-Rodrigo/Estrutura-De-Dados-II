@@ -13,12 +13,12 @@ typedef struct info
 
 typedef struct treeNode23
 {
-    Info info1;
-    Info info2;
-    int n_infos;
     struct treeNode23 *left;
     struct treeNode23 *center;
     struct treeNode23 *right;
+    Info info1;
+    Info info2;
+    int n_infos;
 } TreeNode23;
 
 int isLeaf(TreeNode23 node);

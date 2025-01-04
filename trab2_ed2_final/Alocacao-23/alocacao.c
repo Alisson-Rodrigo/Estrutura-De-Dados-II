@@ -5,7 +5,6 @@
 int initialize_memory_blocks(TreeNode23 **estrutura_memoria, int capacidade_maxima) {
     int current_state;
 
-    // Solicitação do estado inicial
     do {
         printf("\n=== Configuração do Bloco Inicial ===\n");
         printf("Escolha o estado do infoBlock inicial:\n");
@@ -13,18 +12,17 @@ int initialize_memory_blocks(TreeNode23 **estrutura_memoria, int capacidade_maxi
         printf("  [%d] -> Ocupado\n", STATUS_OCCUPIED);
         printf("Digite sua escolha: ");
         scanf("%d", &current_state);
-        while (getchar() != '\n'); // Limpeza do buffer
+        while (getchar() != '\n'); 
         if (current_state != ALLOCATED_STATUS_FREE && current_state != STATUS_OCCUPIED) {
             printf("\n[Erro] Escolha inválida. Por favor, tente novamente.\n");
         }
     } while (current_state != ALLOCATED_STATUS_FREE && current_state != STATUS_OCCUPIED);
 
     Info infoBlock;
-    // Solicitação do endereço inicial
     do {
         printf("\n>>> Insira o endereço inicial do infoBlock: ");
         scanf("%d", &infoBlock.num_start);
-        while (getchar() != '\n'); // Limpeza do buffer
+        while (getchar() != '\n'); 
         if (infoBlock.num_start < 0 || infoBlock.num_start >= capacidade_maxima) {
             printf("\n[Erro] O endereço inicial deve estar entre 0 e %d.\n", capacidade_maxima - 1);
         }
@@ -32,25 +30,22 @@ int initialize_memory_blocks(TreeNode23 **estrutura_memoria, int capacidade_maxi
 
     int endereco_minimo = infoBlock.num_start;
 
-    // Configuração dos blocos subsequentes
     do {
         infoBlock.status = current_state;
 
         do {
             printf("\n>>> Insira o endereço final do infoBlock (deve ser >= %d): ", infoBlock.num_start);
             scanf("%d", &infoBlock.num_end);
-            while (getchar() != '\n'); // Limpeza do buffer
+            while (getchar() != '\n'); 
             if (infoBlock.num_end < infoBlock.num_start || infoBlock.num_end >= capacidade_maxima) {
                 printf("\n[Erro] O endereço final deve estar entre %d e %d.\n", infoBlock.num_start, capacidade_maxima - 1);
             }
         } while (infoBlock.num_end < infoBlock.num_start || infoBlock.num_end >= capacidade_maxima);
 
-        // Inserção do infoBlock na estrutura
         TreeNode23_insert(estrutura_memoria, infoBlock);
 
-        // Atualização do próximo infoBlock
         infoBlock.num_start = infoBlock.num_end + 1;
-        current_state = !current_state; // Alterna entre Livre e Ocupado
+        current_state = !current_state; 
     } while (infoBlock.num_end < (capacidade_maxima - 1));
 
     printf("\n[Sucesso] Blocos inicializados com sucesso!\n");
