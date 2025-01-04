@@ -187,36 +187,36 @@ TreeNode23 *Search_nodo(TreeNode23 *root, int info)
 
 TreeNode23 *Find_min_child_node(TreeNode23 *root, TreeNode23 **pai)
 {
-    TreeNode23 *filho;
-    filho = root;
+    TreeNode23 *childNode;
+    childNode = root;
 
-    while(!isLeaf(*filho))
+    while(!isLeaf(*childNode))
     {
-        *pai = filho;
-        filho = filho->left;
+        *pai = childNode;
+        childNode = childNode->left;
     }
 
-    return filho;
+    return childNode;
 }
 
 TreeNode23 *Find_largest_child_node(TreeNode23 *root, TreeNode23 **pai, Info **maior_valor)
 {
-    TreeNode23 *filho;
-    filho = root;
+    TreeNode23 *childNode;
+    childNode = root;
 
-    while(!isLeaf(*filho))
+    while(!isLeaf(*childNode))
     {
-        *pai = filho;
-        if(filho->n_infos == 1)
-            filho = filho->center;
+        *pai = childNode;
+        if(childNode->n_infos == 1)
+            childNode = childNode->center;
         else
-            filho = filho->right;
+            childNode = childNode->right;
     }
 
-    if(filho != NULL)
-        *maior_valor = getMaxNodeInfo(filho);
+    if(childNode != NULL)
+        *maior_valor = getMaxNodeInfo(childNode);
 
-    return filho;
+    return childNode;
 }
 
 TreeNode23 *Find_parent_node(TreeNode23 *root, int info)
