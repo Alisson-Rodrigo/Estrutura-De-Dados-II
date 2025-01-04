@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "23.c"
+#include "remocao.c"
 #include "alocacao.c"
+
 
 #define MEMORY_SIZE (1024 * 1024) // Tamanho total da memória (1MB por bloco)
 
