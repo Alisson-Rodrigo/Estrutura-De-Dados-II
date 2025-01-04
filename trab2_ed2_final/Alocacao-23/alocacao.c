@@ -71,7 +71,7 @@ TreeNode23 *bloco_menor(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dad
         if (nodo->info1.num_start != info_dados->num_start) {
             menor_bloco = nodo;
         } else {
-            menor_bloco = Search_nodo_menor_pai(*estrutura, info_dados->num_start);
+            menor_bloco = Find_smallest_parent_node(*estrutura, info_dados->num_start);
         }
 
         if (menor_bloco != NULL) {
@@ -82,9 +82,9 @@ TreeNode23 *bloco_menor(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dad
             }
         }
     } else if (nodo->info1.num_start == info_dados->num_start) {
-        menor_bloco = Search_nodo_maior_filho(nodo->left, &pai_temporario, menor_valor);
+        menor_bloco = Find_largest_child_node(nodo->left, &pai_temporario, menor_valor);
     } else {
-        menor_bloco = Search_nodo_maior_filho(nodo->center, &pai_temporario, menor_valor);
+        menor_bloco = Find_largest_child_node(nodo->center, &pai_temporario, menor_valor);
     }
 
     return menor_bloco;
@@ -98,7 +98,7 @@ TreeNode23 *bloco_maior(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dad
         if (nodo->n_infos == 2 && nodo->info1.num_start == info_dados->num_start) {
             maior_bloco = nodo;
         } else {
-            maior_bloco = Search_nodo_maior_pai(*estrutura, info_dados->num_start);
+            maior_bloco = Find_max_parent_node(*estrutura, info_dados->num_start);
         }
 
         if (maior_bloco != NULL) {
@@ -110,9 +110,9 @@ TreeNode23 *bloco_maior(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dad
         }
     } else {
         if (nodo->info1.num_start == info_dados->num_start) {
-            maior_bloco = Search_nodo_menor_filho(nodo->center, &pai_temporario);
+            maior_bloco = Find_min_child_node(nodo->center, &pai_temporario);
         } else {
-            maior_bloco = Search_nodo_menor_filho(nodo->right, &pai_temporario);
+            maior_bloco = Find_min_child_node(nodo->right, &pai_temporario);
         }
 
         if (maior_bloco != NULL) {

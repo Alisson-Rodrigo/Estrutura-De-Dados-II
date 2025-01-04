@@ -159,7 +159,7 @@ TreeNode23 *no23_merge(TreeNode23 *filho1, Info info, TreeNode23 *maior, TreeNod
     return filho1;
 }
 
-Info *no23_maior_info(TreeNode23 *root)
+Info *getMaxNodeInfo(TreeNode23 *root)
 {
     return root->n_infos == 2 ? &(root->info2) : &(root->info1);
 }
@@ -185,7 +185,7 @@ TreeNode23 *Search_nodo(TreeNode23 *root, int info)
     return node;
 }
 
-TreeNode23 *Search_nodo_menor_filho(TreeNode23 *root, TreeNode23 **pai)
+TreeNode23 *Find_min_child_node(TreeNode23 *root, TreeNode23 **pai)
 {
     TreeNode23 *filho;
     filho = root;
@@ -199,7 +199,7 @@ TreeNode23 *Search_nodo_menor_filho(TreeNode23 *root, TreeNode23 **pai)
     return filho;
 }
 
-TreeNode23 *Search_nodo_maior_filho(TreeNode23 *root, TreeNode23 **pai, Info **maior_valor)
+TreeNode23 *Find_largest_child_node(TreeNode23 *root, TreeNode23 **pai, Info **maior_valor)
 {
     TreeNode23 *filho;
     filho = root;
@@ -214,12 +214,12 @@ TreeNode23 *Search_nodo_maior_filho(TreeNode23 *root, TreeNode23 **pai, Info **m
     }
 
     if(filho != NULL)
-        *maior_valor = no23_maior_info(filho);
+        *maior_valor = getMaxNodeInfo(filho);
 
     return filho;
 }
 
-TreeNode23 *Search_nodo_pai(TreeNode23 *root, int info)
+TreeNode23 *Find_parent_node(TreeNode23 *root, int info)
 {
     TreeNode23 *pai;
     pai = NULL;
@@ -229,11 +229,11 @@ TreeNode23 *Search_nodo_pai(TreeNode23 *root, int info)
         if(!isInfo1(*root, info) && !isInfo2(*root, info))
         {
             if(info < root->info1.num_start)
-                pai = Search_nodo_pai(root->left, info);
+                pai = Find_parent_node(root->left, info);
             else if(root->n_infos == 1 || info < root->info2.num_start)
-                pai = Search_nodo_pai(root->center, info);
+                pai = Find_parent_node(root->center, info);
             else
-                pai = Search_nodo_pai(root->right, info);
+                pai = Find_parent_node(root->right, info);
 
             if(pai == NULL)
                 pai = root;
@@ -243,7 +243,7 @@ TreeNode23 *Search_nodo_pai(TreeNode23 *root, int info)
     return pai;
 }
 
-TreeNode23 *Search_nodo_maior_pai(TreeNode23 *root, int info)
+TreeNode23 *Find_max_parent_node(TreeNode23 *root, int info)
 {
     TreeNode23 *pai;
     pai = NULL;
@@ -253,11 +253,11 @@ TreeNode23 *Search_nodo_maior_pai(TreeNode23 *root, int info)
         if(!isInfo1(*root, info) && !isInfo2(*root, info))
         {
             if(info < root->info1.num_start)
-                pai = Search_nodo_maior_pai(root->left, info);
+                pai = Find_max_parent_node(root->left, info);
             else if(root->n_infos == 1 || info < root->info2.num_start)
-                pai = Search_nodo_maior_pai(root->center, info);
+                pai = Find_max_parent_node(root->center, info);
             else
-                pai = Search_nodo_maior_pai(root->right, info);
+                pai = Find_max_parent_node(root->right, info);
 
             if(pai == NULL && ((root->n_infos == 1 && root->info1.num_start > info) || (root->n_infos == 2 && root->info2.num_start > info)))
                 pai = root;
@@ -267,7 +267,7 @@ TreeNode23 *Search_nodo_maior_pai(TreeNode23 *root, int info)
     return pai;
 }
 
-TreeNode23 *Search_nodo_menor_pai(TreeNode23 *root, int info)
+TreeNode23 *Find_smallest_parent_node(TreeNode23 *root, int info)
 {
     TreeNode23 *pai;
     pai = NULL;
@@ -277,11 +277,11 @@ TreeNode23 *Search_nodo_menor_pai(TreeNode23 *root, int info)
         if(!isInfo1(*root, info) && !isInfo2(*root, info))
         {
             if(info < root->info1.num_start)
-                pai = Search_nodo_menor_pai(root->left, info);
+                pai = Find_smallest_parent_node(root->left, info);
             else if(root->n_infos == 1 || info < root->info2.num_start)
-                pai = Search_nodo_menor_pai(root->center, info);
+                pai = Find_smallest_parent_node(root->center, info);
             else
-                pai = Search_nodo_menor_pai(root->right, info);
+                pai = Find_smallest_parent_node(root->right, info);
 
             if(pai == NULL && root->info1.num_start < info)
                 pai = root;

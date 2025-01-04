@@ -31,19 +31,19 @@ void free_nodo(TreeNode23 **node);
 
 TreeNode23 *Create_nodo(Info info, TreeNode23 *filho_left, TreeNode23 *filho_center);
 
-Info *no23_maior_info(TreeNode23 *root);
+Info *getMaxNodeInfo(TreeNode23 *root);
 
 TreeNode23 *Search_nodo(TreeNode23 *root, int info);
 
-TreeNode23 *Search_nodo_menor_filho(TreeNode23 *root, TreeNode23 **pai);
+TreeNode23 *Find_min_child_node(TreeNode23 *root, TreeNode23 **pai);
 
-TreeNode23 *Search_nodo_maior_filho(TreeNode23 *root, TreeNode23 **pai, Info **maior_valor);
+TreeNode23 *Find_largest_child_node(TreeNode23 *root, TreeNode23 **pai, Info **maior_valor);
 
-TreeNode23 *Search_nodo_pai(TreeNode23 *root, int info);
+TreeNode23 *Find_parent_node(TreeNode23 *root, int info);
 
-TreeNode23 *Search_nodo_maior_pai(TreeNode23 *root, int info);
+TreeNode23 *Find_max_parent_node(TreeNode23 *root, int info);
 
-TreeNode23 *Search_nodo_menor_pai(TreeNode23 *root, int info);
+TreeNode23 *Find_smallest_parent_node(TreeNode23 *root, int info);
 
 void TreeNode23_cleanup(TreeNode23 **root);
 
