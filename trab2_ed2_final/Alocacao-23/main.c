@@ -69,7 +69,7 @@ int main() {
                 break;
             case 4:
                 printf("\nExibindo árvore\n");
-                TreeNode23_exibir_ordem(arvore);
+                TreeNode23_print_in_order(arvore);
                 break;
             case 0:
                 printf("\nFinalizando programa...\n");
@@ -80,7 +80,7 @@ int main() {
         }
     } while (op != 0);
 
-    TreeNode23_desalocar(&arvore);
+    TreeNode23_cleanup(&arvore);
     return 0;
 }
 

@@ -315,7 +315,7 @@ TreeNode23 *Search_nodo_menor_pai(TreeNode23 *root, int info)
     return pai;
 }
 
- int movimento_onda(Info saindo, Info *entrada, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **root, TreeNode23 **maior, int (*funcao_remove)(TreeNode23 **, int, TreeNode23 *, TreeNode23 **, TreeNode23 **))
+ int wave_movement(Info saindo, Info *entrada, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **root, TreeNode23 **maior, int (*funcao_remove)(TreeNode23 **, int, TreeNode23 *, TreeNode23 **, TreeNode23 **))
 {
     int removeu = funcao_remove(root, saindo.num_start, pai, origem, maior);
     *entrada = saindo;
@@ -323,21 +323,21 @@ TreeNode23 *Search_nodo_menor_pai(TreeNode23 *root, int info)
 }
 
 
-void TreeNode23_desalocar(TreeNode23 **root)
+void TreeNode23_cleanup(TreeNode23 **root)
 {
     if(*root != NULL)
     {
-        TreeNode23_desalocar(&((*root)->left));
-        TreeNode23_desalocar(&((*root)->center));
+        TreeNode23_cleanup(&((*root)->left));
+        TreeNode23_cleanup(&((*root)->center));
 
         if((*root)->n_infos == 2)
-            TreeNode23_desalocar(&((*root)->right));
+            TreeNode23_cleanup(&((*root)->right));
 
         free_nodo(root);
     }
 }
 
-TreeNode23 *TreeNode23_inserir_no(TreeNode23 **root, Info info, TreeNode23 *pai, Info *up)
+TreeNode23 *TreeNode23_insertNode(TreeNode23 **root, Info info, TreeNode23 *pai, Info *up)
 {
     TreeNode23 *maior;
     maior = NULL;
@@ -363,11 +363,11 @@ TreeNode23 *TreeNode23_inserir_no(TreeNode23 **root, Info info, TreeNode23 *pai,
         else
         {
             if(info.num_start < (*root)->info1.num_start)
-                maior = TreeNode23_inserir_no(&((*root)->left), info, *root, up);
+                maior = TreeNode23_insertNode(&((*root)->left), info, *root, up);
             else if((*root)->n_infos == 1 || info.num_start < (*root)->info2.num_start)
-                maior = TreeNode23_inserir_no(&((*root)->center), info, *root, up);
+                maior = TreeNode23_insertNode(&((*root)->center), info, *root, up);
             else
-                maior = TreeNode23_inserir_no(&((*root)->right), info, *root, up);
+                maior = TreeNode23_insertNode(&((*root)->right), info, *root, up);
 
             if(maior != NULL)
             {
@@ -394,67 +394,65 @@ TreeNode23 *TreeNode23_inserir_no(TreeNode23 **root, Info info, TreeNode23 *pai,
     return maior;
 }
 
-TreeNode23 *TreeNode23_inserir(TreeNode23 **root, Info info)
+TreeNode23 *TreeNode23_insert(TreeNode23 **root, Info info)
 {
     Info up;
-    return TreeNode23_inserir_no(root, info, NULL, &up);
+    return TreeNode23_insertNode(root, info, NULL, &up);
 }
 
-
-
- int balanceamento(TreeNode23 **root, TreeNode23 *filho1, TreeNode23 **filho2, Info info, TreeNode23 **maior)
+ int balanceTree(TreeNode23 **root, TreeNode23 *filho1, TreeNode23 **filho2, Info info, TreeNode23 **maior)
 {
-    int balanceou = 0;
+    int isBalanced = 0;
     if(*filho2 == NULL || (*filho2)->n_infos == 0)
     {
         if(*filho2 != NULL)
             free_nodo(filho2);
 
         *maior = no23_merge(filho1, info, *maior, root);
-        balanceou = 1;
+        isBalanced = 1;
     }
-    return balanceou;
+    return isBalanced;
 }
 
-int TreeNode23_rebalancear(TreeNode23 **root, int info, TreeNode23 **maior)
+int TreeNode23_adjustBalance(TreeNode23 **root, int info, TreeNode23 **maior)
 {
-    int balanceou = 0;
+    int isBalanced = 0;
     if(*root != NULL)
     {
         if(!isLeaf(**root))
         {
             if(info < (*root)->info1.num_start)
-                balanceou = TreeNode23_rebalancear(&((*root)->left), info, maior);
+                isBalanced = TreeNode23_adjustBalance(&((*root)->left), info, maior);
             else if((*root)->n_infos == 1 || info < (*root)->info2.num_start)
             {
                 if((*root)->left->n_infos == 2 && !confirm_remove((*root)->center))
-                    balanceou = -1;
+                    isBalanced = -1;
                 else
-                    balanceou = TreeNode23_rebalancear(&((*root)->center), info, maior);
+                    isBalanced = TreeNode23_adjustBalance(&((*root)->center), info, maior);
             }
             else
             {
                 if((*root)->center->n_infos == 2 && !confirm_remove((*root)->right))
-                    balanceou = -1;
+                    isBalanced = -1;
                 else
-                    balanceou = TreeNode23_rebalancear(&((*root)->right), info, maior);
+                    isBalanced = TreeNode23_adjustBalance(&((*root)->right), info, maior);
             }
 
-            if(balanceou != -1)
+            if(isBalanced != -1)
             {
                 if((*root)->n_infos == 1)
-                    balanceou = balanceamento(root, (*root)->left, &((*root)->center), (*root)->info1, maior);
+                    isBalanced = balanceTree(root, (*root)->left, &((*root)->center), (*root)->info1, maior);
                 else if((*root)->n_infos == 2)
-                    balanceou = balanceamento(root, (*root)->center, &((*root)->right), (*root)->info2, maior);
+                    isBalanced = balanceTree(root, (*root)->center, &((*root)->right), (*root)->info2, maior);
             }
             
         }
     }
 
-    return balanceou;
+    return isBalanced;
 }
 
-void no23_exibir(Info node)
+void showNodeInfo23(Info node)
 {
     // Verifica se o intervalo é válido
     if (node.num_start > node.num_end) {
@@ -481,20 +479,20 @@ void no23_exibir(Info node)
 }
 
 
-void TreeNode23_exibir_ordem(TreeNode23 *root)
+void TreeNode23_print_in_order(TreeNode23 *root)
 {
     if(root != NULL)
     {
-        TreeNode23_exibir_ordem(root->left);
+        TreeNode23_print_in_order(root->left);
         printf("[1º] ");
-        no23_exibir(root->info1);
-        TreeNode23_exibir_ordem(root->center);
+        showNodeInfo23(root->info1);
+        TreeNode23_print_in_order(root->center);
 
         if(root->n_infos == 2)
         {
             printf("[2º] ");
-            no23_exibir(root->info2);
-            TreeNode23_exibir_ordem(root->right);
+            showNodeInfo23(root->info2);
+            TreeNode23_print_in_order(root->right);
         }
     }
 }

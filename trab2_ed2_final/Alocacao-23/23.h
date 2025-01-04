@@ -45,23 +45,23 @@ TreeNode23 *Search_nodo_maior_pai(TreeNode23 *root, int info);
 
 TreeNode23 *Search_nodo_menor_pai(TreeNode23 *root, int info);
 
-void TreeNode23_desalocar(TreeNode23 **root);
+void TreeNode23_cleanup(TreeNode23 **root);
 
-TreeNode23 *TreeNode23_inserir(TreeNode23 **root, Info info);
+TreeNode23 *TreeNode23_insert(TreeNode23 **root, Info info);
 
-int TreeNode23_remove1(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior);
+int RemoveNodeFrom23Tree(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior);
 
-int TreeNode23_remove2(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior);
+int TreeNode23_Delete(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior);
 
 int TreeNode23_remove(TreeNode23 **root, int info);
 
-int TreeNode23_rebalancear(TreeNode23 **root, int info, TreeNode23 **maior);
+int TreeNode23_adjustBalance(TreeNode23 **root, int info, TreeNode23 **maior);
 
-void no23_exibir(Info node);
+void showNodeInfo23(Info node);
 
 void TreeNode23_exibir_pre(TreeNode23 *root);
 
-void TreeNode23_exibir_ordem(TreeNode23 *root);
+void TreeNode23_print_in_order(TreeNode23 *root);
 
 void TreeNode23_exibir_pos(TreeNode23 *root);
 

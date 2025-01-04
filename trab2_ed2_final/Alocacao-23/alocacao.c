@@ -46,7 +46,7 @@ int inicializar_blocos(TreeNode23 **estrutura_memoria, int capacidade_maxima) {
         } while (bloco.num_end < bloco.num_start || bloco.num_end >= capacidade_maxima);
 
         // Inserção do bloco na estrutura
-        TreeNode23_inserir(estrutura_memoria, bloco);
+        TreeNode23_insert(estrutura_memoria, bloco);
 
         // Atualização do próximo bloco
         bloco.num_start = bloco.num_end + 1;
@@ -137,7 +137,7 @@ void alterar_no_arvore(TreeNode23 **estrutura, TreeNode23 *nodo_atual, Info *inf
             novo_dado.status = !(info_atual->status);
 
             info_atual->num_start += tamanho;
-            TreeNode23_inserir(estrutura, novo_dado);
+            TreeNode23_insert(estrutura, novo_dado);
         } else {
             menor_dado->num_end += tamanho;
             info_atual->num_start += tamanho;
@@ -199,7 +199,7 @@ int gerenciar_bloco_memoria(TreeNode23 **estrutura, int tamanho, int estado_atua
 
     if (bloco_alvo != NULL) {
         printf("\nDetalhes do bloco selecionado:\n");
-        no23_exibir(*bloco_alvo);
+        showNodeInfo23(*bloco_alvo);
         alterar_no_arvore(estrutura, nodo_alvo, bloco_alvo, tamanho);
     } else {
         printf("\nNão foram encontrados blocos disponíveis com o critério especificado.\n");

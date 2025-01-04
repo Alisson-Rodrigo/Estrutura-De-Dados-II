@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "23.h"
 
-int TreeNode23_remove_no_interno1(TreeNode23 **origem, TreeNode23* root, Info *info, TreeNode23 *filho1, TreeNode23 *filho2, TreeNode23 **maior)
+int TreeNode23_remove_internal_node(TreeNode23 **origem, TreeNode23* root, Info *info, TreeNode23 *filho1, TreeNode23 *filho2, TreeNode23 **maior)
 {
     int removeu;
     TreeNode23 *filho, *pai;
@@ -20,13 +20,13 @@ int TreeNode23_remove_no_interno1(TreeNode23 **origem, TreeNode23* root, Info *i
     else
     {
         filho = Search_nodo_menor_filho(filho2, &pai);
-        removeu = movimento_onda(filho->info1, info, pai, origem, &filho, maior, TreeNode23_remove1);
+        removeu = wave_movement(filho->info1, info, pai, origem, &filho, maior, RemoveNodeFrom23Tree);
     }
 
     return removeu;
 }
 
- int TreeNode23_remove_no_interno2(TreeNode23 **origem, TreeNode23* root, Info *info, TreeNode23 *filho1, TreeNode23 *filho2, TreeNode23 **maior)
+ int TreeNode23_delete_internal_node(TreeNode23 **origem, TreeNode23* root, Info *info, TreeNode23 *filho1, TreeNode23 *filho2, TreeNode23 **maior)
 {
     int removeu;
     TreeNode23 *filho, *pai;
@@ -45,13 +45,13 @@ int TreeNode23_remove_no_interno1(TreeNode23 **origem, TreeNode23* root, Info *i
     else
     {
         filho = Search_nodo_maior_filho(filho2, &pai, &info_filho);
-        removeu = movimento_onda(*info_filho, info, pai, origem, &filho, maior, TreeNode23_remove2);
+        removeu = wave_movement(*info_filho, info, pai, origem, &filho, maior, TreeNode23_Delete);
     }
 
     return removeu;
 }
 
-int TreeNode23_remove1(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior)
+int RemoveNodeFrom23Tree(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior)
 {
     int removeu = 0;
 
@@ -89,7 +89,7 @@ int TreeNode23_remove1(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 
                             else 
                                 info_pai = pai->info2;
 
-                            removeu = movimento_onda(info_pai, &((*root)->info1), pai_aux, origem, &pai, maior, TreeNode23_remove1);
+                            removeu = wave_movement(info_pai, &((*root)->info1), pai_aux, origem, &pai, maior, RemoveNodeFrom23Tree);
                         }
                         else // Filho do center (com pai de 1 info) ou da direita
                         {
@@ -121,31 +121,31 @@ int TreeNode23_remove1(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 
 
                                 TreeNode23 *avo;
                                 avo = Search_nodo_pai(*origem, info_pai.num_start);
-                                removeu = movimento_onda(info_pai, &((*root)->info1), avo, origem, &pai_aux, maior, TreeNode23_remove1);
+                                removeu = wave_movement(info_pai, &((*root)->info1), avo, origem, &pai_aux, maior, RemoveNodeFrom23Tree);
                             }
                         }
                     }
                 }
             }
             else if(info2)
-                removeu = TreeNode23_remove_no_interno1(origem, *root, &((*root)->info2), (*root)->center, (*root)->right, maior);
+                removeu = TreeNode23_remove_internal_node(origem, *root, &((*root)->info2), (*root)->center, (*root)->right, maior);
             else if(info1)
-                removeu = TreeNode23_remove_no_interno1(origem, *root, &((*root)->info1), (*root)->left, (*root)->center, maior);
+                removeu = TreeNode23_remove_internal_node(origem, *root, &((*root)->info1), (*root)->left, (*root)->center, maior);
         }
         else
         {
             if(info < (*root)->info1.num_start)
-                removeu = TreeNode23_remove1(&(*root)->left, info, *root, origem, maior);
+                removeu = RemoveNodeFrom23Tree(&(*root)->left, info, *root, origem, maior);
             else if((*root)->n_infos == 1 || info < (*root)->info2.num_start)
-                removeu = TreeNode23_remove1(&(*root)->center, info, *root, origem, maior);
+                removeu = RemoveNodeFrom23Tree(&(*root)->center, info, *root, origem, maior);
             else
-                removeu = TreeNode23_remove1(&(*root)->right, info, *root, origem, maior);
+                removeu = RemoveNodeFrom23Tree(&(*root)->right, info, *root, origem, maior);
         }
     }
     return removeu;
 }
 
-int TreeNode23_remove2(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior)
+int TreeNode23_Delete(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **maior)
 {
     int removeu = 0;
 
@@ -183,7 +183,7 @@ int TreeNode23_remove2(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 
                             else 
                                 info_pai = pai->info2;
 
-                            removeu = movimento_onda(info_pai, &((*root)->info1), pai_aux, origem, &pai, maior, TreeNode23_remove2);
+                            removeu = wave_movement(info_pai, &((*root)->info1), pai_aux, origem, &pai, maior, TreeNode23_Delete);
                         }
                         else // Filho da esquerda
                         {
@@ -206,25 +206,25 @@ int TreeNode23_remove2(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 
                                     info_pai = pai_aux->info1;
 
                                 avo = Search_nodo_pai(*origem, info_pai.num_start);
-                                removeu = movimento_onda(info_pai, &((*root)->info1), avo, origem, &pai_aux, maior, TreeNode23_remove2);
+                                removeu = wave_movement(info_pai, &((*root)->info1), avo, origem, &pai_aux, maior, TreeNode23_Delete);
                             }
                         }
                     }
                 }
             }
             else if(info2)
-                removeu = TreeNode23_remove_no_interno2(origem, *root, &((*root)->info2), (*root)->right, (*root)->center, maior);
+                removeu = TreeNode23_delete_internal_node(origem, *root, &((*root)->info2), (*root)->right, (*root)->center, maior);
             else if(info1)
-                removeu = TreeNode23_remove_no_interno2(origem, *root, &((*root)->info1), (*root)->center, (*root)->left, maior);
+                removeu = TreeNode23_delete_internal_node(origem, *root, &((*root)->info1), (*root)->center, (*root)->left, maior);
         }
         else
         {
             if(info < (*root)->info1.num_start)
-                removeu = TreeNode23_remove2(&(*root)->left, info, *root, origem, maior);
+                removeu = TreeNode23_Delete(&(*root)->left, info, *root, origem, maior);
             else if((*root)->n_infos == 1 || info < (*root)->info2.num_start)
-                removeu = TreeNode23_remove2(&(*root)->center, info, *root, origem, maior);
+                removeu = TreeNode23_Delete(&(*root)->center, info, *root, origem, maior);
             else
-                removeu = TreeNode23_remove2(&(*root)->right, info, *root, origem, maior);
+                removeu = TreeNode23_Delete(&(*root)->right, info, *root, origem, maior);
         }
     }
     return removeu;
@@ -233,14 +233,14 @@ int TreeNode23_remove2(TreeNode23 **root, int info, TreeNode23 *pai, TreeNode23 
 int TreeNode23_remove(TreeNode23 **root, int info)
 {   
     TreeNode23 *maior, *posicao_juncao;
-    int removeu = TreeNode23_remove1(root, info, NULL, root, &posicao_juncao);
+    int removeu = RemoveNodeFrom23Tree(root, info, NULL, root, &posicao_juncao);
 
     if(removeu == -1)
     {
         removeu = 1;
         Info valor_juncao = *(no23_maior_info(posicao_juncao));
         maior = NULL;
-        int removeu_aux = TreeNode23_rebalancear(root, valor_juncao.num_start, &maior);
+        int removeu_aux = TreeNode23_adjustBalance(root, valor_juncao.num_start, &maior);
         
         if(removeu_aux == -1)
         {
@@ -253,17 +253,17 @@ int TreeNode23_remove(TreeNode23 **root, int info)
             else
                 entrada = &(posicao_juncao->right->info1);
 
-            removeu_aux = movimento_onda(valor_juncao, entrada, pai, root, &posicao_juncao, &posicao_juncao2, TreeNode23_remove2);
+            removeu_aux = wave_movement(valor_juncao, entrada, pai, root, &posicao_juncao, &posicao_juncao2, TreeNode23_Delete);
 
             if(removeu_aux == -1)
             {
                 valor_juncao = posicao_juncao2->info1;
                 pai = Search_nodo_pai(*root, valor_juncao.num_start);
-                removeu_aux = movimento_onda(valor_juncao, &(posicao_juncao2->left->info1), pai, root, &posicao_juncao2, &posicao_juncao, TreeNode23_remove1);
+                removeu_aux = wave_movement(valor_juncao, &(posicao_juncao2->left->info1), pai, root, &posicao_juncao2, &posicao_juncao, RemoveNodeFrom23Tree);
 
                 valor_juncao = *(no23_maior_info(posicao_juncao));
                 maior = NULL;
-                removeu_aux = TreeNode23_rebalancear(root, valor_juncao.num_start, &maior);
+                removeu_aux = TreeNode23_adjustBalance(root, valor_juncao.num_start, &maior);
             }
         }
 
