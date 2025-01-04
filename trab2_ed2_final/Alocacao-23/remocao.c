@@ -96,7 +96,7 @@ int RemoveNodeFrom23Tree(TreeNode23 **root, int info, TreeNode23 *parentNode, Tr
                             parent_node_aux = Find_max_parent_node(*treeSource, (*root)->info1.num_start);
 
                             TreeNode23 *menor_pai;
-                            menor_pai = Search_nodo_menor_pai_2_infos(*treeSource, (*root)->info1.num_start);
+                            menor_pai = Find_smallest_parent_with_two_info(*treeSource, (*root)->info1.num_start);
 
 
                             if(parent_node_aux != NULL)
@@ -190,7 +190,7 @@ int TreeNode23_Delete(TreeNode23 **root, int info, TreeNode23 *parentNode, TreeN
                             parent_node_aux = Find_smallest_parent_node(*treeSource, (*root)->info1.num_start);
 
                             TreeNode23 *menor_pai;
-                            menor_pai = Search_nodo_menor_pai_2_infos(*treeSource, (*root)->info1.num_start);
+                            menor_pai = Find_smallest_parent_with_two_info(*treeSource, (*root)->info1.num_start);
 
                             TreeNode23 *avo;
                             if(parent_node_aux == NULL || (parent_node_aux != parentNode && menor_pai != NULL))

@@ -291,7 +291,7 @@ TreeNode23 *Find_smallest_parent_node(TreeNode23 *root, int info)
     return pai;
 }
 
- TreeNode23 *Search_nodo_menor_pai_2_infos(TreeNode23 *root, int info)
+ TreeNode23 *Find_smallest_parent_with_two_info(TreeNode23 *root, int info)
 {
     TreeNode23 *pai;
     pai = NULL;
@@ -301,11 +301,11 @@ TreeNode23 *Find_smallest_parent_node(TreeNode23 *root, int info)
         if(!isInfo1(*root, info) && !isInfo2(*root, info))
         {
             if(info < root->info1.num_start)
-                pai = Search_nodo_menor_pai_2_infos(root->left, info);
+                pai = Find_smallest_parent_with_two_info(root->left, info);
             else if(root->n_infos == 1 || info < root->info2.num_start)
-                pai = Search_nodo_menor_pai_2_infos(root->center, info);
+                pai = Find_smallest_parent_with_two_info(root->center, info);
             else
-                pai = Search_nodo_menor_pai_2_infos(root->right, info);
+                pai = Find_smallest_parent_with_two_info(root->right, info);
 
             if(pai == NULL && root->n_infos == 2 && root->info2.num_start < info)
                 pai = root;
