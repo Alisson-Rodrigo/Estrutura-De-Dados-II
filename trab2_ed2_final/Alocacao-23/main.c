@@ -4,7 +4,6 @@
 #include "remocao.c"
 #include "alocacao.c"
 
-
 #define MEMORY_SIZE (1024 * 1024) // Tamanho total da memória (1MB por bloco)
 
 int menu() {
