@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "23.h"
 
-int inicializar_blocos(TreeNode23 **estrutura_memoria, int capacidade_maxima) {
+int initialize_memory_blocks(TreeNode23 **estrutura_memoria, int capacidade_maxima) {
     int estado_inicial;
 
     // Solicitação do estado inicial
@@ -63,7 +63,7 @@ void merge_no(TreeNode23 **root, int *num_end, int limite, int valor_remover) {
     TreeNode23_remove(root, valor_remover);
 }
 
-TreeNode23 *bloco_menor(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dados, Info **menor_valor) {
+TreeNode23 *find_smallest_block(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dados, Info **menor_valor) {
     TreeNode23 *menor_bloco, *pai_temporario;
     *menor_valor = NULL;
 
@@ -90,7 +90,7 @@ TreeNode23 *bloco_menor(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dad
     return menor_bloco;
 }
 
-TreeNode23 *bloco_maior(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dados, Info **maior_valor) {
+TreeNode23 *find_largest_block(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dados, Info **maior_valor) {
     TreeNode23 *maior_bloco, *pai_temporario;
     *maior_valor = NULL;
 
@@ -123,11 +123,11 @@ TreeNode23 *bloco_maior(TreeNode23 **estrutura, TreeNode23 *nodo, Info *info_dad
     return maior_bloco;
 }
 
-void alterar_no_arvore(TreeNode23 **estrutura, TreeNode23 *nodo_atual, Info *info_atual, int tamanho) {
+void adjust_node_in_tree(TreeNode23 **estrutura, TreeNode23 *nodo_atual, Info *info_atual, int tamanho) {
     TreeNode23 *menor_bloco;
     Info *menor_dado = NULL;
 
-    menor_bloco = bloco_menor(estrutura, nodo_atual, info_atual, &menor_dado);
+    menor_bloco = find_smallest_block(estrutura, nodo_atual, info_atual, &menor_dado);
 
     if (tamanho < (info_atual->num_end - info_atual->num_start + 1)) {
         if (menor_bloco == NULL) {
@@ -146,7 +146,7 @@ void alterar_no_arvore(TreeNode23 **estrutura, TreeNode23 *nodo_atual, Info *inf
         TreeNode23 *maior_bloco;
         Info *maior_dado = NULL;
 
-        maior_bloco = bloco_maior(estrutura, nodo_atual, info_atual, &maior_dado);
+        maior_bloco = find_largest_block(estrutura, nodo_atual, info_atual, &maior_dado);
 
         if (menor_bloco == NULL && maior_bloco == NULL) {
             info_atual->status = !(info_atual->status);
@@ -165,10 +165,10 @@ void alterar_no_arvore(TreeNode23 **estrutura, TreeNode23 *nodo_atual, Info *inf
     }
 }
 
-TreeNode23 *procurar_no(TreeNode23 **arvore, int quant, int status, Info **info_escolhido) {
+TreeNode23 *search_node(TreeNode23 **arvore, int quant, int status, Info **info_escolhido) {
     TreeNode23 *node;
     if (*arvore != NULL) {
-        node = procurar_no(&((*arvore)->left), quant, status, info_escolhido);
+        node = search_node(&((*arvore)->left), quant, status, info_escolhido);
 
         if (*info_escolhido == NULL) {
             if ((*arvore)->info1.status == status &&
@@ -176,14 +176,14 @@ TreeNode23 *procurar_no(TreeNode23 **arvore, int quant, int status, Info **info_
                 *info_escolhido = &((*arvore)->info1);
                 node = *arvore;
             } else {
-                node = procurar_no(&((*arvore)->center), quant, status, info_escolhido);
+                node = search_node(&((*arvore)->center), quant, status, info_escolhido);
                 if ((*arvore)->n_infos == 2) {
                     if ((*arvore)->info2.status == status &&
                         ((*arvore)->info2.num_end - (*arvore)->info2.num_start + 1) >= quant) {
                         *info_escolhido = &((*arvore)->info2);
                         node = *arvore;
                     } else if (*info_escolhido == NULL)
-                        node = procurar_no(&((*arvore)->right), quant, status, info_escolhido);
+                        node = search_node(&((*arvore)->right), quant, status, info_escolhido);
                 }
             }
         }
@@ -193,14 +193,14 @@ TreeNode23 *procurar_no(TreeNode23 **arvore, int quant, int status, Info **info_
     return node;
 }
 
-int gerenciar_bloco_memoria(TreeNode23 **estrutura, int tamanho, int estado_atual) {
+int manage_memory_block(TreeNode23 **estrutura, int tamanho, int estado_atual) {
     Info *bloco_alvo = NULL;
-    TreeNode23 *nodo_alvo = procurar_no(estrutura, tamanho, estado_atual, &bloco_alvo);
+    TreeNode23 *nodo_alvo = search_node(estrutura, tamanho, estado_atual, &bloco_alvo);
 
     if (bloco_alvo != NULL) {
         printf("\nDetalhes do bloco selecionado:\n");
         showNodeInfo23(*bloco_alvo);
-        alterar_no_arvore(estrutura, nodo_alvo, bloco_alvo, tamanho);
+        adjust_node_in_tree(estrutura, nodo_alvo, bloco_alvo, tamanho);
     } else {
         printf("\nNão foram encontrados blocos disponíveis com o critério especificado.\n");
     }
