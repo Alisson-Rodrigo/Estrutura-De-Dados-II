@@ -9,15 +9,15 @@ int inicializar_blocos(TreeNode23 **estrutura_memoria, int capacidade_maxima) {
     do {
         printf("\n=== Configuração do Bloco Inicial ===\n");
         printf("Escolha o estado do bloco inicial:\n");
-        printf("  [%d] -> Disponível\n", LIVRE);
-        printf("  [%d] -> Ocupado\n", OCUPADO);
+        printf("  [%d] -> Disponível\n", ALLOCATED_STATUS_FREE);
+        printf("  [%d] -> Ocupado\n", STATUS_OCCUPIED);
         printf("Digite sua escolha: ");
         scanf("%d", &estado_inicial);
         while (getchar() != '\n'); // Limpeza do buffer
-        if (estado_inicial != LIVRE && estado_inicial != OCUPADO) {
+        if (estado_inicial != ALLOCATED_STATUS_FREE && estado_inicial != STATUS_OCCUPIED) {
             printf("\n[Erro] Escolha inválida. Por favor, tente novamente.\n");
         }
-    } while (estado_inicial != LIVRE && estado_inicial != OCUPADO);
+    } while (estado_inicial != ALLOCATED_STATUS_FREE && estado_inicial != STATUS_OCCUPIED);
 
     Info bloco;
     // Solicitação do endereço inicial

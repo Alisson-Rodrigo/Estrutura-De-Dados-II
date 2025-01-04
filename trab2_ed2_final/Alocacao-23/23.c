@@ -464,16 +464,16 @@ void showNodeInfo23(Info node)
     printf("Bloco de [%d] até [%d] - Status: %s\n",
            node.num_start,
            node.num_end,
-           node.status == LIVRE ? "Livre" : node.status == OCUPADO ? "Ocupado" : "Desconhecido");
+           node.status == ALLOCATED_STATUS_FREE ? "Livre" : node.status == STATUS_OCCUPIED ? "Ocupado" : "Desconhecido");
 
     // Informações adicionais para depuração
     printf("Informacoes adicionais:\n");
     printf("  Inicio: %d\n", node.num_start);
     printf("  Fim: %d\n", node.num_end);
-    printf("  Status: %s\n", node.status == LIVRE ? "Livre" : node.status == OCUPADO ? "Ocupado" : "Desconhecido");
+    printf("  Status: %s\n", node.status == ALLOCATED_STATUS_FREE ? "Livre" : node.status == STATUS_OCCUPIED ? "Ocupado" : "Desconhecido");
 
     // Caso queira exibir mais informações ou mensagens de validação
-    if (node.status != LIVRE && node.status != OCUPADO) {
+    if (node.status != ALLOCATED_STATUS_FREE && node.status != STATUS_OCCUPIED) {
         printf("  Aviso: Status desconhecido encontrado no no\n");
     }
 }

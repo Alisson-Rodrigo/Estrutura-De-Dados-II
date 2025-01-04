@@ -1,8 +1,8 @@
 #ifndef TreeNode23_H
 #define TreeNode23_H
 
-#define OCUPADO 0
-#define LIVRE 1
+#define STATUS_OCCUPIED 0
+#define ALLOCATED_STATUS_FREE 1
 
 typedef struct info
 {
@@ -59,11 +59,8 @@ int TreeNode23_adjustBalance(TreeNode23 **root, int info, TreeNode23 **maior);
 
 void showNodeInfo23(Info node);
 
-void TreeNode23_exibir_pre(TreeNode23 *root);
-
 void TreeNode23_print_in_order(TreeNode23 *root);
 
-void TreeNode23_exibir_pos(TreeNode23 *root);
 
 #endif
 

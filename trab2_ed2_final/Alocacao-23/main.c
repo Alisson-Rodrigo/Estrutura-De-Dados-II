@@ -48,7 +48,7 @@ int main() {
                     }
                 } while (quant_nos < minimo || quant_nos > maximo);
 
-                gerenciar_bloco_memoria(&arvore, quant_nos, LIVRE);
+                gerenciar_bloco_memoria(&arvore, quant_nos, ALLOCATED_STATUS_FREE);
                 break;
 
             case 2:
@@ -61,7 +61,7 @@ int main() {
                     }
                 } while (quant_nos < minimo || quant_nos > maximo);
 
-                gerenciar_bloco_memoria(&arvore, quant_nos, OCUPADO);
+                gerenciar_bloco_memoria(&arvore, quant_nos, STATUS_OCCUPIED);
                 break;
             case 3:
                 printf("\nExibindo Enderecos\n");
