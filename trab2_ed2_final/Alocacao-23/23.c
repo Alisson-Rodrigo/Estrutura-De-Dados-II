@@ -60,27 +60,27 @@ TreeNode23 *Create_nodo(Info info, TreeNode23 *filho_left, TreeNode23 *filho_cen
 
  TreeNode23 *SplitNode(TreeNode23 *node, Info info, Info *up, TreeNode23 *filho_maior)
 {
-    TreeNode23 *maior;
+    TreeNode23 *largestNode;
     if(info.num_start > node->info2.num_start)
     {
         *up = node->info2;
-        maior = Create_nodo(info, node->right, filho_maior);
+        largestNode = Create_nodo(info, node->right, filho_maior);
     }
     else if(info.num_start > node->info1.num_start)
     {
         *up = info;
-        maior = Create_nodo(node->info2, filho_maior, node->right);
+        largestNode = Create_nodo(node->info2, filho_maior, node->right);
     }
     else
     {
         *up = node->info1;
-        maior = Create_nodo(node->info2, node->center, node->right);
+        largestNode = Create_nodo(node->info2, node->center, node->right);
         node->info1 = info;
         node->center = filho_maior;
     }
     node->n_infos = 1;
 
-    return maior;
+    return largestNode;
 }
 
 
@@ -147,9 +147,9 @@ int confirm_remove(TreeNode23 *root)
     return confirm;
 }
 
-TreeNode23 *no23_merge(TreeNode23 *filho1, Info info, TreeNode23 *maior, TreeNode23 **root)
+TreeNode23 *no23_merge(TreeNode23 *filho1, Info info, TreeNode23 *largestNode, TreeNode23 **root)
 {
-    add_info(filho1, info, maior);
+    add_info(filho1, info, largestNode);
 
     (*root)->n_infos--;
 
@@ -185,28 +185,28 @@ TreeNode23 *Search_nodo(TreeNode23 *root, int info)
     return node;
 }
 
-TreeNode23 *Find_min_child_node(TreeNode23 *root, TreeNode23 **pai)
+TreeNode23 *Find_min_child_node(TreeNode23 *root, TreeNode23 **parentNode)
 {
     TreeNode23 *childNode;
     childNode = root;
 
     while(!isLeaf(*childNode))
     {
-        *pai = childNode;
+        *parentNode = childNode;
         childNode = childNode->left;
     }
 
     return childNode;
 }
 
-TreeNode23 *Find_largest_child_node(TreeNode23 *root, TreeNode23 **pai, Info **maior_valor)
+TreeNode23 *Find_largest_child_node(TreeNode23 *root, TreeNode23 **parentNode, Info **maior_valor)
 {
     TreeNode23 *childNode;
     childNode = root;
 
     while(!isLeaf(*childNode))
     {
-        *pai = childNode;
+        *parentNode = childNode;
         if(childNode->n_infos == 1)
             childNode = childNode->center;
         else
@@ -221,105 +221,105 @@ TreeNode23 *Find_largest_child_node(TreeNode23 *root, TreeNode23 **pai, Info **m
 
 TreeNode23 *Find_parent_node(TreeNode23 *root, int info)
 {
-    TreeNode23 *pai;
-    pai = NULL;
+    TreeNode23 *parentNode;
+    parentNode = NULL;
 
     if(root != NULL)
     {
         if(!isInfo1(*root, info) && !isInfo2(*root, info))
         {
             if(info < root->info1.num_start)
-                pai = Find_parent_node(root->left, info);
+                parentNode = Find_parent_node(root->left, info);
             else if(root->n_infos == 1 || info < root->info2.num_start)
-                pai = Find_parent_node(root->center, info);
+                parentNode = Find_parent_node(root->center, info);
             else
-                pai = Find_parent_node(root->right, info);
+                parentNode = Find_parent_node(root->right, info);
 
-            if(pai == NULL)
-                pai = root;
+            if(parentNode == NULL)
+                parentNode = root;
         }
     }
 
-    return pai;
+    return parentNode;
 }
 
 TreeNode23 *Find_max_parent_node(TreeNode23 *root, int info)
 {
-    TreeNode23 *pai;
-    pai = NULL;
+    TreeNode23 *parentNode;
+    parentNode = NULL;
 
     if(root != NULL)
     {
         if(!isInfo1(*root, info) && !isInfo2(*root, info))
         {
             if(info < root->info1.num_start)
-                pai = Find_max_parent_node(root->left, info);
+                parentNode = Find_max_parent_node(root->left, info);
             else if(root->n_infos == 1 || info < root->info2.num_start)
-                pai = Find_max_parent_node(root->center, info);
+                parentNode = Find_max_parent_node(root->center, info);
             else
-                pai = Find_max_parent_node(root->right, info);
+                parentNode = Find_max_parent_node(root->right, info);
 
-            if(pai == NULL && ((root->n_infos == 1 && root->info1.num_start > info) || (root->n_infos == 2 && root->info2.num_start > info)))
-                pai = root;
+            if(parentNode == NULL && ((root->n_infos == 1 && root->info1.num_start > info) || (root->n_infos == 2 && root->info2.num_start > info)))
+                parentNode = root;
         }
     }
 
-    return pai;
+    return parentNode;
 }
 
 TreeNode23 *Find_smallest_parent_node(TreeNode23 *root, int info)
 {
-    TreeNode23 *pai;
-    pai = NULL;
+    TreeNode23 *parentNode;
+    parentNode = NULL;
 
     if(root != NULL)
     {
         if(!isInfo1(*root, info) && !isInfo2(*root, info))
         {
             if(info < root->info1.num_start)
-                pai = Find_smallest_parent_node(root->left, info);
+                parentNode = Find_smallest_parent_node(root->left, info);
             else if(root->n_infos == 1 || info < root->info2.num_start)
-                pai = Find_smallest_parent_node(root->center, info);
+                parentNode = Find_smallest_parent_node(root->center, info);
             else
-                pai = Find_smallest_parent_node(root->right, info);
+                parentNode = Find_smallest_parent_node(root->right, info);
 
-            if(pai == NULL && root->info1.num_start < info)
-                pai = root;
+            if(parentNode == NULL && root->info1.num_start < info)
+                parentNode = root;
         }
     }
 
-    return pai;
+    return parentNode;
 }
 
  TreeNode23 *Find_smallest_parent_with_two_info(TreeNode23 *root, int info)
 {
-    TreeNode23 *pai;
-    pai = NULL;
+    TreeNode23 *parentNode;
+    parentNode = NULL;
 
     if(root != NULL)
     {
         if(!isInfo1(*root, info) && !isInfo2(*root, info))
         {
             if(info < root->info1.num_start)
-                pai = Find_smallest_parent_with_two_info(root->left, info);
+                parentNode = Find_smallest_parent_with_two_info(root->left, info);
             else if(root->n_infos == 1 || info < root->info2.num_start)
-                pai = Find_smallest_parent_with_two_info(root->center, info);
+                parentNode = Find_smallest_parent_with_two_info(root->center, info);
             else
-                pai = Find_smallest_parent_with_two_info(root->right, info);
+                parentNode = Find_smallest_parent_with_two_info(root->right, info);
 
-            if(pai == NULL && root->n_infos == 2 && root->info2.num_start < info)
-                pai = root;
+            if(parentNode == NULL && root->n_infos == 2 && root->info2.num_start < info)
+                parentNode = root;
         }
     }
 
-    return pai;
+    return parentNode;
 }
 
- int wave_movement(Info saindo, Info *entrada, TreeNode23 *pai, TreeNode23 **origem, TreeNode23 **root, TreeNode23 **maior, int (*remove_node)(TreeNode23 **, int, TreeNode23 *, TreeNode23 **, TreeNode23 **))
+ int wave_movement(Info exitInfo, Info *inputData, TreeNode23 *parentNode, TreeNode23 **sourceNode, TreeNode23 **root, TreeNode23 **largestNode, int (*remove_node)(TreeNode23 **, int, TreeNode23 *, TreeNode23 **, TreeNode23 **))
 {
-    int removeu = remove_node(root, saindo.num_start, pai, origem, maior);
-    *entrada = saindo;
-    return removeu;
+    int isNodeRemoved = remove_node(root, exitInfo.num_start, parentNode, sourceNode, largestNode);
+    *inputData = exitInfo;
+    return isNodeRemoved;
 }
 
 
@@ -337,10 +337,10 @@ void TreeNode23_cleanup(TreeNode23 **root)
     }
 }
 
-TreeNode23 *TreeNode23_insertNode(TreeNode23 **root, Info info, TreeNode23 *pai, Info *up)
+TreeNode23 *TreeNode23_insertNode(TreeNode23 **root, Info info, TreeNode23 *parentNode, Info *up)
 {
-    TreeNode23 *maior;
-    maior = NULL;
+    TreeNode23 *largestNode;
+    largestNode = NULL;
 
     if(*root == NULL)
         *root = Create_nodo(info, NULL, NULL);
@@ -352,46 +352,46 @@ TreeNode23 *TreeNode23_insertNode(TreeNode23 **root, Info info, TreeNode23 *pai,
                 add_info(*root, info, NULL);
             else
             {
-                maior = SplitNode(*root, info, up, NULL);
-                if(pai == NULL)
+                largestNode = SplitNode(*root, info, up, NULL);
+                if(parentNode == NULL)
                 {
-                    *root = Create_nodo(*up, *root, maior);
-                    maior = NULL;
+                    *root = Create_nodo(*up, *root, largestNode);
+                    largestNode = NULL;
                 }
             }
         }
         else
         {
             if(info.num_start < (*root)->info1.num_start)
-                maior = TreeNode23_insertNode(&((*root)->left), info, *root, up);
+                largestNode = TreeNode23_insertNode(&((*root)->left), info, *root, up);
             else if((*root)->n_infos == 1 || info.num_start < (*root)->info2.num_start)
-                maior = TreeNode23_insertNode(&((*root)->center), info, *root, up);
+                largestNode = TreeNode23_insertNode(&((*root)->center), info, *root, up);
             else
-                maior = TreeNode23_insertNode(&((*root)->right), info, *root, up);
+                largestNode = TreeNode23_insertNode(&((*root)->right), info, *root, up);
 
-            if(maior != NULL)
+            if(largestNode != NULL)
             {
                 if((*root)->n_infos == 1)
                 {
-                    add_info(*root, *up, maior);
-                    maior = NULL;
+                    add_info(*root, *up, largestNode);
+                    largestNode = NULL;
                 }
                 else
                 {
                     Info promove_aux;
-                    maior = SplitNode(*root, *up, &promove_aux, maior);
+                    largestNode = SplitNode(*root, *up, &promove_aux, largestNode);
                     *up = promove_aux;
-                    if(pai == NULL)
+                    if(parentNode == NULL)
                     {
-                        *root = Create_nodo(promove_aux, *root, maior);
-                        maior = NULL;
+                        *root = Create_nodo(promove_aux, *root, largestNode);
+                        largestNode = NULL;
                     }
                 }
             }
         }
     }
 
-    return maior;
+    return largestNode;
 }
 
 TreeNode23 *TreeNode23_insert(TreeNode23 **root, Info info)
@@ -400,7 +400,7 @@ TreeNode23 *TreeNode23_insert(TreeNode23 **root, Info info)
     return TreeNode23_insertNode(root, info, NULL, &up);
 }
 
- int balanceTree(TreeNode23 **root, TreeNode23 *filho1, TreeNode23 **filho2, Info info, TreeNode23 **maior)
+ int balanceTree(TreeNode23 **root, TreeNode23 *filho1, TreeNode23 **filho2, Info info, TreeNode23 **largestNode)
 {
     int isBalanced = 0;
     if(*filho2 == NULL || (*filho2)->n_infos == 0)
@@ -408,13 +408,13 @@ TreeNode23 *TreeNode23_insert(TreeNode23 **root, Info info)
         if(*filho2 != NULL)
             free_nodo(filho2);
 
-        *maior = no23_merge(filho1, info, *maior, root);
+        *largestNode = no23_merge(filho1, info, *largestNode, root);
         isBalanced = 1;
     }
     return isBalanced;
 }
 
-int TreeNode23_adjustBalance(TreeNode23 **root, int info, TreeNode23 **maior)
+int TreeNode23_adjustBalance(TreeNode23 **root, int info, TreeNode23 **largestNode)
 {
     int isBalanced = 0;
     if(*root != NULL)
@@ -422,28 +422,28 @@ int TreeNode23_adjustBalance(TreeNode23 **root, int info, TreeNode23 **maior)
         if(!isLeaf(**root))
         {
             if(info < (*root)->info1.num_start)
-                isBalanced = TreeNode23_adjustBalance(&((*root)->left), info, maior);
+                isBalanced = TreeNode23_adjustBalance(&((*root)->left), info, largestNode);
             else if((*root)->n_infos == 1 || info < (*root)->info2.num_start)
             {
                 if((*root)->left->n_infos == 2 && !confirm_remove((*root)->center))
                     isBalanced = -1;
                 else
-                    isBalanced = TreeNode23_adjustBalance(&((*root)->center), info, maior);
+                    isBalanced = TreeNode23_adjustBalance(&((*root)->center), info, largestNode);
             }
             else
             {
                 if((*root)->center->n_infos == 2 && !confirm_remove((*root)->right))
                     isBalanced = -1;
                 else
-                    isBalanced = TreeNode23_adjustBalance(&((*root)->right), info, maior);
+                    isBalanced = TreeNode23_adjustBalance(&((*root)->right), info, largestNode);
             }
 
             if(isBalanced != -1)
             {
                 if((*root)->n_infos == 1)
-                    isBalanced = balanceTree(root, (*root)->left, &((*root)->center), (*root)->info1, maior);
+                    isBalanced = balanceTree(root, (*root)->left, &((*root)->center), (*root)->info1, largestNode);
                 else if((*root)->n_infos == 2)
-                    isBalanced = balanceTree(root, (*root)->center, &((*root)->right), (*root)->info2, maior);
+                    isBalanced = balanceTree(root, (*root)->center, &((*root)->right), (*root)->info2, largestNode);
             }
             
         }
