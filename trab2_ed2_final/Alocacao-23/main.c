@@ -75,7 +75,7 @@ int main() {
                 break;
 
             default:
-                printf("\nOpção inválida\n");
+                printf("\nOpção invalida\n");
         }
     } while (op != 0);
 
