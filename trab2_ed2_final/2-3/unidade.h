@@ -2,27 +2,27 @@
 #define UNIDADE_H
 
 // Estrutura para a lista de unidades
-typedef struct unidade {
-    int unidade;              // Valor da unidade
-    struct unidade *prox;     // Ponteiro para o próximo nó da lista
-} Unidade;
+typedef struct Unit {
+    int unitValue;              // Valor da unidade
+    struct Unit *nextNode;     // Ponteiro para o próximo nó da lista
+} Unit;
 
 // Função para criar um novo nó de Unidade
-Unidade *criar_unidade(int valor);
+Unit *create_unit(int valor);
 
 // Função para adicionar uma nova unidade de forma ordenada na lista
-Unidade *adicionar_unidade_ordenada(Unidade *lista, Unidade *novo_no);
+Unit *insert_unit_sorted(Unit *lista, Unit *novo_no);
 
 // Função para remover uma unidade da lista
-Unidade *remover_unidade(Unidade *lista, int valor);
+Unit *remove_unit(Unit *lista, int valor);
 
 // Função para buscar uma unidade na lista
-Unidade *buscar_unidade(Unidade *lista, int valor);
+Unit *find_unit(Unit *lista, int valor);
 
 // Função para imprimir todas as unidades da lista
-void imprimir_unidades(Unidade *lista);
+void print_units(Unit *lista);
 
 // Função para liberar a memória alocada pela lista de unidades
-void liberar_lista(Unidade *lista);
+void free_list(Unit *lista);
 
 #endif // UNIDADE_H

@@ -4,7 +4,7 @@
 typedef struct EnglishBinaryTree
 {
   char englishWord[50];
-  Unidade *unitValues; // Lista encadeada de unidades
+  Unit *unitValues; // Lista encadeada de unidades
   struct EnglishBinaryTree *left;
   struct EnglishBinaryTree *right;
 } BinaryTreeNode;

@@ -18,7 +18,7 @@ int inserirPalavraPortugues(Arv_portugues **arvore, char *palavraPortugues, char
         AdicionarTraducaoEN(noExistente, palavraIngles, unidade);
         inseriu = 1;
     } else {
-        Info novoInfo = CriarInfo(palavraPortugues, palavraIngles, unidade);
+        NodeData novoInfo = CriarInfo(palavraPortugues, palavraIngles, unidade);
         inserirArvRec(arvore, &novoInfo);
         inseriu = 1;
     }

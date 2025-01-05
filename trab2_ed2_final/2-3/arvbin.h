@@ -7,31 +7,31 @@
 typedef struct Inglesbin {
     char *palavraIngles;
     struct Inglesbin *dir, *esq;
-    Unidade *unidades; // Lista ligada de unidades
+    Unit *unidades; // Lista ligada de unidades
 } Inglesbin;
 
-typedef struct Portugues23 Portugues23;
+typedef struct PortugueseTree PortugueseTree;
 
 
 
-Inglesbin* createNode(const char* word, int unit);
+Inglesbin* initializeNode(const char* word, int unit);
 
 // Função para inserir uma palavra em inglês na arvore binaria de busca
-Inglesbin* insertpalavraIngles(Inglesbin* root, const char* word, int unit);
+Inglesbin* insertEnglishWord(Inglesbin* root, const char* word, int unit);
 
-void adicionarTraducao(Portugues23 *no, const char *palavraPortugues, const char *palavraIngles, int unidade);
+void insertTranslation(PortugueseTree *no, const char *palavraPortugues, const char *palavraIngles, int unidade);
 
-int ehFolhas(Inglesbin *raiz);
+int isLeafNode(Inglesbin *raiz);
 
-Inglesbin *soUmFilho(Inglesbin *raiz);
+Inglesbin *getSingleChild(Inglesbin *raiz);
 
-Inglesbin *menorFilho(Inglesbin *raiz);
+Inglesbin *getMinimumChild(Inglesbin *raiz);
 
 void printBinaryTree(Inglesbin *root);
 
-int removerPalavraIngles(Inglesbin **raiz, char *palavra, int unidade);
-Inglesbin *buscarPalavraIngles(Inglesbin *raiz, const char *palavraIngles);
+int removeEnglishWord(Inglesbin **raiz, const char *palavra, int unidade);
+Inglesbin *findEnglishWord(Inglesbin *raiz, const char *palavraIngles);
 
-void free_arvore_binaria(Inglesbin *raiz);
-void exibirTraducoesIngles(Inglesbin *raiz);
+void clear_binary_tree(Inglesbin *raiz);
+void showEnglishTranslations(Inglesbin *raiz);
 #endif

@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "unidade.h"
-Inglesbin *createNode(const char *palavraIngles, int unidade) {
+
+
+Inglesbin *initializeNode(const char *palavraIngles, int unidade) {
     Inglesbin *novoNo = (Inglesbin *)malloc(sizeof(Inglesbin));
     if (novoNo != NULL) {
         novoNo->palavraIngles = (char *)malloc(strlen(palavraIngles) + 1);
@@ -12,7 +14,7 @@ Inglesbin *createNode(const char *palavraIngles, int unidade) {
         }
         
         // Inicializar a lista ligada de unidades com o primeiro valor
-        novoNo->unidades = criar_unidade(unidade);
+        novoNo->unidades = create_unit(unidade);
         
         // Inicializar os ponteiros da árvore binária
         novoNo->esq = novoNo->dir = NULL;
@@ -22,23 +24,23 @@ Inglesbin *createNode(const char *palavraIngles, int unidade) {
 
 
 // Função para inserir uma palavra em inglês na arvore binaria de busca
-Inglesbin *insertpalavraIngles(Inglesbin *root, const char *palavraIngles, int unidade) {
+Inglesbin *insertEnglishWord(Inglesbin *root, const char *palavraIngles, int unidade) {
     Inglesbin *result;
 
     if (root == NULL) {
         // Cria um novo nó para a palavra em inglês e adiciona a unidade à lista
-        result = createNode(palavraIngles, unidade);
+        result = initializeNode(palavraIngles, unidade);
     } else {
         // Se a palavra em inglês já existe, adiciona a unidade à lista ordenada
         if (strcmp(palavraIngles, root->palavraIngles) == 0) {
-            root->unidades = adicionar_unidade_ordenada(root->unidades, criar_unidade(unidade));
+            root->unidades = insert_unit_sorted(root->unidades, create_unit(unidade));
             result = root;
         } else {
             // Caso contrário, insere recursivamente na árvore binária
             if (strcmp(palavraIngles, root->palavraIngles) < 0) {
-                root->esq = insertpalavraIngles(root->esq, palavraIngles, unidade);
+                root->esq = insertEnglishWord(root->esq, palavraIngles, unidade);
             } else {
-                root->dir = insertpalavraIngles(root->dir, palavraIngles, unidade);
+                root->dir = insertEnglishWord(root->dir, palavraIngles, unidade);
             }
             result = root;
         }
@@ -47,18 +49,18 @@ Inglesbin *insertpalavraIngles(Inglesbin *root, const char *palavraIngles, int u
     return result;
 }
 
-void adicionarTraducaoEmIngles(Info *info, const char *palavraIng, int unidade) {
+void addEnglishTranslation(NodeInfo *info, const char *palavraIng, int unidade) {
     // Verifica se a árvore binária de traduções em inglês está vazia
-    if (info->palavraIngles == NULL) {
+    if (info->englishWord == NULL) {
         // Se a árvore estiver vazia, cria a palavra em inglês com a unidade associada
-        info->palavraIngles = createNode(palavraIng, unidade);
+        info->englishWord = initializeNode(palavraIng, unidade);
     } else {
         // Se a árvore não estiver vazia, insere a palavra em inglês de maneira ordenada na árvore
-        info->palavraIngles = insertpalavraIngles(info->palavraIngles, palavraIng, unidade);
+        info->englishWord = insertEnglishWord(info->englishWord, palavraIng, unidade);
     }
 
     // Agora associa a unidade à palavra em inglês, garantindo a ordem das unidades
-    info->palavraIngles->unidades = adicionar_unidade_ordenada(info->palavraIngles->unidades, criar_unidade(unidade));
+    info->englishWord->unidades = insert_unit_sorted(info->englishWord->unidades, create_unit(unidade));
 }
 
 
@@ -75,7 +77,7 @@ void printBinaryTree(Inglesbin *root)
         // Imprime as unidades associadas a essa palavra em inglês
         if (root->unidades != NULL) {
             printf("Unidades associadas: ");
-            imprimir_unidades(root->unidades);  // Usa a função 'imprimir_unidades' para imprimir as unidades
+            print_units(root->unidades);  // Usa a função 'imprimir_unidades' para imprimir as unidades
         }
         else {
             printf("Nenhuma unidade associada.\n");
@@ -87,11 +89,11 @@ void printBinaryTree(Inglesbin *root)
 }
 
 
-int ehFolhas(Inglesbin *raiz){
+int isLeafNode(Inglesbin *raiz){
     return (raiz->esq == NULL && raiz->dir == NULL);
 }
 
-Inglesbin *soUmFilho(Inglesbin *raiz){
+Inglesbin *getSingleChild(Inglesbin *raiz){
     Inglesbin *aux;
     aux = NULL;
 
@@ -107,56 +109,58 @@ Inglesbin *soUmFilho(Inglesbin *raiz){
     return aux;
 }
 
-Inglesbin *menorFilho(Inglesbin *raiz){
+Inglesbin *getMinimumChild(Inglesbin *raiz){
     Inglesbin *aux;
     aux = raiz;
 
     if (raiz)
     {
         if (raiz->esq)
-            aux = menorFilho(raiz->esq);
+            aux = getMinimumChild(raiz->esq);
     }
 
     return aux;
 }
 
-int removerPalavraIngles(Inglesbin **raiz, char *palavra, int unidade) {
-    int existe = 0; // Indicador de sucesso da remoção
+int removeEnglishWord(Inglesbin **raiz, const char *palavra, int unidade) {
+    Inglesbin *endFilho = NULL;
+    int existe = 0;
 
-    if (*raiz != NULL) {
+    if (*raiz) {
+        // Verifica se a palavra em inglês corresponde ao nó atual
         if (strcmp(palavra, (*raiz)->palavraIngles) == 0) {
+            Inglesbin *aux = *raiz;
             existe = 1;
-            printf("Removendo a palavra %s da unidade %d\n", palavra, unidade);
 
-            // Remove apenas a unidade especificada
-            (*raiz)->unidades = remover_unidade((*raiz)->unidades, unidade);
+            // Remove a unidade da lista associada
+            Unit *novaLista = remove_unit((*raiz)->unidades, unidade);
 
-            // Se a lista de unidades estiver vazia, decide remover o nó
-            if ((*raiz)->unidades == NULL) {
-                Inglesbin *aux = *raiz;
+            if (novaLista != (*raiz)->unidades) {
+                (*raiz)->unidades = novaLista;
 
-                if (ehFolhas(*raiz)) { // Caso o nó não tenha filhos
-                    free(aux->palavraIngles);
-                    free(aux);
-                    *raiz = NULL;
-                } else if (soUmFilho(*raiz)) { // Caso tenha apenas um filho
-                    Inglesbin *endFilho = soUmFilho(*raiz);
-                    *raiz = endFilho;
-                    free(aux->palavraIngles);
-                    free(aux);
-                } else { // Caso tenha dois filhos
-                    // Substitui a palavra pelo menor filho à direita
-                    Inglesbin *endFilho = menorFilho((*raiz)->dir);
-                    free((*raiz)->palavraIngles);
-                    (*raiz)->palavraIngles = strdup(endFilho->palavraIngles);
-                    (*raiz)->unidades = endFilho->unidades; // Atualiza a lista de unidades
-                    removerPalavraIngles(&(*raiz)->dir, endFilho->palavraIngles, unidade);
+                // Se a lista de unidades ficar vazia, remover o nó
+                if (novaLista == NULL) {
+                    if (isLeafNode(*raiz)) {
+                        free(aux);
+                        *raiz = NULL;
+                    } else if ((endFilho = getSingleChild(*raiz)) != NULL) {
+                        free(aux);
+                        *raiz = endFilho;
+                    } else {
+                        endFilho = getMinimumChild((*raiz)->dir);
+                        strcpy((*raiz)->palavraIngles, endFilho->palavraIngles);
+                        (*raiz)->unidades = endFilho->unidades;
+
+                        removeEnglishWord(&(*raiz)->dir, endFilho->palavraIngles, unidade);
+                    }
                 }
             }
         } else if (strcmp(palavra, (*raiz)->palavraIngles) < 0) {
-            existe = removerPalavraIngles(&(*raiz)->esq, palavra, unidade);
+            // Continua a busca na subárvore esquerda
+            existe = removeEnglishWord(&(*raiz)->esq, palavra, unidade);
         } else {
-            existe = removerPalavraIngles(&(*raiz)->dir, palavra, unidade);
+            // Continua a busca na subárvore direita
+            existe = removeEnglishWord(&(*raiz)->dir, palavra, unidade);
         }
     }
 
@@ -166,38 +170,46 @@ int removerPalavraIngles(Inglesbin **raiz, char *palavra, int unidade) {
 
 
 
+void clear_binary_tree(Inglesbin *raiz) {
+    if (raiz != NULL) {
+        // Debug: Log the word being freed
+        printf("Liberando nó da árvore binária com palavra: %s\n", raiz->palavraIngles);
 
+        // Recursively free left and right subtrees
+        clear_binary_tree(raiz->esq);
+        clear_binary_tree(raiz->dir);
 
-void free_arvore_binaria(Inglesbin *raiz)
-{
-  if (raiz)
-  {
-    free_arvore_binaria(raiz->esq);
-    free_arvore_binaria(raiz->dir);
-    free(raiz->palavraIngles);
-    free(raiz);
-  }
+        // Free associated list of units
+        free_list(raiz->unidades);
+
+        // Free the English word
+        free(raiz->palavraIngles);
+
+        // Free the node itself
+        free(raiz);
+    }
 }
-void imprimirTraducoes(Inglesbin *node, int unidade, const char *palavraPortugues)
+
+void printTranslations(Inglesbin *node, int unidade, const char *palavraPortugues)
 {
     if (node)
     {
         // Percorre a subárvore esquerda
-        imprimirTraducoes(node->esq, unidade, palavraPortugues);
+        printTranslations(node->esq, unidade, palavraPortugues);
 
         // Verifica se a unidade está associada à palavra em inglês
-        if (buscar_unidade(node->unidades, unidade)) // Verifica se a unidade existe na lista
+        if (find_unit(node->unidades, unidade)) // Verifica se a unidade existe na lista
         {
             printf("Palavra em Português: %s\n", palavraPortugues);
             printf("Tradução em Inglês: %s\n", node->palavraIngles);
         }
 
         // Percorre a subárvore direita
-        imprimirTraducoes(node->dir, unidade, palavraPortugues);
+        printTranslations(node->dir, unidade, palavraPortugues);
     }
 }
 
-Inglesbin *buscarPalavraIngles(Inglesbin *raiz, const char *palavraIngles) {
+Inglesbin *findEnglishWord(Inglesbin *raiz, const char *palavraIngles) {
     Inglesbin *resultado = NULL;
 
     if (raiz != NULL) {
@@ -206,9 +218,9 @@ Inglesbin *buscarPalavraIngles(Inglesbin *raiz, const char *palavraIngles) {
         if (comparacao == 0) {
             resultado = raiz; // Palavra encontrada
         } else if (comparacao < 0) {
-            resultado = buscarPalavraIngles(raiz->esq, palavraIngles);
+            resultado = findEnglishWord(raiz->esq, palavraIngles);
         } else {
-            resultado = buscarPalavraIngles(raiz->dir, palavraIngles);
+            resultado = findEnglishWord(raiz->dir, palavraIngles);
         }
     }
 
@@ -216,31 +228,31 @@ Inglesbin *buscarPalavraIngles(Inglesbin *raiz, const char *palavraIngles) {
 }
 
 
-void BuscarPalavraIngles(Portugues23 **raiz, char *palavraIngles, int unidade, Portugues23 **pai)
+void FindEnglishWord(PortugueseTree **raiz, char *palavraIngles, int unidade, PortugueseTree **pai)
 {
     if (*raiz != NULL)
     {
         // Verifica na subárvore esquerda
-        BuscarPalavraIngles(&(*raiz)->esq, palavraIngles, unidade, pai);
+        FindEnglishWord(&(*raiz)->left, palavraIngles, unidade, pai);
 
         // Verifica no primeiro elemento do nó
-        if ((*raiz)->info1.palavraIngles != NULL)
+        if ((*raiz)->info1.englishWord != NULL)
         {
-            Inglesbin *traducaoEncontrada = buscarPalavraIngles((*raiz)->info1.palavraIngles, palavraIngles);
-            if (traducaoEncontrada != NULL && buscar_unidade(traducaoEncontrada->unidades, unidade))
+            Inglesbin *traducaoEncontrada = findEnglishWord((*raiz)->info1.englishWord, palavraIngles);
+            if (traducaoEncontrada != NULL && find_unit(traducaoEncontrada->unidades, unidade))
             {
                 printf("Palavra em Inglês: %s encontrada na Unidade: %d\n", palavraIngles, unidade);
             }
         }
 
         // Verifica na subárvore central
-        BuscarPalavraIngles(&(*raiz)->cent, palavraIngles, unidade, raiz);
+        FindEnglishWord(&(*raiz)->cent, palavraIngles, unidade, raiz);
 
         // Se o nó tem dois elementos, verifica o segundo
-        if ((*raiz)->nInfos == 2 && (*raiz)->info2.palavraIngles != NULL)
+        if ((*raiz)->nInfos == 2 && (*raiz)->info2.englishWord != NULL)
         {
-            Inglesbin *traducaoEncontrada = buscarPalavraIngles((*raiz)->info2.palavraIngles, palavraIngles);
-            if (traducaoEncontrada != NULL && buscar_unidade(traducaoEncontrada->unidades, unidade))
+            Inglesbin *traducaoEncontrada = findEnglishWord((*raiz)->info2.englishWord, palavraIngles);
+            if (traducaoEncontrada != NULL && find_unit(traducaoEncontrada->unidades, unidade))
             {
                 printf("Palavra em Inglês: %s encontrada na Unidade: %d\n", palavraIngles, unidade);
             }
@@ -249,22 +261,22 @@ void BuscarPalavraIngles(Portugues23 **raiz, char *palavraIngles, int unidade, P
         // Verifica na subárvore direita
         if ((*raiz)->nInfos == 2)
         {
-            BuscarPalavraIngles(&(*raiz)->dir, palavraIngles, unidade, raiz);
+            FindEnglishWord(&(*raiz)->right, palavraIngles, unidade, raiz);
         }
     }
 }
 
-void exibirTraducoesIngles(Inglesbin *raiz)
+void showEnglishTranslations(Inglesbin *raiz)
 {
     if (raiz)
     {
         // Percorre a subárvore esquerda
-        exibirTraducoesIngles(raiz->esq);
+        showEnglishTranslations(raiz->esq);
 
         // Exibe a tradução em inglês
         printf("- %s\n", raiz->palavraIngles);
 
         // Percorre a subárvore direita
-        exibirTraducoesIngles(raiz->dir);
+        showEnglishTranslations(raiz->dir);
     }
 }

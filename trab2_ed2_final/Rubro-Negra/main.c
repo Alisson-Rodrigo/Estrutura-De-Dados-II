@@ -31,57 +31,56 @@ void clearCharacters(char *str)
     memmove(str, start, strlen(start) + 1);
 }
 
-void loadFile(const char *nomeArquivo, RedBlackTreePT **arvore)
+void loadFile(const char *fileName, RedBlackTreePT **treeRef)
 {
-    FILE *arquivo = fopen(nomeArquivo, "r");
-    if (arquivo == NULL)
+    FILE *filePointer = fopen(fileName, "r");
+    if (filePointer == NULL)
     {
         perror("Erro ao abrir o arquivo");
         return;
     }
 
-    char linha[256];
-    int unidadeAtual = 0;
+    char inputLine[256];
+    int currentUnit = 0;
 
-    while (fgets(linha, sizeof(linha), arquivo))
+    while (fgets(inputLine, sizeof(inputLine), filePointer))
     {
         // Remove o caractere de nova linha
-        linha[strcspn(linha, "\n")] = 0;
+        inputLine[strcspn(inputLine, "\n")] = 0;
 
-        if (linha[0] == '%')
+        if (inputLine[0] == '%')
         {
             // Atualiza a unidade atual
-            sscanf(linha, "%% Unidade %d", &unidadeAtual);
+            sscanf(inputLine, "%% Unidade %d", &currentUnit);
         }
         else
         {
-            char palavraIngles[50], traducoesPortugues[200];
+            char englishWord[50], portugueseTranslations[200];
 
             // Separa a palavra em ingles e suas traducoes em portugues
-            if (sscanf(linha, "%[^:]: %[^\n]", palavraIngles, traducoesPortugues) == 2)
+            if (sscanf(inputLine, "%[^:]: %[^\n]", englishWord, portugueseTranslations) == 2)
             {
                 // Limpa a palavra em ingles
-                clearCharacters(palavraIngles);
+                clearCharacters(englishWord);
 
                 // Divide as traducoes em portugues
-                char *traducaoPortugues = strtok(traducoesPortugues, ",;");
-                while (traducaoPortugues != NULL)
+                char *portugueseTranslationToken = strtok(portugueseTranslations, ",;");
+                while (portugueseTranslationToken != NULL)
                 {
                     // Limpa cada traducao em portugues
-                    clearCharacters(traducaoPortugues);
+                    clearCharacters(portugueseTranslationToken);
 
                     // Insere a palavra na arvore
-                    insertPortugueseWord(arvore, traducaoPortugues, palavraIngles, unidadeAtual);
+                    insertPortugueseWord(treeRef, portugueseTranslationToken, englishWord, currentUnit);
 
                     // Proxima traducao
-                    traducaoPortugues = strtok(NULL, ",;");
+                    portugueseTranslationToken = strtok(NULL, ",;");
                 }
             }
         }
     }
 
-    fclose(arquivo);
-    printf("Arquivo '%s' carregado com sucesso!\n", nomeArquivo);
+    fclose(filePointer);
 }
 
 void exibirMenu()
@@ -105,67 +104,67 @@ int main()
     RedBlackTreePT *rootNode = NULL;
 
     // Carregar os dados iniciais do arquivo
-    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/trabalhoEd2.txt", &rootNode);
+    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/text.txt", &rootNode);
 
-    int opcao;
-    char palavra[50];
-    int unidade;
+    int option;
+    char inputWord[50];
+    int unitValue;
 
 
     do
     {
         exibirMenu();
-        scanf("%d", &opcao);
+        scanf("%d", &option);
 
-        switch (opcao)
+        switch (option)
         {
         case 1:
             printf("\n>>> Consultar palavras por unidade <<<\n");
             printf("Informe o numero da unidade desejada: ");
-            scanf("%d", &unidade);
+            scanf("%d", &unitValue);
             printf("\nResultado:\n");
-            printf("%% Unidade %d\n", unidade);
-            printWordsByUnit(rootNode, unidade);
+            printf("%% Unidade %d\n", unitValue);
+            printWordsByUnit(rootNode, unitValue);
             break;
 
         case 2:
             printf("\n>>> Buscar traducoes em ingles <<<\n");
             printf("Digite uma palavra em portugues: ");
-            scanf(" %[^\n]", palavra); // Lê a entrada até encontrar um caractere de nova linha
+            scanf(" %[^\n]", inputWord); // Lê a entrada até encontrar um caractere de nova linha
             printf("\nTraducoes encontradas:\n");
-            showPortugueseTranslation(&rootNode, palavra);
+            showPortugueseTranslation(&rootNode, inputWord);
             break;
 
         case 3:
             printf("\n>>> Remover palavra em ingles de uma unidade <<<\n");
             printf("Digite a palavra em ingles: ");
-            scanf("%s", palavra);
+            scanf("%s", inputWord);
             printf("Informe a unidade: ");
-            scanf("%d", &unidade);
+            scanf("%d", &unitValue);
 
-            int totalRemovido = 0;
-            removeWordByUnit(&rootNode, palavra, unidade, &totalRemovido, &rootNode);
+            int totalRemoved = 0;
+            removeWordByUnit(&rootNode, inputWord, unitValue, &totalRemoved, &rootNode);
 
-            if (totalRemovido > 0)
+            if (totalRemoved > 0)
             {
-                printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", palavra, unidade);
+                printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", inputWord, unitValue);
             }
             else
             {
-                printf("\nA palavra '%s' nao foi encontrada na unidade %d.\n", palavra, unidade);
+                printf("\nA palavra '%s' nao foi encontrada na unidade %d.\n", inputWord, unitValue);
             }
             break;
 
         case 4:
             printf("\n>>> Excluir palavra em portugues e traducoes <<<\n");
             printf("Digite a palavra em portugues: ");
-            scanf(" %[^\n]", palavra); // Lê até o caractere de nova linha
+            scanf(" %[^\n]", inputWord); // Lê até o caractere de nova linha
 
             printf("Digite a unidade à qual a palavra pertence: ");
-            scanf("%d", &unidade);
+            scanf("%d", &unitValue);
 
             // Chama a função para remover a palavra da unidade
-            removerPalavraPortuguesaPorUnidade(&rootNode, palavra, unidade);
+            removerPalavraPortuguesaPorUnidade(&rootNode, inputWord, unitValue);
 
             break;
 
@@ -178,9 +177,9 @@ int main()
         case 6:
             printf("\n>>> Mostrar Arvore Binaria de uma palavra <<<\n");
             printf("Digite a palavra em portugues: ");
-            scanf("%s", palavra);
+            scanf("%s", inputWord);
             printf("\nEstrutura da Arvore Binaria:\n");
-            exibir_arvorebianria_dada_palavra_portuguesa(rootNode, palavra);
+            exibir_arvorebianria_dada_palavra_portuguesa(rootNode, inputWord);
             break;
 
         case 0:
@@ -194,7 +193,7 @@ int main()
 
         printf("\n=================================================================\n");
 
-    } while (opcao != 0);
+    } while (option != 0);
 
     // Liberacao de memoria das arvores
     // freeTree(rootNode);
