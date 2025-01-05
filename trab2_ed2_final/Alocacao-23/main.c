@@ -29,7 +29,7 @@ int main() {
     printf("Alocacao de Memoria - Arvore 2-3\n");
     printf("---------------------------------\n");
 
-    printf("Tamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE - 1);
+    printf("Tamanho maximo da memoria configurado como %d blocos.\n", MEMORY_SIZE - 1);
 
     int minimumMemoryBlock = initialize_memory_blocks(&treeRoot, maximumMemorySize);
 
