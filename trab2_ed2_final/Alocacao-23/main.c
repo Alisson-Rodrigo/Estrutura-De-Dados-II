@@ -8,12 +8,12 @@
 
 int menu() {
     int op;
-    printf("\n1 - Alocar Nós");
-    printf("\n2 - Liberar Nós");
-    printf("\n3 - Exibir Nós Endereços)");
-    printf("\n4 - Exibir Nós Em Ordem");
+    printf("\n1 - Alocar Nos");
+    printf("\n2 - Liberar Nos");
+    printf("\n3 - Exibir Nos Enderecos)");
+    printf("\n4 - Exibir Nos Em Ordem");
     printf("\n0 - Sair");
-    printf("\nOpção escolhida: ");
+    printf("\nOpcao escolhida: ");
     scanf("%d", &op);
     while (getchar() != '\n'); // Limpa o buffer
     return op;
