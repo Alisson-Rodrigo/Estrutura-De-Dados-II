@@ -31,7 +31,7 @@ int main() {
 
     printf("Tamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE - 1);
 
-    int minimo = initialize_memory_blocks(&treeRoot, maximumMemorySize);
+    int minimumMemoryBlock = initialize_memory_blocks(&treeRoot, maximumMemorySize);
 
     int op, node_count;
     do {
@@ -42,10 +42,10 @@ int main() {
                     printf("\nQuantidade de nós a serem alocados: ");
                     scanf("%d", &node_count);
                     while (getchar() != '\n'); 
-                    if (node_count < minimo || node_count > maximumMemorySize) {
-                        printf("\nDigite um número entre %d e %d\n", minimo, maximumMemorySize);
+                    if (node_count < minimumMemoryBlock || node_count > maximumMemorySize) {
+                        printf("\nDigite um número entre %d e %d\n", minimumMemoryBlock, maximumMemorySize);
                     }
-                } while (node_count < minimo || node_count > maximumMemorySize);
+                } while (node_count < minimumMemoryBlock || node_count > maximumMemorySize);
 
                 manage_memory_block(&treeRoot, node_count, ALLOCATED_STATUS_FREE);
                 break;
@@ -55,10 +55,10 @@ int main() {
                     printf("\nQuantidade de nós a serem liberados: ");
                     scanf("%d", &node_count);
                     while (getchar() != '\n'); 
-                    if (node_count < minimo || node_count > maximumMemorySize) {
-                        printf("\nDigite um número entre %d e %d\n", minimo, maximumMemorySize);
+                    if (node_count < minimumMemoryBlock || node_count > maximumMemorySize) {
+                        printf("\nDigite um número entre %d e %d\n", minimumMemoryBlock, maximumMemorySize);
                     }
-                } while (node_count < minimo || node_count > maximumMemorySize);
+                } while (node_count < minimumMemoryBlock || node_count > maximumMemorySize);
 
                 manage_memory_block(&treeRoot, node_count, STATUS_OCCUPIED);
                 break;

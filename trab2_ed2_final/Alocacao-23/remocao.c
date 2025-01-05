@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "23.h"
 
-int TreeNode23_remove_internal_node(TreeNode23 **treeSource, TreeNode23* root, Info *info, TreeNode23 *filho1, TreeNode23 *filho2, TreeNode23 **maxNode)
+int TreeNode23_remove_internal_node(TreeNode23 **treeSource, TreeNode23* root, Info *info, TreeNode23 *leftChild, TreeNode23 *rightChild, TreeNode23 **maxNode)
 {
     int isRemoved;
     TreeNode23 *childNode, *parentNode;
@@ -10,7 +10,7 @@ int TreeNode23_remove_internal_node(TreeNode23 **treeSource, TreeNode23* root, I
 
     parentNode = root;
 
-    childNode = Find_largest_child_node(filho1, &parentNode, &child_info);
+    childNode = Find_largest_child_node(leftChild, &parentNode, &child_info);
 
     if(childNode->n_infos == 2)
     {
@@ -19,14 +19,14 @@ int TreeNode23_remove_internal_node(TreeNode23 **treeSource, TreeNode23* root, I
     }
     else
     {
-        childNode = Find_min_child_node(filho2, &parentNode);
+        childNode = Find_min_child_node(rightChild, &parentNode);
         isRemoved = wave_movement(childNode->info1, info, parentNode, treeSource, &childNode, maxNode, RemoveNodeFrom23Tree);
     }
 
     return isRemoved;
 }
 
- int TreeNode23_delete_internal_node(TreeNode23 **treeSource, TreeNode23* root, Info *info, TreeNode23 *filho1, TreeNode23 *filho2, TreeNode23 **maxNode)
+ int TreeNode23_delete_internal_node(TreeNode23 **treeSource, TreeNode23* root, Info *info, TreeNode23 *leftChild, TreeNode23 *rightChild, TreeNode23 **maxNode)
 {
     int isRemoved;
     TreeNode23 *childNode, *parentNode;
@@ -34,7 +34,7 @@ int TreeNode23_remove_internal_node(TreeNode23 **treeSource, TreeNode23* root, I
 
     parentNode = root;
 
-    childNode = Find_min_child_node(filho1, &parentNode);
+    childNode = Find_min_child_node(leftChild, &parentNode);
 
     if(childNode->n_infos == 2)
     {
@@ -44,7 +44,7 @@ int TreeNode23_remove_internal_node(TreeNode23 **treeSource, TreeNode23* root, I
     }
     else
     {
-        childNode = Find_largest_child_node(filho2, &parentNode, &child_info);
+        childNode = Find_largest_child_node(rightChild, &parentNode, &child_info);
         isRemoved = wave_movement(*child_info, info, parentNode, treeSource, &childNode, maxNode, TreeNode23_Delete);
     }
 
@@ -95,8 +95,8 @@ int RemoveNodeFrom23Tree(TreeNode23 **root, int info, TreeNode23 *parentNode, Tr
                         {
                             parent_node_aux = Find_max_parent_node(*treeSource, (*root)->info1.num_start);
 
-                            TreeNode23 *menor_pai;
-                            menor_pai = Find_smallest_parent_with_two_info(*treeSource, (*root)->info1.num_start);
+                            TreeNode23 *smaller_parent;
+                            smaller_parent = Find_smallest_parent_with_two_info(*treeSource, (*root)->info1.num_start);
 
 
                             if(parent_node_aux != NULL)
@@ -107,10 +107,10 @@ int RemoveNodeFrom23Tree(TreeNode23 **root, int info, TreeNode23 *parentNode, Tr
                                     parent_info = parent_node_aux->info2;
                             }
 
-                            int height_menor_pai = height_size(menor_pai);
-                            int height_pai_aux = height_size(parent_node_aux);
+                            int height_of_smaller_parent = height_size(smaller_parent);
+                            int parent_node_height = height_size(parent_node_aux);
 
-                            if(parent_node_aux == NULL || (parent_node_aux != parentNode && menor_pai != NULL && height_menor_pai <= height_pai_aux && parent_info.num_start > menor_pai->info2.num_start))
+                            if(parent_node_aux == NULL || (parent_node_aux != parentNode && smaller_parent != NULL && height_of_smaller_parent <= parent_node_height && parent_info.num_start > smaller_parent->info2.num_start))
                             {
                                 *maxNode = parentNode;
                                 (*root)->n_infos = 0;
@@ -189,11 +189,11 @@ int TreeNode23_Delete(TreeNode23 **root, int info, TreeNode23 *parentNode, TreeN
                         {
                             parent_node_aux = Find_smallest_parent_node(*treeSource, (*root)->info1.num_start);
 
-                            TreeNode23 *menor_pai;
-                            menor_pai = Find_smallest_parent_with_two_info(*treeSource, (*root)->info1.num_start);
+                            TreeNode23 *smaller_parent;
+                            smaller_parent = Find_smallest_parent_with_two_info(*treeSource, (*root)->info1.num_start);
 
                             TreeNode23 *avo;
-                            if(parent_node_aux == NULL || (parent_node_aux != parentNode && menor_pai != NULL))
+                            if(parent_node_aux == NULL || (parent_node_aux != parentNode && smaller_parent != NULL))
                             {  
                                 isRemoved = -1;
                                 *maxNode = parentNode;
@@ -240,9 +240,9 @@ int TreeNode23_remove(TreeNode23 **root, int info)
         isRemoved = 1;
         Info junction_value = *(getMaxNodeInfo(junction_position));
         maxNode = NULL;
-        int removeu_aux = TreeNode23_adjustBalance(root, junction_value.num_start, &maxNode);
+        int adjusted_balance_status = TreeNode23_adjustBalance(root, junction_value.num_start, &maxNode);
         
-        if(removeu_aux == -1)
+        if(adjusted_balance_status == -1)
         {
             TreeNode23 *parentNode, *junction_position;
             Info *enterAux;
@@ -253,17 +253,17 @@ int TreeNode23_remove(TreeNode23 **root, int info)
             else
                 enterAux = &(junction_position->right->info1);
 
-            removeu_aux = wave_movement(junction_value, enterAux, parentNode, root, &junction_position, &junction_position, TreeNode23_Delete);
+            adjusted_balance_status = wave_movement(junction_value, enterAux, parentNode, root, &junction_position, &junction_position, TreeNode23_Delete);
 
-            if(removeu_aux == -1)
+            if(adjusted_balance_status == -1)
             {
                 junction_value = junction_position->info1;
                 parentNode = Find_parent_node(*root, junction_value.num_start);
-                removeu_aux = wave_movement(junction_value, &(junction_position->left->info1), parentNode, root, &junction_position, &junction_position, RemoveNodeFrom23Tree);
+                adjusted_balance_status = wave_movement(junction_value, &(junction_position->left->info1), parentNode, root, &junction_position, &junction_position, RemoveNodeFrom23Tree);
 
                 junction_value = *(getMaxNodeInfo(junction_position));
                 maxNode = NULL;
-                removeu_aux = TreeNode23_adjustBalance(root, junction_value.num_start, &maxNode);
+                adjusted_balance_status = TreeNode23_adjustBalance(root, junction_value.num_start, &maxNode);
             }
         }
 
