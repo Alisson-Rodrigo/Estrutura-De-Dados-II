@@ -39,11 +39,11 @@ int main() {
         switch (op) {
             case 1:
                 do {
-                    printf("\nQuantidade de nós a serem alocados: ");
+                    printf("\nQuantidade de nos a serem alocados: ");
                     scanf("%d", &node_count);
                     while (getchar() != '\n'); 
                     if (node_count < minimumMemoryBlock || node_count > maximumMemorySize) {
-                        printf("\nDigite um número entre %d e %d\n", minimumMemoryBlock, maximumMemorySize);
+                        printf("\nDigite um numero entre %d e %d\n", minimumMemoryBlock, maximumMemorySize);
                     }
                 } while (node_count < minimumMemoryBlock || node_count > maximumMemorySize);
 
@@ -52,7 +52,7 @@ int main() {
 
             case 2:
                 do {
-                    printf("\nQuantidade de nós a serem liberados: ");
+                    printf("\nQuantidade de nos a serem liberados: ");
                     scanf("%d", &node_count);
                     while (getchar() != '\n'); 
                     if (node_count < minimumMemoryBlock || node_count > maximumMemorySize) {
@@ -67,7 +67,7 @@ int main() {
                 DisplayInfos(treeRoot);
                 break;
             case 4:
-                printf("\nExibindo árvore\n");
+                printf("\nExibindo arvore\n");
                 TreeNode23_print_in_order(treeRoot);
                 break;
             case 0:
