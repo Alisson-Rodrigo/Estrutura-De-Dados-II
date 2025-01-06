@@ -119,7 +119,7 @@ void searchWord23(PortugueseTree **tree, const char *word)
 int main()
 {
     PortugueseTree *tree23 = NULL;
-    const char *fileName = "C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/text.txt";
+    const char *fileName = "C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/text.txt";
     loadFile23(fileName, &tree23);
 
     const char *words[] = { "carro", "automovel", "erro", "engano", "roda", "ventilador", "soprador",
