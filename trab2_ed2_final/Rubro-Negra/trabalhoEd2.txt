@@ -1,0 +1,23 @@
+% Unidade 1
+Bus: onibus, barramento;
+Bug: inseto, problema;
+Bike: bicicleta;
+Coller: ventilador;
+Network: rede de computadores;
+System: sistema;
+% Unidade 2
+Bug: inseto;
+Bicycle: bicicleta;
+Fan: ventilador;
+Network: rede de relacionamento;
+% Unidade 3
+Bus: onibus;
+Bug: inseto;
+Bike: bicicleta;
+Cooler: ventilador;
+% Unidade 4
+Bus: onibus;
+Bug: inseto;
+Bike: bicicleta;
+Cooler: ventilador;
+Network: rede de computadores;
