@@ -130,7 +130,7 @@ int main()
     RedBlackTreePT *arvore = NULL;
 
     // Carrega dados do arquivo
-    const char *nomeArquivo = "C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/text.txt"; // Nome do arquivo a ser carregado
+    const char *nomeArquivo = "C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/text.txt"; // Nome do arquivo a ser carregado
     loadFile(nomeArquivo, &arvore);
 
     // Lista de 30 palavras para busca
