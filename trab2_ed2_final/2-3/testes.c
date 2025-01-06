@@ -1,141 +1,174 @@
 #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include "arv23.c"
+#include "arvbin.c"
+#include "unidade.c"
 #include <time.h>
-#include "portugues_arv.c"
-#include "ingles_arv.c"
-#include <windows.h> // Para QueryPerformanceCounter
+void clearCharacters(char *str)
+{
+    char *end = str + strlen(str) - 1;
 
-typedef struct {
-    char palavra[100];
-    char caminho[500];
-    int encontrada;
-    long long tempo_ns; // Substituí LONGLONG por long long
-} ResultadoBusca;
-
-// Função para obter tempo em nanosegundos no Windows
-long long getTempoNanosegundos() {
-    LARGE_INTEGER frequency, counter;
-    QueryPerformanceFrequency(&frequency);
-    QueryPerformanceCounter(&counter);
-    return (counter.QuadPart * 1000000000) / frequency.QuadPart;
-}
-
-int inserirPalavraPortugues(Arv_pt **arvore, char *palavraPortugues, char *palavraIngles, int unidade) {
-    Info promove;
-    Arv_pt *pai = NULL;
-    int inseriu;
-
-    Arv_pt *noExistente = BuscarNoPorPalavra(arvore, palavraPortugues);
-    if (noExistente != NULL) {
-        AdicionarTraducaoNo(noExistente, palavraPortugues, palavraIngles, unidade);
-        inseriu = 1;
-    } else {
-        Info novoInfo = CriarInfo(palavraPortugues, palavraIngles, unidade);
-        InserirInfoArvore23(arvore, &novoInfo, &promove, &pai);
-        inseriu = 0;
-    }
-    return inseriu;
-}
-
-void carregarArquivo(const char *nomeArquivo, Arv_pt **arvore) {
-    FILE *arquivo = fopen(nomeArquivo, "r");
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return;
+    while (end > str && (*end == ';' || isspace((unsigned char)*end)))
+    {
+        *end = '\0';
+        end--;
     }
 
-    char linha[256];
-    int unidadeAtual = 0;
+    while (*str && isspace((unsigned char)*str))
+    {
+        str++;
+    }
+}
 
-    while (fgets(linha, sizeof(linha), arquivo)) {
-        linha[strcspn(linha, "\n")] = 0;
+void loadFile(const char *nomeArquivo, PortugueseTree **arvore)
+{
+    FILE *dataFile = fopen(nomeArquivo, "r");
 
-        if (linha[0] == '%') {
-            sscanf(linha, "%% Unidade %d", &unidadeAtual);
-        } else {
-            char palavraIngles[50], traducoesPortugues[200];
-            sscanf(linha, "%[^:]: %[^;]", palavraIngles, traducoesPortugues);
-            char *traducaoPortugues = strtok(traducoesPortugues, ",;");
-            while (traducaoPortugues != NULL) {
-                while (*traducaoPortugues == ' ') 
-                    traducaoPortugues++;
-                inserirPalavraPortugues(arvore, traducaoPortugues, palavraIngles, unidadeAtual);
-                traducaoPortugues = strtok(NULL, ",;");
+    if (dataFile != NULL)
+    {
+        char inputLine[256];
+        int currentUnit = -1; // Inicia com um valor inválido
+
+        while (fgets(inputLine, sizeof(inputLine), dataFile))
+        {
+            inputLine[strcspn(inputLine, "\n")] = 0; // Remove o caractere de nova linha
+
+            if (inputLine[0] == '%')
+            {
+                // Verifica a linha de unidade e extrai o número
+                if (sscanf(inputLine, "%% Unidade %d", &currentUnit) != 1)
+                {
+                    currentUnit = -1; // Reseta para inválido
+                }
+            }
+            else if (currentUnit != -1)
+            {
+                // Processa linhas de palavras e traduções
+                char englishWord[50], portugueseTranslations[200];
+
+                if (sscanf(inputLine, "%[^:]: %[^\n]", englishWord, portugueseTranslations) == 2)
+                {
+                    clearCharacters(englishWord); // Limpa caracteres indesejados
+
+                    // Divide as traduções em português separadas por vírgula
+                    char *currentPortugueseTranslation = strtok(portugueseTranslations, ",");
+                    while (currentPortugueseTranslation != NULL)
+                    {
+                        while (*currentPortugueseTranslation == ' ')
+                        {
+                            currentPortugueseTranslation++; // Remove espaços no início
+                        }
+
+                        clearCharacters(currentPortugueseTranslation); // Limpa caracteres indesejados
+                        insertPortugueseTerm(arvore, currentPortugueseTranslation, englishWord, currentUnit);
+
+                        currentPortugueseTranslation = strtok(NULL, ",");
+                    }
+                }
+            }
+        }
+
+        fclose(dataFile);
+    }
+}
+
+
+void printPathAndFindWord(PortugueseTree **tree, const char *word)
+{
+    PortugueseTree *currentNode = *tree;
+    int found = 0;
+    char caminho[1024] = ""; // String para armazenar o caminho
+
+    while (currentNode != NULL && !found)
+    {
+        if (strcmp(word, currentNode->info1.portugueseWord) == 0)
+        {
+            found = 1;
+        }
+        else if (currentNode->nInfos == 2 && strcmp(word, currentNode->info2.portugueseWord) == 0)
+        {
+            found = 1;
+        }
+        else
+        {
+            if (strcmp(word, currentNode->info1.portugueseWord) < 0)
+            {
+                strcat(caminho, "Esquerda -> ");
+                currentNode = currentNode->left;
+            }
+            else if (currentNode->nInfos == 1 || strcmp(word, currentNode->info2.portugueseWord) < 0)
+            {
+                strcat(caminho, "Centro -> ");
+                currentNode = currentNode->cent;
+            }
+            else
+            {
+                strcat(caminho, "Direita -> ");
+                currentNode = currentNode->right;
             }
         }
     }
 
-    fclose(arquivo);
-}
+    if (found)
+    {
+        // Remover a última " -> " do caminho
+        if (strlen(caminho) > 0)
+            caminho[strlen(caminho) - 4] = '\0';
 
-int buscarPalavraComCaminho23(Arv_pt *arvore, char *palavraPortugues, char *caminho) {
-    if (arvore == NULL) {
-        strcat(caminho, "NULL");
-        return 0;
+        printf("Caminho percorrido: %s\n", caminho);
     }
-
-    if (strcmp(arvore->info1.palavraPortugues, palavraPortugues) == 0) {
-        strcat(caminho, "Encontrado em Info1 -> ");
-        return 1;
-    }
-
-    if (arvore->nInfos == 2 && strcmp(arvore->info2.palavraPortugues, palavraPortugues) == 0) {
-        strcat(caminho, "Encontrado em Info2 -> ");
-        return 1;
-    }
-
-    if (strcmp(palavraPortugues, arvore->info1.palavraPortugues) < 0) {
-        strcat(caminho, "Esquerda -> ");
-        return buscarPalavraComCaminho23(arvore->esq, palavraPortugues, caminho);
-    } else if (arvore->nInfos == 1 || strcmp(palavraPortugues, arvore->info2.palavraPortugues) < 0) {
-        strcat(caminho, "Centro -> ");
-        return buscarPalavraComCaminho23(arvore->cent, palavraPortugues, caminho);
-    } else {
-        strcat(caminho, "Direita -> ");
-        return buscarPalavraComCaminho23(arvore->dir, palavraPortugues, caminho);
+    else
+    {
+        printf("Palavra nao encontrada\n");
     }
 }
 
-void realizarExperimento23(Arv_pt *arvore, char palavras[30][50]) {
-    long long inicio, fim;
-    double tempoTotal = 0;
+int main()
+{
+    PortugueseTree *arvore = NULL;
 
-    printf("\n--- Experimento ---\n");
-    for (int i = 0; i < 30; i++) {
-        char caminho[2048] = "";
-        inicio = getTempoNanosegundos();
+    // Carregar dados do arquivo
+    const char *nomeArquivo = "C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/text.txt"; // Altere para o nome real do arquivo
+    loadFile(nomeArquivo, &arvore);
 
-        int encontrado = buscarPalavraComCaminho23(arvore, palavras[i], caminho);
-
-        fim = getTempoNanosegundos();
-        double tempoGasto = (double)(fim - inicio);
-        tempoTotal += tempoGasto;
-
-        printf("Palavra: %s | Caminho: %s | Encontrada: %s | Tempo: %.0f nanosegundos\n",
-               palavras[i], caminho, encontrado ? "Sim" : "Não", tempoGasto);
-    }
-
-    printf("\nTempo médio por busca: %.0f nanosegundos\n", tempoTotal / 30);
-}
-
-int main() {
-    Arv_pt *arvore = NULL;
-
-    carregarArquivo("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_segunda_provaVERSAO-REFERENCIA/Tabalho2_Ed2-main/trabalhoEd2.txt", &arvore);
-
-    char palavras[30][50] = {
-        "onibus", "barramento", "inseto", "bicicleta", "ventilador", 
-        "casa", "livro", "escola", "tempo", "sol", 
-        "lua", "estrela", "amigo", "carro", "felicidade", 
-        "amizade", "trabalho", "lazer", "computador", "árvore",
-        "flor", "jardim", "cachorro", "gato", "passarinho", 
-        "peixe", "montanha", "rio", "praia", "mar"
+    // Lista de palavras para busca
+    const char *palavras[] = {
+         "estrela",
+        "mar", "rio", "cachoeira", "tempo", "vento", "chuva", "amor", "esperanca", "alegria", "tristeza",
+        "familia", "coracao", "alma", "mente", "cidade", "campo", "montanha", "cavalo", "passaro", "peixe",
+        "onibus", "barramento", "problema", "bicicleta", "ventilador", "rede", "sistema", 
+        "rede de computadores", "rede de relacionamento"
     };
 
-    realizarExperimento23(arvore, palavras);
+    int numPalavras = sizeof(palavras) / sizeof(palavras[0]);
 
-    LiberarArvore23(arvore);
+    printf("Realizando buscas por %d palavras\n\n", numPalavras);
+
+    clock_t startTime, endTime;
+    double totalTime = 0;
+
+    // Buscar cada palavra e medir o tempo
+    for (int i = 0; i < numPalavras; i++)
+    {
+        startTime = clock();
+        printf("Palavra: %s\n", palavras[i]);
+        printPathAndFindWord(&arvore, palavras[i]);
+        endTime = clock();
+
+        double elapsedTime = (double)(endTime - startTime) / CLOCKS_PER_SEC;
+        totalTime += elapsedTime;
+
+        printf("\n");
+    }
+
+    printf("Tempo total para buscar %d palavras %.6f segundos\n", numPalavras, totalTime);
+    printf("Tempo medio por palavra %.6f segundos\n", totalTime / numPalavras);
+
+    // Liberar memoria
+    deallocateTree(&arvore);
 
     return 0;
 }

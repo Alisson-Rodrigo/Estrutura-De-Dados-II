@@ -1,57 +1,85 @@
-#include "arv-23.c"  // Assume que todas as funções e estruturas necessárias estão definidas aqui
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>  // Para suporte a caracteres especiais e acentuação
+#include "23.c"
+#include "remocao.c"
+#include "alocacao.c"
+
+#define MEMORY_SIZE (1024 * 1024) // Tamanho total da memória (1MB por bloco)
+
+int menu() {
+    int op;
+    printf("\n1 - Alocar Nos");
+    printf("\n2 - Liberar Nos");
+    printf("\n3 - Exibir Nos Enderecos)");
+    printf("\n4 - Exibir Nos Em Ordem");
+    printf("\n0 - Sair");
+    printf("\nOpcao escolhida: ");
+    scanf("%d", &op);
+    while (getchar() != '\n'); // Limpa o buffer
+    return op;
+}
 
 int main() {
-    setlocale(LC_ALL, "");  // Configura o ambiente para suportar a língua local (acentuação)
-    Memory *root = NULL;  // Raiz da árvore
-    int option;
-    int size, start;
+    TreeNode23 *treeRoot = NULL;
 
-    while (1) {
-        printf("\nMenu de Gerenciamento de Memória:\n");
-        printf("1. Cadastrar Nós\n");
-        printf("2. Exibir Estado da Memória\n");
-        printf("3. Alocar Blocos\n");
-        printf("4. Liberar Blocos\n");
-        printf("5. Sair\n");
-        printf("Escolha uma opção: ");
-        scanf("%d", &option);
+    // Define o tamanho máximo da memória
+    int maximumMemorySize = MEMORY_SIZE;
 
-        switch (option) {
+    printf("---------------------------------\n");
+    printf("Alocacao de Memoria - Arvore 2-3\n");
+    printf("---------------------------------\n");
+
+    printf("Tamanho maximo da memoria configurado como %d blocos.\n", MEMORY_SIZE - 1);
+
+    int minimumMemoryBlock = initialize_memory_blocks(&treeRoot, maximumMemorySize);
+
+    int op, node_count;
+    do {
+        op = menu();
+        switch (op) {
             case 1:
-                cadastrar_nos(&root);
+                do {
+                    printf("\nQuantidade de nos a serem alocados: ");
+                    scanf("%d", &node_count);
+                    while (getchar() != '\n'); 
+                    if (node_count < minimumMemoryBlock || node_count > maximumMemorySize) {
+                        printf("\nDigite um numero entre %d e %d\n", minimumMemoryBlock, maximumMemorySize);
+                    }
+                } while (node_count < minimumMemoryBlock || node_count > maximumMemorySize);
+
+                manage_memory_block(&treeRoot, node_count, ALLOCATED_STATUS_FREE);
                 break;
+
             case 2:
-                printf("\nEstado atual da memória:\n");
-                if (root) {
-                    DisplayInfos(root);
-                } else {
-                    printf("Nenhum nó cadastrado.\n");
-                }
+                do {
+                    printf("\nQuantidade de nos a serem liberados: ");
+                    scanf("%d", &node_count);
+                    while (getchar() != '\n'); 
+                    if (node_count < minimumMemoryBlock || node_count > maximumMemorySize) {
+                        printf("\nDigite um número entre %d e %d\n", minimumMemoryBlock, maximumMemorySize);
+                    }
+                } while (node_count < minimumMemoryBlock || node_count > maximumMemorySize);
+
+                manage_memory_block(&treeRoot, node_count, STATUS_OCCUPIED);
                 break;
             case 3:
-                printf("Informe a quantidade de blocos a alocar: ");
-                scanf("%d", &size);
-                alocar_blocos(&root, size);
+                printf("\nExibindo Enderecos\n");
+                DisplayInfos(treeRoot);
                 break;
             case 4:
-                printf("Informe o endereço inicial do bloco a ser liberado: ");
-                scanf("%d", &start);
-                printf("Informe a quantidade de blocos a liberar: ");
-                scanf("%d", &size);
-                liberar_blocos(&root, start, size);
+                printf("\nExibindo arvore\n");
+                TreeNode23_print_in_order(treeRoot);
                 break;
-            case 5:
-                printf("Saindo do programa...\n");
-                // Liberar toda a memória alocada, se necessário
-                // free_memory(&root);  // Supõe que existe uma função para liberar toda a árvore
-                return 0;
+            case 0:
+                printf("\nFinalizando programa...\n");
+                break;
+
             default:
-                printf("Opção inválida! Tente novamente.\n");
-                break;
+                printf("\nOpção invalida\n");
         }
-    }
+    } while (op != 0);
+
+    TreeNode23_cleanup(&treeRoot);
     return 0;
 }
+

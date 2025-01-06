@@ -1,15 +1,15 @@
 #ifndef ARVRB_H
 #define ARVRB_H
 
-typedef struct Info
+typedef struct NodeData
 {
   BinaryTreeNode *englishWordNode;
   char *portugueseWord;
-} Info;
+} NodeData;
 
 typedef struct RedBlackTreePT
 {
-  Info info;
+  NodeData info;
   int color;
   struct RedBlackTreePT *left;
   struct RedBlackTreePT *right;
@@ -17,9 +17,9 @@ typedef struct RedBlackTreePT
 
 int insertPortugueseWord(RedBlackTreePT **arvore, char *palavraPortugues, char *palavraIngles, int unidade);
 
-Info createInfo(char *palavra, char *palavraIngles, int unidade);
+NodeData createInfo(char *palavra, char *palavraIngles, int unidade);
 
-RedBlackTreePT *createNode(Info *informacao);
+RedBlackTreePT *createNode(NodeData *informacao);
 int getNodeColor(RedBlackTreePT *raiz);
 
 void switch_node_color(RedBlackTreePT **raiz);
@@ -30,9 +30,9 @@ void left_rotate(RedBlackTreePT **raiz);
 
 void balanceTree(RedBlackTreePT **raiz);
 
-int insertRedBlackNode(RedBlackTreePT **raiz, Info *informacao);
+int insertRedBlackNode(RedBlackTreePT **raiz, NodeData *informacao);
 
-int insertRedBlackTree(RedBlackTreePT **raiz, Info *informacao);
+int insertRedBlackTree(RedBlackTreePT **raiz, NodeData *informacao);
 
 void shiftLeftRed(RedBlackTreePT **raiz);
 

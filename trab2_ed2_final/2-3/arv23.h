@@ -5,43 +5,43 @@
 #include "arvbin.h"
 typedef struct info {
     char *portugueseWord;
-    Inglesbin *palavraIngles;
-} Info;
+    Inglesbin *englishWord;
+} NodeInfo;
 
-typedef struct Portugues23{
-    Info info1;
-    Info info2;
-    struct Portugues23 *cent;
-    struct Portugues23 *dir;
-    struct Portugues23 *esq;
+typedef struct PortugueseTree{
+    NodeInfo info1;
+    NodeInfo info2;
+    struct PortugueseTree *cent;
+    struct PortugueseTree *right;
+    struct PortugueseTree *left;
     int nInfos;
-} Portugues23;
+} PortugueseTree;
+
 typedef struct Inglesbin Inglesbin;
-Portugues23 *BuscarPalavra(Portugues23 **no, const char *palavraPortugues);
-int inserirPalavraPortugues(Portugues23 **arvore, char *palavraPortugues, char *palavraIngles, int unidade);
-void adicionarTraducaoEmIngles(Info *info, const char *palavraIng, int unidade);
+PortugueseTree *FindWord(PortugueseTree **no, const char *palavraPortugues);
+int insertPortugueseTerm(PortugueseTree **arvore, char *palavraPortugues, char *palavraIngles, int unidade);
+void addEnglishTranslation(NodeInfo *info, const char *palavraIng, int unidade);
 
-Info createInfo(char *palavra, char *palavraIngles, int unidade);
-Portugues23 *criaNo(const Info *informacao, Portugues23 *filhoesq, Portugues23 *filhocen);
-Portugues23 *adicionaChave(Portugues23 *no, const Info *informacao, Portugues23 *filho);
-Portugues23 *quebraNo(Portugues23 **no, const Info *informacao, Info *promove, Portugues23 **filho);
-int ehFolha(const Portugues23 *no);
-Portugues23 *inserirArv23(Portugues23 **no, Info *informacao, Info *promove, Portugues23 **pai);
+NodeInfo createInfo(char *palavra, char *palavraIngles, int unidade);
+PortugueseTree *createNode(NodeInfo *informacao, PortugueseTree *filhoesq, PortugueseTree *filhocen);
+PortugueseTree *updateNode23(PortugueseTree *no,  NodeInfo *informacao, PortugueseTree *filho);
+PortugueseTree *splitNode(PortugueseTree **no, NodeInfo *informacao, NodeInfo *promove, PortugueseTree **filho);
+int isNodeLeaf(PortugueseTree *no);
+PortugueseTree *insertNode23(PortugueseTree **no, NodeInfo *informacao, NodeInfo *promove, PortugueseTree **pai);
 
 
-void freeInfo2_3(Info *info);
-void freeTree(Portugues23 *no);
+void deleteInfo2_3(NodeInfo *info);
+void deallocateTree(PortugueseTree **no);
+int remove_palavra_ingles_unidade(PortugueseTree *raiz, const char *palavraIngles, int unidade, PortugueseTree **top);
+void print_tree23(PortugueseTree *raiz);
+void printWordsAtUnit(PortugueseTree *arvore, int unidade, int *unidadeImpressa);
 
-void exibir_tree23(const Portugues23 *raiz);
-void imprimirPalavrasUnidade(Portugues23 *arvore, int unidade, int *unidadeImpressa);
+void printPortugueseTranslation(PortugueseTree **raiz, const char *palavraPortugues);
+void printTranslations(Inglesbin *node, int unidade, const char *palavraPortugues);
 
-void exibir_traducao_Portugues(Portugues23 **raiz, const char *palavraPortugues);
-void imprimirTraducoes(Inglesbin *node, int unidade, const char *palavraPortugues);
 
-void menorInfoDir(Portugues23 *Raiz, Portugues23 **no, Portugues23 **paiNo);
-void maiorInfoEsq(Portugues23 *Raiz, Portugues23 **no, Portugues23 **paiNo);
-int remover23(Portugues23 **Pai, Portugues23 **Raiz, char *valor);
+int removeNodeFrom23Tree(PortugueseTree **raiz, char *info, PortugueseTree *pai, PortugueseTree **origem, PortugueseTree **maior);
 
-void imprimirTraducoesNoFormato(Inglesbin *node, int unidade, const char *palavraPortugues);
-
+void printTranslationsInFormat(Inglesbin *node, int unidade, const char *palavraPortugues);
+int deleteFrom23Tree(PortugueseTree **raiz, char *info, PortugueseTree *pai, PortugueseTree **origem, PortugueseTree **maior);
 #endif

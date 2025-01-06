@@ -5,58 +5,58 @@
 #include "arvrb.h"
 #include "unidade.h"
 
-BinaryTreeNode *initializeBinaryTreeNode(char *palavraIngles, int unidade) {
+BinaryTreeNode *initializeBinaryTreeNode(char *englishWord, int unit) {
     // Aloca memória para o novo nó
-    BinaryTreeNode *novoNo = (BinaryTreeNode *)malloc(sizeof(BinaryTreeNode));
-    if (novoNo == NULL) {
+    BinaryTreeNode *newNode = (BinaryTreeNode *)malloc(sizeof(BinaryTreeNode));
+    if (newNode == NULL) {
         perror("Erro ao alocar memória para o nó da árvore binária");
         exit(EXIT_FAILURE);
     }
 
     // Inicializa os campos do nó
-    strcpy(novoNo->englishWord, palavraIngles);
-    novoNo->unitValues = criar_unidade(unidade); // Cria a lista de unidades com a primeira unidade
-    novoNo->left = NULL;
-    novoNo->right = NULL;
+    strcpy(newNode->englishWord, englishWord);
+    newNode->unitValues = create_unit(unit); // Cria a lista de unidades com a primeira unidade
+    newNode->left = NULL;
+    newNode->right = NULL;
 
-    return novoNo;
+    return newNode;
 }
 
-BinaryTreeNode *insertEnglishWord(BinaryTreeNode *root, char *palavraIngles, int unidade) {
-    BinaryTreeNode *result = root; // Variável para manter o único retorno
+BinaryTreeNode *insertEnglishWord(BinaryTreeNode *rootNode, char *englishWord, int unit) {
+    BinaryTreeNode *result = rootNode; // Variável para manter o único retorno
 
-    if (root == NULL) {
+    if (rootNode == NULL) {
         // Cria um novo nó da árvore binária
-        BinaryTreeNode *novoNo = initializeBinaryTreeNode(palavraIngles, unidade);
-        if (novoNo != NULL) {
-            result = novoNo;
+        BinaryTreeNode *newTreeNode = initializeBinaryTreeNode(englishWord, unit);
+        if (newTreeNode != NULL) {
+            result = newTreeNode;
         } else {
             perror("Erro ao alocar memória para o nó da árvore binária.");
         }
     } else {
-        int cmp = strcmp(palavraIngles, root->englishWord);
+        int cmp = strcmp(englishWord, rootNode->englishWord);
         if (cmp < 0) {
-            root->left = insertEnglishWord(root->left, palavraIngles, unidade);
+            rootNode->left = insertEnglishWord(rootNode->left, englishWord, unit);
         } else if (cmp > 0) {
-            root->right = insertEnglishWord(root->right, palavraIngles, unidade);
+            rootNode->right = insertEnglishWord(rootNode->right, englishWord, unit);
         } else {
             // Palavra já existe, adiciona a unidade à lista ordenada
-            Unidade *novaUnidade = criar_unidade(unidade);
-            if (novaUnidade != NULL) {
-                root->unitValues = adicionar_unidade_ordenada(root->unitValues, novaUnidade);
+            Unit *newUnit = create_unit(unit);
+            if (newUnit != NULL) {
+                rootNode->unitValues = insert_unit_sorted(rootNode->unitValues, newUnit);
             } else {
                 perror("Erro ao alocar memória para a unidade.");
             }
         }
     }
 
-    return result; // Retorna a árvore atualizada ou o novo nó
+    return result; 
 }
 
-void addEnglishTranslation(RedBlackTreePT *raiz, char *palavraIng, int unidade) {
-    if (raiz != NULL) {
-        BinaryTreeNode *novoRoot = insertEnglishWord(raiz->info.englishWordNode, palavraIng, unidade);
-        raiz->info.englishWordNode = novoRoot;
+void addEnglishTranslation(RedBlackTreePT *rootNode, char *englishWord, int unit) {
+    if (rootNode != NULL) {
+        BinaryTreeNode *novoRoot = insertEnglishWord(rootNode->info.englishWordNode, englishWord, unit);
+        rootNode->info.englishWordNode = novoRoot;
     } else {
         perror("Erro: Nó da árvore vermelho-preto é nulo.");
     }
@@ -70,11 +70,11 @@ void printBinaryTree(BinaryTreeNode *root) {
         printf("Palavra em inglês: %s\n", root->englishWord);
 
         // Imprime as unidades associadas (caso necessário para depuração)
-        Unidade *currentUnit = root->unitValues;
+        Unit *currentUnit = root->unitValues;
         printf("Unidades: ");
         while (currentUnit != NULL) {
-            printf("%d ", currentUnit->unidade);
-            currentUnit = currentUnit->prox;
+            printf("%d ", currentUnit->unitValue);
+            currentUnit = currentUnit->nextNode;
         }
         printf("\n");
 
@@ -84,117 +84,117 @@ void printBinaryTree(BinaryTreeNode *root) {
 
 
 
-int isLeafNodes(BinaryTreeNode *raiz)
+int isLeafNodes(BinaryTreeNode *rootNode)
 {
-    return (raiz->left == NULL && raiz->right == NULL);
+    return (rootNode->left == NULL && rootNode->right == NULL);
 }
 
-BinaryTreeNode *singleChildNode(BinaryTreeNode *raiz)
+BinaryTreeNode *singleChildNode(BinaryTreeNode *rootNode)
 {
     BinaryTreeNode *aux;
     aux = NULL;
 
-    if (raiz->right == NULL)
+    if (rootNode->right == NULL)
     {
-        aux = raiz->left;
+        aux = rootNode->left;
     }
-    else if (raiz->left == NULL)
+    else if (rootNode->left == NULL)
     {
-        aux = raiz->right;
+        aux = rootNode->right;
     }
 
     return aux;
 }
 
-BinaryTreeNode *minimumChildNode(BinaryTreeNode *raiz)
+BinaryTreeNode *minimumChildNode(BinaryTreeNode *rootNode)
 {
     BinaryTreeNode *aux;
-    aux = raiz;
+    aux = rootNode;
 
-    if (raiz)
+    if (rootNode)
     {
-        if (raiz->left)
-            aux = minimumChildNode(raiz->left);
+        if (rootNode->left)
+            aux = minimumChildNode(rootNode->left);
     }
 
     return aux;
 }
 
-int removeEnglishWord(BinaryTreeNode **raiz, char *palavra) {
-    int existe = 0; // Variável para manter o único retorno
-    BinaryTreeNode *endFilho = NULL;
+int removeEnglishWord(BinaryTreeNode **rootNode, char *wordToRemove) {
+    int isFound = 0; // Variável para manter o único retorno
+    BinaryTreeNode *lastChild = NULL;
 
-    if (*raiz) {
-        if (strcmp(palavra, (*raiz)->englishWord) == 0) {
-            existe = 1;
-            printf("Removendo palavra: %s\n", palavra);
-            BinaryTreeNode *aux = *raiz;
+    if (*rootNode) {
+        if (strcmp(wordToRemove, (*rootNode)->englishWord) == 0) {
+            isFound = 1;
+            printf("Removendo palavra: %s\n", wordToRemove);
+            BinaryTreeNode *aux = *rootNode;
 
-            if (isLeafNodes(*raiz)) {
+            if (isLeafNodes(*rootNode)) {
                 // Libera a lista de unidades associada
-                liberar_lista(aux->unitValues);
+                free_list(aux->unitValues);
                 free(aux);
-                *raiz = NULL;
-            } else if ((endFilho = singleChildNode(*raiz)) != NULL) {
+                *rootNode = NULL;
+            } else if ((lastChild = singleChildNode(*rootNode)) != NULL) {
                 // Libera a lista de unidades associada
-                liberar_lista(aux->unitValues);
+                free_list(aux->unitValues);
                 free(aux);
-                *raiz = endFilho;
+                *rootNode = lastChild;
             } else {
                 // Substitui pelo menor nó da subárvore direita
-                endFilho = minimumChildNode((*raiz)->right);
-                strcpy((*raiz)->englishWord, endFilho->englishWord);
+                lastChild = minimumChildNode((*rootNode)->right);
+                strcpy((*rootNode)->englishWord, lastChild->englishWord);
 
                 // Libera a lista antiga e copia a nova
-                liberar_lista((*raiz)->unitValues);
-                (*raiz)->unitValues = NULL;
+                free_list((*rootNode)->unitValues);
+                (*rootNode)->unitValues = NULL;
 
                 // Clona a lista de unidades do nó substituto
-                Unidade *currentUnit = endFilho->unitValues;
+                Unit *currentUnit = lastChild->unitValues;
                 while (currentUnit != NULL) {
-                    Unidade *novaUnidade = criar_unidade(currentUnit->unidade);
-                    (*raiz)->unitValues = adicionar_unidade_ordenada((*raiz)->unitValues, novaUnidade);
-                    currentUnit = currentUnit->prox;
+                    Unit *novaUnidade = create_unit(currentUnit->unitValue);
+                    (*rootNode)->unitValues = insert_unit_sorted((*rootNode)->unitValues, novaUnidade);
+                    currentUnit = currentUnit->nextNode;
                 }
 
-                removeEnglishWord(&(*raiz)->right, endFilho->englishWord);
+                removeEnglishWord(&(*rootNode)->right, lastChild->englishWord);
             }
-        } else if (strcmp(palavra, (*raiz)->englishWord) < 0) {
-            existe = removeEnglishWord(&(*raiz)->left, palavra);
+        } else if (strcmp(wordToRemove, (*rootNode)->englishWord) < 0) {
+            isFound = removeEnglishWord(&(*rootNode)->left, wordToRemove);
         } else {
-            existe = removeEnglishWord(&(*raiz)->right, palavra);
+            isFound = removeEnglishWord(&(*rootNode)->right, wordToRemove);
         }
     }
 
-    return existe; // Único ponto de retorno
+    return isFound; // Único ponto de retorno
 }
 
 
-void FindEnglishTerm(RedBlackTreePT **raiz, char *palavraIngles, int unidade) {
-    if (*raiz != NULL) {
+void FindEnglishTerm(RedBlackTreePT **rootNode, char *englishTerm, int unit) {
+    if (*rootNode != NULL) {
         // Recursão para o lado esquerdo da árvore
-        FindEnglishTerm(&(*raiz)->left, palavraIngles, unidade);
+        FindEnglishTerm(&(*rootNode)->left, englishTerm, unit);
 
         // Verifica se a árvore binária de palavras em inglês não está vazia
-        if ((*raiz)->info.englishWordNode != NULL) {
+        if ((*rootNode)->info.englishWordNode != NULL) {
             // Percorre a árvore binária para encontrar a palavra e remover a unidade
-            BinaryTreeNode *currentNode = (*raiz)->info.englishWordNode;
+            BinaryTreeNode *currentNode = (*rootNode)->info.englishWordNode;
             while (currentNode != NULL) {
-                if (strcmp(currentNode->englishWord, palavraIngles) == 0) {
+                if (strcmp(currentNode->englishWord, englishTerm) == 0) {
                     // Encontra a palavra e remove a unidade da lista
-                    Unidade *novaLista = remover_unidade(currentNode->unitValues, unidade);
+                    Unit *novaLista = remove_unit(currentNode->unitValues, unit);
                     currentNode->unitValues = novaLista;
 
                     // Verifica se a lista de unidades está vazia
                     if (currentNode->unitValues == NULL) {
                         // Remove o nó da árvore binária se não houver mais unidades
-                        removeEnglishWord(&(*raiz)->info.englishWordNode, palavraIngles);
+                        removeEnglishWord(&(*rootNode)->info.englishWordNode, englishTerm);
                     }
                     break; // Palavra encontrada e tratada
                 }
 
                 // Navega para o próximo nó na árvore binária
-                if (strcmp(palavraIngles, currentNode->englishWord) < 0) {
+                if (strcmp(englishTerm, currentNode->englishWord) < 0) {
                     currentNode = currentNode->left;
                 } else {
                     currentNode = currentNode->right;
@@ -203,26 +203,26 @@ void FindEnglishTerm(RedBlackTreePT **raiz, char *palavraIngles, int unidade) {
         }
 
         // Recursão para o lado direito da árvore
-        FindEnglishTerm(&(*raiz)->right, palavraIngles, unidade);
+        FindEnglishTerm(&(*rootNode)->right, englishTerm, unit);
     }
 }
 
-void exibir_arvorebinaria(BinaryTreeNode *raiz) {
-    if (raiz != NULL) {
-        exibir_arvorebinaria(raiz->left);
+void exibir_arvorebinaria(BinaryTreeNode *rootNode) {
+    if (rootNode != NULL) {
+        exibir_arvorebinaria(rootNode->left);
 
         // Imprime a palavra em inglês
-        printf("Palavra em inglês: %s\n", raiz->englishWord);
+        printf("Palavra em inglês: %s\n", rootNode->englishWord);
 
         // Imprime as unidades associadas (caso necessário para depuração)
-        Unidade *currentUnit = raiz->unitValues;
+        Unit *currentUnit = rootNode->unitValues;
         printf("Unidades: ");
         while (currentUnit != NULL) {
-            printf("%d ", currentUnit->unidade);
-            currentUnit = currentUnit->prox;
+            printf("%d ", currentUnit->unitValue);
+            currentUnit = currentUnit->nextNode;
         }
         printf("\n");
 
-        exibir_arvorebinaria(raiz->right);
+        exibir_arvorebinaria(rootNode->right);
     }
 }
