@@ -67,7 +67,7 @@ void printBinaryTree(BinaryTreeNode *root) {
         printBinaryTree(root->left);
 
         // Imprime a palavra em inglês
-        printf("Palavra em inglês: %s\n", root->englishWord);
+        printf("Palavra em ingles: %s\n", root->englishWord);
 
         // Imprime as unidades associadas (caso necessário para depuração)
         Unit *currentUnit = root->unitValues;

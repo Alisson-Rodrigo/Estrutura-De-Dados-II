@@ -8,12 +8,12 @@
 
 int menu() {
     int op;
-    printf("\n1 - Alocar Nos");
-    printf("\n2 - Liberar Nos");
-    printf("\n3 - Exibir Nos Enderecos)");
-    printf("\n4 - Exibir Nos Em Ordem");
+    printf("\n1 - Alocar Nós");
+    printf("\n2 - Liberar Nós");
+    printf("\n3 - Exibir Nós Endereços)");
+    printf("\n4 - Exibir Nós Em Ordem");
     printf("\n0 - Sair");
-    printf("\nOpcao escolhida: ");
+    printf("\nOpção escolhida: ");
     scanf("%d", &op);
     while (getchar() != '\n'); // Limpa o buffer
     return op;
@@ -29,7 +29,7 @@ int main() {
     printf("Alocacao de Memoria - Arvore 2-3\n");
     printf("---------------------------------\n");
 
-    printf("Tamanho maximo da memoria configurado como %d blocos.\n", MEMORY_SIZE - 1);
+    printf("Tamanho máximo da memória configurado como %d blocos.\n", MEMORY_SIZE - 1);
 
     int minimumMemoryBlock = initialize_memory_blocks(&treeRoot, maximumMemorySize);
 
@@ -39,11 +39,11 @@ int main() {
         switch (op) {
             case 1:
                 do {
-                    printf("\nQuantidade de nos a serem alocados: ");
+                    printf("\nQuantidade de nós a serem alocados: ");
                     scanf("%d", &node_count);
                     while (getchar() != '\n'); 
                     if (node_count < minimumMemoryBlock || node_count > maximumMemorySize) {
-                        printf("\nDigite um numero entre %d e %d\n", minimumMemoryBlock, maximumMemorySize);
+                        printf("\nDigite um número entre %d e %d\n", minimumMemoryBlock, maximumMemorySize);
                     }
                 } while (node_count < minimumMemoryBlock || node_count > maximumMemorySize);
 
@@ -52,7 +52,7 @@ int main() {
 
             case 2:
                 do {
-                    printf("\nQuantidade de nos a serem liberados: ");
+                    printf("\nQuantidade de nós a serem liberados: ");
                     scanf("%d", &node_count);
                     while (getchar() != '\n'); 
                     if (node_count < minimumMemoryBlock || node_count > maximumMemorySize) {
@@ -67,7 +67,7 @@ int main() {
                 DisplayInfos(treeRoot);
                 break;
             case 4:
-                printf("\nExibindo arvore\n");
+                printf("\nExibindo árvore\n");
                 TreeNode23_print_in_order(treeRoot);
                 break;
             case 0:
@@ -75,7 +75,7 @@ int main() {
                 break;
 
             default:
-                printf("\nOpção invalida\n");
+                printf("\nOpção inválida\n");
         }
     } while (op != 0);
 

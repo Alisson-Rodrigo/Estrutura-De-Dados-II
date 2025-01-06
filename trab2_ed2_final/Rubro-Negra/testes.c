@@ -1,19 +1,18 @@
 #include <stdio.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h> // Para QueryPerformanceCounter e QueryPerformanceFrequency
 #include "arvbin.c"
 #include "arvrb.c"
 #include "unidade.c"
 #include <ctype.h>
-#include <time.h>
 
-// Funcao para limpar caracteres indesejados
+// Função para limpar caracteres indesejados
 void clearCharacters(char *str)
 {
     char *end;
 
-    // Remove espacos e caracteres indesejados do final
+    // Remove espaços e caracteres indesejados do final
     end = str + strlen(str) - 1;
     while (end > str && (isspace((unsigned char)*end) || *end == ';' || *end == ','))
     {
@@ -21,17 +20,18 @@ void clearCharacters(char *str)
         end--;
     }
 
-    // Remove espacos do inicio
+    // Remove espaços do início
     char *start = str;
     while (*start && isspace((unsigned char)*start))
     {
         start++;
     }
 
-    // Copia a string limpa para o inicio
+    // Copia a string limpa para o início
     memmove(str, start, strlen(start) + 1);
 }
 
+// Função para carregar o arquivo
 void loadFile(const char *fileName, RedBlackTreePT **treeRef)
 {
     FILE *filePointer = fopen(fileName, "r");
@@ -58,23 +58,23 @@ void loadFile(const char *fileName, RedBlackTreePT **treeRef)
         {
             char englishWord[50], portugueseTranslations[200];
 
-            // Separa a palavra em ingles e suas traducoes em portugues
+            // Separa a palavra em inglês e suas traduções em português
             if (sscanf(inputLine, "%[^:]: %[^\n]", englishWord, portugueseTranslations) == 2)
             {
-                // Limpa a palavra em ingles
+                // Limpa a palavra em inglês
                 clearCharacters(englishWord);
 
-                // Divide as traducoes em portugues
+                // Divide as traduções em português
                 char *portugueseTranslationToken = strtok(portugueseTranslations, ",;");
                 while (portugueseTranslationToken != NULL)
                 {
-                    // Limpa cada traducao em portugues
+                    // Limpa cada tradução em português
                     clearCharacters(portugueseTranslationToken);
 
-                    // Insere a palavra na arvore
+                    // Insere a palavra na árvore
                     insertPortugueseWord(treeRef, portugueseTranslationToken, englishWord, currentUnit);
 
-                    // Proxima traducao
+                    // Próxima tradução
                     portugueseTranslationToken = strtok(NULL, ",;");
                 }
             }
@@ -84,60 +84,49 @@ void loadFile(const char *fileName, RedBlackTreePT **treeRef)
     fclose(filePointer);
 }
 
-void printPathAndFindWord(RedBlackTreePT **tree, const char *word) {
+// Função para medir tempo e imprimir resultado
+void printPathAndFindWord(RedBlackTreePT **tree, const char *word)
+{
     RedBlackTreePT *currentNode = *tree;
     int found = 0;
     char path[1024] = ""; // Armazena o caminho percorrido
 
-    while (currentNode != NULL && !found) {
-        if (strcmp(word, currentNode->info.portugueseWord) == 0) {
+    while (currentNode != NULL && !found)
+    {
+        if (strcmp(word, currentNode->info.portugueseWord) == 0)
+        {
             found = 1;
-        } else if (strcmp(word, currentNode->info.portugueseWord) < 0) {
+        }
+        else if (strcmp(word, currentNode->info.portugueseWord) < 0)
+        {
             strcat(path, "Esquerda -> ");
             currentNode = currentNode->left;
-        } else {
+        }
+        else
+        {
             strcat(path, "Direita -> ");
             currentNode = currentNode->right;
         }
     }
 
-    if (found) {
+    if (found)
+    {
         // Remove o último " -> "
-        if (strlen(path) > 0) path[strlen(path) - 4] = '\0';
+        if (strlen(path) > 0)
+            path[strlen(path) - 4] = '\0';
         printf("Palavra encontrada: %s\n", word);
         printf("Caminho percorrido: %s\n", path);
-    } else {
-        printf("Palavra não encontrada: %s\n", word);
     }
-}
-void printPathOnly(RedBlackTreePT **tree, const char *word) {
-    RedBlackTreePT *currentNode = *tree;
-    char path[1024] = ""; // String para armazenar o caminho
-    int found = 0;
-
-    while (currentNode != NULL && !found) {
-        if (strcmp(word, currentNode->info.portugueseWord) == 0) {
-            found = 1;
-        } else if (strcmp(word, currentNode->info.portugueseWord) < 0) {
-            strcat(path, "Esquerda -> ");
-            currentNode = currentNode->left;
-        } else {
-            strcat(path, "Direita -> ");
-            currentNode = currentNode->right;
-        }
-    }
-
-    // Exibe o caminho percorrido
-    if (found) {
-        if (strlen(path) > 0) path[strlen(path) - 4] = '\0'; // Remove o último " -> "
+    else
+    {
+        strcat(path, "NULL"); // Adiciona "NULL" ao final do caminho
+        printf("Palavra nao encontrada: %s\n", word);
         printf("Caminho percorrido: %s\n", path);
-    } else {
-        printf("Caminho percorrido: Palavra nao encontrada\n");
     }
 }
 
-
-int main() {
+int main()
+{
     RedBlackTreePT *arvore = NULL;
 
     // Carrega dados do arquivo
@@ -145,37 +134,39 @@ int main() {
     loadFile(nomeArquivo, &arvore);
 
     // Lista de 30 palavras para busca
-     const char *palavras[] = {
-         "estrela",
-        "mar", "rio", "cachoeira", "tempo", "vento", "chuva", "amor", "esperanca", "alegria", "tristeza",
-        "familia", "coracao", "alma", "mente", "cidade", "campo", "montanha", "cavalo", "passaro", "peixe",
-        "onibus", "barramento", "problema", "bicicleta", "ventilador", "rede", "sistema", 
-        "rede de computadores", "rede de relacionamento"
-    };
+    const char *palavras[] = {
+        "carro", "automovel", "erro", "engano", "roda", "ventilador", "soprador",
+        "teia", "conexao", "estrutura", "organizacao", "cadeado", "fruta",
+        "memoria", "companheiro", "documento", "esfera", "fio", "dispositivo",
+        "vidro", "escrivaninha", "cursor", "acordo", "estrela", "mar", "rio",
+        "cachoeira", "tempo", "vento", "chuva"};
 
     int numPalavras = sizeof(palavras) / sizeof(palavras[0]);
 
     printf("### Realizando Experimento com %d palavras ###\n\n", numPalavras);
 
-    clock_t startTime, endTime;
+    LARGE_INTEGER frequency, startTime, endTime;
+    QueryPerformanceFrequency(&frequency);
+
     double totalTime = 0;
 
     // Buscar cada palavra e medir o tempo
-    for (int i = 0; i < numPalavras; i++) {
+    for (int i = 0; i < numPalavras; i++)
+    {
         printf("Buscando palavra: %s\n", palavras[i]);
-        startTime = clock();
+        QueryPerformanceCounter(&startTime);
         printPathAndFindWord(&arvore, palavras[i]);
-        endTime = clock();
+        QueryPerformanceCounter(&endTime);
 
-        double elapsedTime = (double)(endTime - startTime) / CLOCKS_PER_SEC;
+        double elapsedTime = (double)(endTime.QuadPart - startTime.QuadPart) * 1e9 / frequency.QuadPart;
         totalTime += elapsedTime;
 
-        printf("Tempo gasto: %.6f segundos\n\n", elapsedTime);
+        printf("Tempo gasto: %.2f nanosegundos\n\n", elapsedTime);
     }
 
     printf("### Resultados do Experimento ###\n");
-    printf("Tempo total para buscar %d palavras: %.6f segundos\n", numPalavras, totalTime);
-    printf("Tempo médio por palavra: %.6f segundos\n", totalTime / numPalavras);
+    printf("Tempo total para buscar %d palavras: %.2f nanosegundos\n", numPalavras, totalTime);
+    printf("Tempo medio por palavra: %.2f nanosegundos\n", totalTime / numPalavras);
 
     // Liberar memória da árvore
     free(arvore);
