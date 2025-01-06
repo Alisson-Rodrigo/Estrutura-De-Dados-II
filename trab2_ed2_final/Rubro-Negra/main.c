@@ -104,7 +104,7 @@ int main()
     RedBlackTreePT *rootNode = NULL;
 
     // Carregar os dados iniciais do arquivo
-    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &rootNode);
+    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/text.txt", &rootNode);
 
     int option;
     char inputWord[50];
