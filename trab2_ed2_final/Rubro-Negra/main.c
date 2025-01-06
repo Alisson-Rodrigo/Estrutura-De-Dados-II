@@ -34,62 +34,53 @@ void clearCharacters(char *str)
 void loadFile(const char *fileName, RedBlackTreePT **treeRef)
 {
     FILE *filePointer = fopen(fileName, "r");
+    if (filePointer == NULL)
+    {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
+
     char inputLine[256];
     int currentUnit = 0;
 
-    if (filePointer != NULL)
+    while (fgets(inputLine, sizeof(inputLine), filePointer))
     {
-        while (fgets(inputLine, sizeof(inputLine), filePointer))
+        // Remove o caractere de nova linha
+        inputLine[strcspn(inputLine, "\n")] = 0;
+
+        if (inputLine[0] == '%')
         {
-            // Remove o caractere de nova linha
-            inputLine[strcspn(inputLine, "\n")] = 0;
+            // Atualiza a unidade atual
+            sscanf(inputLine, "%% Unidade %d", &currentUnit);
+        }
+        else
+        {
+            char englishWord[50], portugueseTranslations[200];
 
-            if (inputLine[0] == '%')
+            // Separa a palavra em ingles e suas traducoes em portugues
+            if (sscanf(inputLine, "%[^:]: %[^\n]", englishWord, portugueseTranslations) == 2)
             {
-                // Verifica e atualiza a unidade atual
-                int parsedUnit;
-                if (sscanf(inputLine, "%% Unidade %d", &parsedUnit) == 1)
+                // Limpa a palavra em ingles
+                clearCharacters(englishWord);
+
+                // Divide as traducoes em portugues
+                char *portugueseTranslationToken = strtok(portugueseTranslations, ",;");
+                while (portugueseTranslationToken != NULL)
                 {
-                    currentUnit = parsedUnit; // Atualiza a unidade
-                }
-                else
-                {
-                    printf("Aviso: Unidade inválida encontrada no arquivo. Linha ignorada: %s\n", inputLine);
-                    currentUnit = 0; // Reseta para um valor padrão
-                }
-            }
-            else
-            {
-                char englishWord[50], portugueseTranslations[200];
+                    // Limpa cada traducao em portugues
+                    clearCharacters(portugueseTranslationToken);
 
-                // Separa a palavra em inglês e suas traduções em português
-                if (sscanf(inputLine, "%[^:]: %[^\n]", englishWord, portugueseTranslations) == 2)
-                {
-                    // Limpa a palavra em inglês
-                    clearCharacters(englishWord);
+                    // Insere a palavra na arvore
+                    insertPortugueseWord(treeRef, portugueseTranslationToken, englishWord, currentUnit);
 
-                    // Divide as traduções em português
-                    char *portugueseTranslationToken = strtok(portugueseTranslations, ",;");
-                    while (portugueseTranslationToken != NULL)
-                    {
-                        // Limpa cada tradução em português
-                        clearCharacters(portugueseTranslationToken);
-
-                        // Insere a palavra na árvore
-                        insertPortugueseWord(treeRef, portugueseTranslationToken, englishWord, currentUnit);
-
-                        // Próxima tradução
-                        portugueseTranslationToken = strtok(NULL, ",;");
-                    }
+                    // Proxima traducao
+                    portugueseTranslationToken = strtok(NULL, ",;");
                 }
             }
         }
-        fclose(filePointer);
     }
-    else
-    {
-        perror("Erro ao abrir o arquivo");
-    }
+
+    fclose(filePointer);
 }
 
 void exibirMenu()
@@ -113,7 +104,7 @@ int main()
     RedBlackTreePT *rootNode = NULL;
 
     // Carregar os dados iniciais do arquivo
-    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/text.txt", &rootNode);
+    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/trab2_ed2_final/trabalhoEd2.txt", &rootNode);
 
     int option;
     char inputWord[50];
