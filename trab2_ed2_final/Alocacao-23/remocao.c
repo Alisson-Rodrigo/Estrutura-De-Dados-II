@@ -91,7 +91,7 @@ int RemoveNodeFrom23Tree(TreeNode23 **root, int info, TreeNode23 *parentNode, Tr
 
                             isRemoved = wave_movement(parent_info, &((*root)->info1), parent_node_aux, treeSource, &parentNode, maxNode, RemoveNodeFrom23Tree);
                         }
-                        else // Filho do center (com parentNode de 1 info) ou da direita
+                        else 
                         {
                             parent_node_aux = Find_max_parent_node(*treeSource, (*root)->info1.num_start);
 
@@ -185,7 +185,7 @@ int TreeNode23_Delete(TreeNode23 **root, int info, TreeNode23 *parentNode, TreeN
 
                             isRemoved = wave_movement(parent_info, &((*root)->info1), parent_node_aux, treeSource, &parentNode, maxNode, TreeNode23_Delete);
                         }
-                        else // Filho da esquerda
+                        else 
                         {
                             parent_node_aux = Find_smallest_parent_node(*treeSource, (*root)->info1.num_start);
 
