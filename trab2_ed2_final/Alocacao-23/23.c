@@ -3,10 +3,6 @@
 #include "23.h"
 
 void DisplayInfos(TreeNode23 *root) {
-    if (root == NULL) {
-        return;  
-    }
-
     if (root->left) {
         DisplayInfos(root->left);
     }
@@ -454,25 +450,21 @@ int TreeNode23_adjustBalance(TreeNode23 **root, int info, TreeNode23 **largestNo
 
 void showNodeInfo23(Info node)
 {
-    // Verifica se o intervalo é válido
     if (node.num_start > node.num_end) {
         printf("Erro: Intervalo invalido no no [%d] até [%d].\n", node.num_start, node.num_end);
         return;
     }
 
-    // Exibe as informações do nó em um formato mais organizado
     printf("Bloco de [%d] até [%d] - Status: %s\n",
            node.num_start,
            node.num_end,
            node.status == ALLOCATED_STATUS_FREE ? "Livre" : node.status == STATUS_OCCUPIED ? "Ocupado" : "Desconhecido");
 
-    // Informações adicionais para depuração
     printf("Informacoes adicionais:\n");
     printf("  Inicio: %d\n", node.num_start);
     printf("  Fim: %d\n", node.num_end);
     printf("  Status: %s\n", node.status == ALLOCATED_STATUS_FREE ? "Livre" : node.status == STATUS_OCCUPIED ? "Ocupado" : "Desconhecido");
 
-    // Caso queira exibir mais informações ou mensagens de validação
     if (node.status != ALLOCATED_STATUS_FREE && node.status != STATUS_OCCUPIED) {
         printf("  Aviso: Status desconhecido encontrado no no\n");
     }

@@ -7,7 +7,7 @@ int initialize_memory_blocks(TreeNode23 **memory_structure, int max_capacity) {
 
     do {
         printf("\n=== Configuração do Bloco Inicial ===\n");
-        printf("Escolha o estado do infoBlock inicial:\n");
+        printf("Escolha o estado do bloco inicial:\n");
         printf("%d -> Disponível\n", ALLOCATED_STATUS_FREE);
         printf("%d -> Ocupado\n", STATUS_OCCUPIED);
         printf("Digite sua escolha: ");
@@ -19,6 +19,8 @@ int initialize_memory_blocks(TreeNode23 **memory_structure, int max_capacity) {
     } while (current_state != ALLOCATED_STATUS_FREE && current_state != STATUS_OCCUPIED);
 
     Info infoBlock;
+    printf("\n=== Inicialização dos Blocos ===\n");
+    printf("Para finalizar digite 1048575 como endereço final.\n");
     do {
         printf("\n>>> Insira o endereço inicial do infoBlock: ");
         scanf("%d", &infoBlock.num_start);
