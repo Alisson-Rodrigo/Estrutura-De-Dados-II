@@ -1,169 +1,189 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <stdbool.h>
 
-#define TAMANHO_MATRICULA 6
-#define TAMANHO_DISPONIVEL_HASH 150
+#define TAMANHO_TABELA1 101
+#define TAMANHO_TABELA2 150
+#define MAX_FUNCIONARIOS 1000
 
-typedef struct Funcionario {
-  char matricula[TAMANHO_MATRICULA];
-  char nome[TAMANHO_MATRICULA];
-  char funcao[TAMANHO_MATRICULA];
-  float salario;
-} Funcionario;
+typedef struct {
+    char Id[7];
+    char userName[50];
+    char functionName[20];
+    int salary;
+    bool isOccupied;
+} Employee;
 
-Funcionario gerar_funcionario() {
-  int numero = rand() % 10;
-  Funcionario funcionario;
-  funcionario.salario = (float)numero;
-
-  int i;
-  for (i = 0; i < TAMANHO_MATRICULA; i++, numero /= 10) {
-    int digito_atual = numero % 10;
-    funcionario.matricula[i] = (char)digito_atual + '0';
-    funcionario.nome[i] = (char)digito_atual + '0';
-    funcionario.funcao[i] = (char)digito_atual + '0';
-  }
-
-  funcionario.matricula[TAMANHO_MATRICULA] = '\0';
-  funcionario.nome[TAMANHO_MATRICULA] = '\0';
-  funcionario.funcao[TAMANHO_MATRICULA] = '\0';
-
-  if (funcionario.matricula[0] == '0') {
-    funcionario.matricula[0] = '1';
-  }
-
-  return funcionario;
+void rotate_left(char *matricula) {
+    char temp = matricula[0];
+    for (int i = 0; i < 5; i++) {
+        matricula[i] = matricula[i + 1];
+    }
+    matricula[5] = temp;
 }
 
-typedef struct stTabelaHash {
-  int hash[TAMANHO_DISPONIVEL_HASH];
-  Funcionario funcionario[TAMANHO_DISPONIVEL_HASH];
-} TabelaHash;
-
-void inicializar_tabela_hash(TabelaHash *tabela_hash) {
-  int index_hash_atual;
-  for (index_hash_atual = 0; index_hash_atual < TAMANHO_DISPONIVEL_HASH; index_hash_atual++) {
-    tabela_hash->hash[index_hash_atual] = -1;
-  }
+int rotate_hash_function(char *matricula, int tamanho_tabela) {
+    rotate_left(matricula);
+    int d2 = matricula[1] - '0';
+    int d4 = matricula[3] - '0';
+    int d6 = matricula[5] - '0';
+    return (d2 + d4 + d6) % tamanho_tabela;
 }
 
-int char_to_int(char c) {
-  return (int)c - '0';
+int hash_fold_and_shift(char *matricula, int tamanho_tabela) {
+    int grupo1 = (matricula[0] - '0') * 100 + (matricula[2] - '0') * 10 + (matricula[5] - '0');
+    int grupo2 = (matricula[1] - '0') * 100 + (matricula[3] - '0') * 10 + (matricula[4] - '0');
+    return (grupo1 + grupo2) % tamanho_tabela;
 }
 
-int hash_1(char matricula[]) {
-  char aux[TAMANHO_MATRICULA];
-
-  aux[0] = matricula[TAMANHO_MATRICULA - 2];
-  aux[1] = matricula[TAMANHO_MATRICULA - 1];
-
-  int index_matricula_velha, idx_matricula_new;
-  for (index_matricula_velha = 0, idx_matricula_new = 2; index_matricula_velha < TAMANHO_MATRICULA - 2;
-       index_matricula_velha++, idx_matricula_new++) {
-    aux[idx_matricula_new] = matricula[index_matricula_velha];
-  }
-
-  int valorInteiro = atoi((char[]){aux[1], aux[3], aux[5]});
-  return valorInteiro % TAMANHO_DISPONIVEL_HASH;
+int handle_rotation_collision(int indice, int i, char *matricula, int tamanho_tabela) {
+    int incremento = matricula[0] - '0'; // Primeiro dígito da matrícula
+    return (indice + i * incremento) % tamanho_tabela;
 }
 
-int hash_2(char matricula[]) {
-  int parte1 = (char_to_int(matricula[1 - 1]) * 100) + (char_to_int(matricula[3 - 1]) * 10) + (char_to_int(matricula[6 - 1]));
-  int parte2 = (char_to_int(matricula[2 - 1]) * 100) + (char_to_int(matricula[4 - 1]) * 10) + (char_to_int(matricula[5 - 1]));
-
-  int soma_partes = parte1 + parte2;
-  return soma_partes % TAMANHO_DISPONIVEL_HASH;
+int handle_fold_shift_collision(int indice, int i, int tamanho_tabela) {
+    int incremento = 7; 
+    return (indice + i * incremento) % tamanho_tabela;
 }
 
-int colisao_hash_1(int hash, char matricula[]) {
-  char primeiro_caractere[2] = {matricula[0], '\0'};
-  return (hash + atoi(primeiro_caractere));
-}
+bool insertEmployee(Employee *tabela, Employee funcionario, int tamanho_tabela, int (*hash_func)(char *, int), int *colisoes, int metodo) {
+    int indice = hash_func(funcionario.Id, tamanho_tabela);
+    bool inserido = false;
+    bool metodo_valido = (metodo == 1 || metodo == 2);
+    int i = 0;
 
-int colisao_hash_2(int hash, char matricula[]) {
-  (void)matricula;
-  return (hash + 7);
-}
-
-int efetivar_hash(TabelaHash *tabela_hash, int hash, char matricula[], Funcionario funcionario, int colisao_hash(int, char[])) {
-  int colisao = 0, inseriu = 0;
-  int novo_hash = hash;
-
-  while (novo_hash < TAMANHO_DISPONIVEL_HASH && inseriu == 0) {
-    if (tabela_hash->hash[novo_hash] == -1) {
-      tabela_hash->hash[novo_hash] = novo_hash;
-      tabela_hash->funcionario[novo_hash] = funcionario;
-      inseriu = 1;
+    // Caso o método não seja válido, a inserção não será realizada
+    if (!metodo_valido) {
+        inserido = false;
     } else {
-      colisao++;
-      novo_hash = colisao_hash(novo_hash, matricula);
+        while (i < tamanho_tabela && !inserido) {
+            int posicao = 0;
+
+            // Calcula a posição com base no método de tratamento de colisão
+            if (metodo == 1) { 
+                posicao = handle_rotation_collision(indice, i, funcionario.Id, tamanho_tabela);
+            } else if (metodo == 2) { 
+                posicao = handle_fold_shift_collision(indice, i, tamanho_tabela);
+            }
+
+            // Verifica se a posição está desocupada
+            if (!tabela[posicao].isOccupied) {
+                tabela[posicao] = funcionario;
+                tabela[posicao].isOccupied = true;
+                inserido = true;
+            } else {
+                (*colisoes)++; // Incrementa o contador de colisões
+            }
+
+            i++; // Incrementa o contador de tentativas
+        }
+
+        // Caso não tenha sido possível inserir, usa a posição 0 como fallback
+        if (!inserido) {
+            tabela[0] = funcionario;
+            tabela[0].isOccupied = true;
+        }
     }
-  }
 
-  if (inseriu == 0) {
-    tabela_hash->hash[hash] = hash;
-    tabela_hash->funcionario[hash] = funcionario;
-  }
-
-  return colisao;
+    return inserido;
 }
 
-void test_hash(int hash_func(char[]), int colisao_hash(int, char[])) {
-  TabelaHash tabela_hash;
-  inicializar_tabela_hash(&tabela_hash);
 
-  int qtd_colisoes = 0;
-  clock_t tempo_efetivar_hash = 0;
 
-  int criar_1000_funcionarios;
-  for (criar_1000_funcionarios = 0; criar_1000_funcionarios < 1000; criar_1000_funcionarios++) {
-    Funcionario funcionario = gerar_funcionario();
 
-    clock_t inicio = clock();
-    int hash = hash_func(funcionario.matricula);
-    qtd_colisoes += efetivar_hash(&tabela_hash, hash, funcionario.matricula, funcionario, colisao_hash);
-    clock_t fim = clock();
-
-    tempo_efetivar_hash += (fim - inicio);
-  }
-
-  printf("Tempo para efetivar: %f\n", (double)tempo_efetivar_hash / CLOCKS_PER_SEC);
-  printf("Quantidade de colisoes: %d\n", qtd_colisoes);
-}
-
-void menu() {
-  int opcao;
-  do {
-    printf("\n=== MENU ===\n");
-    printf("1. Testar Hash 1\n");
-    printf("2. Testar Hash 2\n");
-    printf("0. Sair\n");
-    printf("Escolha uma opcao: ");
-    scanf("%d", &opcao);
-
-    switch (opcao) {
-      case 1:
-        printf("\nTestando Hash 1\n");
-        test_hash(hash_1, colisao_hash_1);
-        break;
-      case 2:
-        printf("\nTestando Hash 2\n");
-        test_hash(hash_2, colisao_hash_2);
-        break;
-      case 0:
-        printf("Encerrando o programa...\n");
-        break;
-      default:
-        printf("Opcao invalida. Tente novamente.\n");
-        break;
+void initialize_employee_table(Employee *tabela, int tamanho_tabela) {
+    for (int i = 0; i < tamanho_tabela; i++) {
+        tabela[i].isOccupied = false;
     }
-  } while (opcao != 0);
 }
+
+
+void generate_employee_data(Employee *dados, int total) {
+    for (int i = 0; i < total; i++) {
+        sprintf(dados[i].Id, "%06d", rand() % 1000000);
+        sprintf(dados[i].userName, "Funcionario_%d", i);
+        sprintf(dados[i].functionName, "Funcao_%d", i % 4);
+        dados[i].salary = 3000 + rand() % 20000;
+        dados[i].isOccupied = false;
+    }
+}
+
+
+void print_hash_table(Employee *tabela, int tamanho_tabela) {
+    printf("+--------+------------+------------+-------------------+-------------+\n");
+    printf("| Indice | Matricula  | Nome       | Funcao            | Salario     |\n");
+    printf("+--------+------------+------------+-------------------+-------------+\n");
+    for (int i = 0; i < tamanho_tabela; i++) {
+        if (tabela[i].isOccupied) {
+            printf("| %6d | %-10s | %-10s | %-17s | %11d |\n",
+                   i, tabela[i].Id, tabela[i].userName,
+                   tabela[i].functionName, tabela[i].salary);
+        } else {
+            printf("| %6d | %-10s | %-10s | %-17s | %-11s |\n",
+                   i, "Vazio", "Vazio", "Vazio", "Vazio");
+        }
+    }
+    printf("+--------+------------+------------+-------------------+-------------+\n");
+}
+
 
 int main() {
-  srand((unsigned)time(NULL));
-  menu();
-  return 0;
+   Employee tabela1[TAMANHO_TABELA1], tabela2[TAMANHO_TABELA2];
+    Employee dados[MAX_FUNCIONARIOS];
+    int continuar = 1;
+
+    generate_employee_data(dados, MAX_FUNCIONARIOS);
+
+    while (continuar) {
+        int metodo, tamanho_tabela;
+        int (*hash_func)(char *, int);
+
+        printf("Escolha o método de hashing:\n");
+        printf("1 - Rotacao e Extracao\n");
+        printf("2 - Fold Shift\n");
+        scanf("%d", &metodo);
+
+        printf("Escolha o tamanho da tabela:\n");
+        printf("1 - %d (Tabela 1)\n", TAMANHO_TABELA1);
+        printf("2 - %d (Tabela 2)\n", TAMANHO_TABELA2);
+        int opcao_tamanho;
+        scanf("%d", &opcao_tamanho);
+
+        if (opcao_tamanho == 1) {
+            tamanho_tabela = TAMANHO_TABELA1;
+            initialize_employee_table(tabela1, tamanho_tabela);
+        } else {
+            tamanho_tabela = TAMANHO_TABELA2;
+            initialize_employee_table(tabela2, tamanho_tabela);
+        }
+
+        hash_func = (metodo == 1) ? rotate_hash_function : hash_fold_and_shift;
+
+        int colisoes = 0;
+
+        for (int i = 0; i < MAX_FUNCIONARIOS; i++) {
+            if (opcao_tamanho == 1) {
+                insertEmployee(tabela1, dados[i], tamanho_tabela, hash_func, &colisoes, metodo);
+            } else {
+                insertEmployee(tabela2, dados[i], tamanho_tabela, hash_func, &colisoes, metodo);
+            }
+        }
+
+        printf("\nTabela escolhida:\n");
+        if (opcao_tamanho == 1) {
+            print_hash_table(tabela1, tamanho_tabela);
+        } else {
+            print_hash_table(tabela2, tamanho_tabela);
+        }
+
+        printf("\nTotal de colisoes: %d\n", colisoes);
+
+        printf("\nDeseja continuar? (1 - Sim, 0 - Nao): ");
+        scanf("%d", &continuar);
+    }
+
+    printf("Programa encerrado.\n");
+    return 0;
 }
+

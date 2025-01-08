@@ -44,26 +44,34 @@ int isValidMove(Configuration a, Configuration b) {
     int diffCount = 0;
     int from = -1, to = -1, smallestDisk = -1;
     int i;
+    int isValid = 1; // Inicialmente válido
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 4 && isValid; i++) {
         if (a.disks[i] != b.disks[i]) {
             diffCount++;
-            if (diffCount > 1) return 0;
-
-            from = a.disks[i];
-            to = b.disks[i];
-            smallestDisk = i;
+            if (diffCount > 1) {
+                isValid = 0; // Mais de uma diferença detectada, inválido
+            } else {
+                from = a.disks[i];
+                to = b.disks[i];
+                smallestDisk = i;
+            }
         }
     }
 
-    if (diffCount != 1) return 0;
-
-    for (i = 0; i < smallestDisk; i++) {
-        if (a.disks[i] == from || b.disks[i] == to) return 0;
+    if (diffCount != 1) {
+        isValid = 0; // Deve haver exatamente uma diferença
     }
 
-    return 1;
+    for (i = 0; i < smallestDisk && isValid; i++) {
+        if (a.disks[i] == from || b.disks[i] == to) {
+            isValid = 0; // Condição inválida
+        }
+    }
+
+    return isValid;
 }
+
 
 // Constrói a matriz de adjacência do grafo
 void buildGraph(int graph[MAX_CONFIGURATIONS][MAX_CONFIGURATIONS], Configuration *configs) {
@@ -75,7 +83,7 @@ void buildGraph(int graph[MAX_CONFIGURATIONS][MAX_CONFIGURATIONS], Configuration
     }
 }
 
-// Implementação do Algoritmo de Bellman-Ford
+
 void bellmanFord(int graph[MAX_CONFIGURATIONS][MAX_CONFIGURATIONS], int start, int end, Configuration *configs) {
     int dist[MAX_CONFIGURATIONS], prev[MAX_CONFIGURATIONS];
     int i, j, u, v;
@@ -107,9 +115,9 @@ void bellmanFord(int graph[MAX_CONFIGURATIONS][MAX_CONFIGURATIONS], int start, i
     }
 
     for (i = pathIndex - 1; i >= 0; i--) {
-        printf("Configuração %d: [", path[i]);
+        printf("Configuracao %d: [", path[i]);
         for (j = 0; j < 4; j++) {
-            printf("%d", configs[path[i]].disks[j] + 1); // Converte pino (0,1,2) para (1,2,3)
+            printf("%d", configs[path[i]].disks[j] + 1); 
             if (j < 3) printf(", ");
         }
         printf("]\n");
@@ -141,11 +149,11 @@ int main() {
 
     do {
         printf("\n========== MENU ==========\n");
-        printf("1. Exibir todas as configurações\n");
-        printf("2. Calcular o menor caminho entre duas configurações\n");
+        printf("1. Exibir todas as configuracoes\n");
+        printf("2. Calcular o menor caminho entre duas configuracoes\n");
         printf("3. Sair\n");
         printf("==========================\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &choice);
 
         switch (choice) {
@@ -153,9 +161,9 @@ int main() {
                 displayConfigurations(configs);
                 break;
             case 2:
-                printf("Digite a configuração inicial (0 a 80): ");
+                printf("Digite a configuracao inicial (0 a 80): ");
                 scanf("%d", &start);
-                printf("Digite a configuração final (0 a 80): ");
+                printf("Digite a configuracao final (0 a 80): ");
                 scanf("%d", &end);
 
 #ifdef _WIN32
@@ -182,7 +190,7 @@ int main() {
                 printf("Saindo...\n");
                 break;
             default:
-                printf("Opção inválida!\n");
+                printf("Opcao invalida!\n");
         }
     } while (choice != 3);
 
