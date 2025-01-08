@@ -17,7 +17,8 @@ typedef struct {
 
 void rotate_left(char *matricula) {
     char temp = matricula[0];
-    for (int i = 0; i < 5; i++) {
+    int i;
+    for (i = 0; i < 5; i++) {
         matricula[i] = matricula[i + 1];
     }
     matricula[5] = temp;
@@ -91,16 +92,17 @@ bool insertEmployee(Employee *tabela, Employee funcionario, int tamanho_tabela, 
 
 
 
-
 void initialize_employee_table(Employee *tabela, int tamanho_tabela) {
-    for (int i = 0; i < tamanho_tabela; i++) {
+    int i;
+    for (i = 0; i < tamanho_tabela; i++) {
         tabela[i].isOccupied = false;
     }
 }
 
 
 void generate_employee_data(Employee *dados, int total) {
-    for (int i = 0; i < total; i++) {
+    int i;
+    for (i = 0; i < total; i++) {
         sprintf(dados[i].Id, "%06d", rand() % 1000000);
         sprintf(dados[i].userName, "Funcionario_%d", i);
         sprintf(dados[i].functionName, "Funcao_%d", i % 4);
@@ -113,8 +115,9 @@ void generate_employee_data(Employee *dados, int total) {
 void print_hash_table(Employee *tabela, int tamanho_tabela) {
     printf("+--------+------------+------------+-------------------+-------------+\n");
     printf("| Indice | Matricula  | Nome       | Funcao            | Salario     |\n");
-    printf("+--------+------------+------------+-------------------+-------------+\n");
-    for (int i = 0; i < tamanho_tabela; i++) {
+
+    int i;
+    for (i = 0; i < tamanho_tabela; i++) {
         if (tabela[i].isOccupied) {
             printf("| %6d | %-10s | %-10s | %-17s | %11d |\n",
                    i, tabela[i].Id, tabela[i].userName,
@@ -161,8 +164,9 @@ int main() {
         hash_func = (metodo == 1) ? rotate_hash_function : hash_fold_and_shift;
 
         int colisoes = 0;
+        int i;
 
-        for (int i = 0; i < MAX_FUNCIONARIOS; i++) {
+        for (i = 0; i < MAX_FUNCIONARIOS; i++) {
             if (opcao_tamanho == 1) {
                 insertEmployee(tabela1, dados[i], tamanho_tabela, hash_func, &colisoes, metodo);
             } else {
