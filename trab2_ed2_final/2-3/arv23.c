@@ -243,7 +243,6 @@ PortugueseTree *insertNode23(PortugueseTree **currentNode, NodeInfo *nodeData, N
     return largestNode;
 }
 
-// ############################################## FUNÇOES PARA EXIBIR ##############################################
 
 void print_tree23(PortugueseTree *rootNode)
 {
@@ -257,12 +256,10 @@ void print_tree23(PortugueseTree *rootNode)
             printf("\n");
         }
         print_tree23(rootNode->cent);
-        // Se houver o segundo elemento (nInfos == 2), exibe o segundo filho
         if (rootNode->nInfos == 2)
         {
             printf("Palavra (PT): %s", rootNode->info2.portugueseWord);
 
-            // Exibir a tradução em inglês, se houver
             if (rootNode->info2.englishWord != NULL && rootNode->info2.englishWord->palavraIngles != NULL)
                 printBinaryTree(rootNode->info2.englishWord);
             printf("\n");
@@ -279,23 +276,19 @@ void printWordsAtUnit(PortugueseTree *portugueseTree, int unit, int *printedUnit
 {
     if (portugueseTree)
     {
-        // Percorre a subárvore esquerda
         printWordsAtUnit(portugueseTree->left, unit, printedUnit);
 
-        // Imprime o cabeçalho da unidade uma vez
         if (!(*printedUnit))
         {
-            printf("%% Unidade %d\n", unit); // Cabeçalho da unidade
-            *printedUnit = 1;                // Marca como já impresso
+            printf("%% Unidade %d\n", unit); 
+            *printedUnit = 1;                
         }
 
-        // Imprime as traduções associadas à unidade para a primeira palavra do nó
         if (portugueseTree->info1.englishWord != NULL)
         {
             printTranslationsInFormat(portugueseTree->info1.englishWord, unit, portugueseTree->info1.portugueseWord);
         }
 
-        // Percorre a subárvore central
         printWordsAtUnit(portugueseTree->cent, unit, printedUnit);
 
         // Se houver o segundo elemento no nó, imprime também suas traduções
