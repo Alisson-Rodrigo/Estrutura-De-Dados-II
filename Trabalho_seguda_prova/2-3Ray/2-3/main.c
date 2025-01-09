@@ -99,7 +99,7 @@ int main()
     int option;
 
 
-    loadFile("C:/Users/Rayssa Alves/Downloads/Estrutura-De-Dados-II-main/Estrutura-De-Dados-II-main/Trabalho_seguda_prova/text.txt", &rootNode);
+    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/Trabalho_seguda_prova/text.txt", &rootNode);
 
     do
     {
