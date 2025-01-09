@@ -1,5 +1,5 @@
 #include "arvbin.h"
-#include "lista_encadeada.h"
+#include "lista_encadeada.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

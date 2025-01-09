@@ -67,6 +67,7 @@
     "**/templates/**/*.html": "django-html",
     "**/base_templates/**/*.html": "django-html",
     "**/requirements{/**,*}.{txt,in}": "pip-requirements",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "string.h": "c"
   }
 }

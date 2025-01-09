@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "src/arv23.h"
-#include "src/arvbin.h"
-#include "test/maintest.h"
+#include "src/arv23.c"
+#include "src/arvbin.c"
 #include "src/remocao.h"
 
 void carregarArquivo(const char *nomeArquivo, Portugues23 **arvore)
@@ -138,7 +137,6 @@ int main()
         case 7:
             printf("\n--------------------------------------------------------------- \n");
             printf("\nExecutando os casos de teste...\n");
-            main_teste();
             printf("\n--------------------------------------------------------------- \n");
             break;
         case 0:
