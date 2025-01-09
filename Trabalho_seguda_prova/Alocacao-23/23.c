@@ -41,38 +41,38 @@ void free_nodo(TreeNode23 **node)
     *node = NULL;
 }
 
-TreeNode23 *Create_nodo(Info info, TreeNode23 *filho_left, TreeNode23 *filho_center)
+TreeNode23 *Create_nodo(Info info, TreeNode23 *left_child, TreeNode23 *center_child)
 {
     TreeNode23 *node;
     node = allocate_nodo();
 
     node->info1 = info;
-    node->left = filho_left;
-    node->center = filho_center;
+    node->left = left_child;
+    node->center = center_child;
     node->right = NULL;
     node->n_infos = 1;
     return node;
 }
 
- TreeNode23 *SplitNode(TreeNode23 *node, Info info, Info *up, TreeNode23 *filho_maior)
+ TreeNode23 *SplitNode(TreeNode23 *node, Info info, Info *up, TreeNode23 *right_child)
 {
     TreeNode23 *largestNode;
     if(info.num_start > node->info2.num_start)
     {
         *up = node->info2;
-        largestNode = Create_nodo(info, node->right, filho_maior);
+        largestNode = Create_nodo(info, node->right, right_child);
     }
     else if(info.num_start > node->info1.num_start)
     {
         *up = info;
-        largestNode = Create_nodo(node->info2, filho_maior, node->right);
+        largestNode = Create_nodo(node->info2, right_child, node->right);
     }
     else
     {
         *up = node->info1;
         largestNode = Create_nodo(node->info2, node->center, node->right);
         node->info1 = info;
-        node->center = filho_maior;
+        node->center = right_child;
     }
     node->n_infos = 1;
 
@@ -80,18 +80,18 @@ TreeNode23 *Create_nodo(Info info, TreeNode23 *filho_left, TreeNode23 *filho_cen
 }
 
 
- void add_info(TreeNode23 *node, Info info, TreeNode23 *filho_maior)
+ void add_info(TreeNode23 *node, Info info, TreeNode23 *right_child)
 {
     if(info.num_start > node->info1.num_start)
     {
         node->info2 = info;
-        node->right = filho_maior;
+        node->right = right_child;
     }
     else
     {
         node->info2 = node->info1;
         node->right = node->center;
-        node->center = filho_maior;
+        node->center = right_child;
         node->info1 = info;
     }
     node->n_infos = 2;
@@ -143,16 +143,16 @@ int confirm_remove(TreeNode23 *root)
     return confirm;
 }
 
-TreeNode23 *no23_merge(TreeNode23 *filho1, Info info, TreeNode23 *largestNode, TreeNode23 **root)
+TreeNode23 *no23_merge(TreeNode23 *leftChild, Info info, TreeNode23 *largestNode, TreeNode23 **root)
 {
-    add_info(filho1, info, largestNode);
+    add_info(leftChild, info, largestNode);
 
     (*root)->n_infos--;
 
     if((*root)->n_infos == 0)
         free_nodo(root);
 
-    return filho1;
+    return leftChild;
 }
 
 Info *getMaxNodeInfo(TreeNode23 *root)
@@ -396,7 +396,7 @@ TreeNode23 *TreeNode23_insert(TreeNode23 **root, Info info)
     return TreeNode23_insertNode(root, info, NULL, &up);
 }
 
- int balanceTree(TreeNode23 **root, TreeNode23 *filho1, TreeNode23 **filho2, Info info, TreeNode23 **largestNode)
+ int balanceTree(TreeNode23 **root, TreeNode23 *leftChild, TreeNode23 **filho2, Info info, TreeNode23 **largestNode)
 {
     int isBalanced = 0;
     if(*filho2 == NULL || (*filho2)->n_infos == 0)
@@ -404,7 +404,7 @@ TreeNode23 *TreeNode23_insert(TreeNode23 **root, Info info)
         if(*filho2 != NULL)
             free_nodo(filho2);
 
-        *largestNode = no23_merge(filho1, info, *largestNode, root);
+        *largestNode = no23_merge(leftChild, info, *largestNode, root);
         isBalanced = 1;
     }
     return isBalanced;
