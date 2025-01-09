@@ -153,7 +153,7 @@ int main()
             printf("Informe a unidade associada: ");
             scanf("%d", &unit);
 
-            if (Remove_word_from_portuguese_unit(&rootNode, userInput, unit))
+            if (remove_node_from23_tree(&rootNode, userInput) )
             {
                 printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", userInput, unit);
             }
