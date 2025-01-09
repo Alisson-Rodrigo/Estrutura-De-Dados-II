@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "arvbin.h"
-#include "arvrb.h"
+#include "ingles.h"
+#include "portugues.h"
 #include "unidade.h"
 #define RED 1
 #define BLACK 0
@@ -10,7 +10,7 @@
 NodeData createInfo(char *portugueseWord, char *englishWord, int unit) {
     NodeData info;
 
-    // Aloca e copia a palavra em português
+  
     info.portugueseWord = malloc(strlen(portugueseWord) + 1);
     if (info.portugueseWord == NULL) {
         perror("Erro ao alocar memória para a palavra em português.");
@@ -18,10 +18,10 @@ NodeData createInfo(char *portugueseWord, char *englishWord, int unit) {
     }
     strcpy(info.portugueseWord, portugueseWord);
 
-    // Inicializa a árvore binária de palavras em inglês
+
     info.englishWordNode = NULL;
 
-    // Insere a palavra em inglês e a unidade na árvore binária
+   
     info.englishWordNode = insertEnglishWord(info.englishWordNode, englishWord, unit);
 
     return info;
@@ -258,21 +258,18 @@ RedBlackTreePT *SearchWordInTree(RedBlackTreePT **redBlackTree, char *portuguese
     RedBlackTreePT *currentNode = NULL;
 
     if (*redBlackTree != NULL) {
-        // Exibe a palavra com a qual está comparando
-        printf("[DEBUG] Comparando '%s' com '%s'\n", portugueseWord, (*redBlackTree)->info.portugueseWord);
 
         if (strcmp(portugueseWord, (*redBlackTree)->info.portugueseWord) == 0) {
-            printf("[DEBUG] Palavra encontrada: '%s'\n", (*redBlackTree)->info.portugueseWord);
             currentNode = *redBlackTree;
         } else if (strcmp(portugueseWord, (*redBlackTree)->info.portugueseWord) < 0) {
-            printf("[DEBUG] Indo para a esquerda.\n");
+ 
             currentNode = SearchWordInTree(&(*redBlackTree)->left, portugueseWord);
         } else {
-            printf("[DEBUG] Indo para a direita.\n");
+
             currentNode = SearchWordInTree(&(*redBlackTree)->right, portugueseWord);
         }
     } else {
-        printf("[DEBUG] Chegou a um nó NULL.\n");
+
     }
 
     return currentNode;
@@ -280,28 +277,28 @@ RedBlackTreePT *SearchWordInTree(RedBlackTreePT **redBlackTree, char *portuguese
 
 
 void printWordsByUnit(RedBlackTreePT *redBlackTree, int unit) {
-
     if (redBlackTree) {
-        // Percorre a subárvore esquerda
+      
         printWordsByUnit(redBlackTree->left, unit);
 
-        // Processa o nó atual
+  
         BinaryTreeNode *englishWordNode = redBlackTree->info.englishWordNode;
 
-        // Percorre a árvore binária associada
+   
         while (englishWordNode != NULL) {
             Unit *currentUnit = englishWordNode->unitValues;
 
-            // Verifica todas as unidades associadas à palavra
-            while (currentUnit != NULL) {
+        
+            int foundUnit = 0;
+            while (currentUnit != NULL && !foundUnit) {
                 if (currentUnit->unitValue == unit) {
-                    printf("%s: %s;\n", englishWordNode->englishWord, redBlackTree->info.portugueseWord); // Palavra e significado
-                    break; // Sai da lista de unidades ao encontrar a unidade desejada
+                    printf("%s: %s;\n", redBlackTree->info.portugueseWord, englishWordNode->englishWord);
+                    foundUnit = 1; 
                 }
                 currentUnit = currentUnit->nextNode;
             }
 
-            // Movimenta para o próximo nó da árvore binária
+
             if (englishWordNode->left != NULL) {
                 englishWordNode = englishWordNode->left;
             } else if (englishWordNode->right != NULL) {
@@ -311,68 +308,62 @@ void printWordsByUnit(RedBlackTreePT *redBlackTree, int unit) {
             }
         }
 
-        // Percorre a subárvore direita
+
         printWordsByUnit(redBlackTree->right, unit);
     }
-
-
 }
+
 
 
 
 
 void printTranslations(BinaryTreeNode *currentNode, int unit, char *portugueseWord) {
     if (currentNode) {
-        // Verifica se a unidade fornecida está presente na lista de unidades
         Unit *currentUnit = currentNode->unitValues;
         int foundUnit = 0;
 
-        while (currentUnit != NULL) {
+        
+        while (currentUnit != NULL && !foundUnit) {
             if (currentUnit->unitValue == unit) {
                 foundUnit = 1;
-                break;
             }
             currentUnit = currentUnit->nextNode;
         }
 
-        // Se a unidade foi encontrada, imprime a tradução
         if (foundUnit) {
-            printf("Palavra em Português: %s\n", portugueseWord);
-            printf("Palavra em inglês: %s\n", currentNode->englishWord);
+            printf("Palavra em Portugues: %s\n", portugueseWord);
+            printf("Palavra em ingles: %s\n", currentNode->englishWord);
         }
 
-        // Percorre os subnós da árvore binária
+        
         printTranslations(currentNode->left, unit, portugueseWord);
         printTranslations(currentNode->right, unit, portugueseWord);
     }
 }
 
+
 void showPortugueseTranslation(RedBlackTreePT **rootNode, char *portugueseWord) {
     if (*rootNode != NULL) {
-        // Busca a palavra na árvore rubro-negra
-        printf("[DEBUG] Buscando a palavra em português: '%s'\n", portugueseWord);
+      
         RedBlackTreePT *resultado = SearchWordInTree(rootNode, portugueseWord);
 
         if (resultado != NULL) {
-            printf("[DEBUG] Palavra encontrada na árvore rubro-negra.\n");
-            printf("Traduções em inglês para a palavra '%s':\n", portugueseWord);
+            printf("Traducoes em ingles para a palavra '%s':\n", portugueseWord);
 
-            // Percorre a árvore binária associada e imprime as traduções
+      
             BinaryTreeNode *node = resultado->info.englishWordNode;
             if (node == NULL) {
-                printf("Nenhuma tradução encontrada.\n");
+                printf("Nenhuma traducao encontrada.\n");
             } else {
                 printBinaryTree(node);
             }
         } else {
-            printf("[DEBUG] Palavra '%s' não encontrada na árvore rubro-negra.\n", portugueseWord);
-            printf("Nenhuma tradução encontrada para '%s'.\n", portugueseWord);
+            printf("Nenhuma traducao encontrada para '%s'.\n", portugueseWord);
         }
     } else {
-        printf("[DEBUG] A árvore rubro-negra está vazia.\n");
-    }
+        printf("Arvore vazia.\n");
 }
-
+}
 
 void showRedBlackTree(RedBlackTreePT *rootNode)
 {
@@ -388,128 +379,114 @@ void showRedBlackTree(RedBlackTreePT *rootNode)
 }
 
 RedBlackTreePT *SearchEnglishWordInRBTree(RedBlackTreePT *rootNode, char *englishWord, int unit) {
-    RedBlackTreePT *rbTreeOutput = NULL; // Variável para armazenar o retorno
+    RedBlackTreePT *rbTreeOutput = NULL;
 
     if (rootNode != NULL) {
-        // Verifica o nó atual da árvore vermelho-preto
         BinaryTreeNode *currentNode = rootNode->info.englishWordNode;
-        while (currentNode != NULL) {
+        int found = 0; 
+
+   
+        while (currentNode != NULL && !found) {
             printf("Verificando palavra: '%s' na unidade %d\n", currentNode->englishWord, unit);
 
             Unit *currentUnit = currentNode->unitValues;
             int unitFound = 0;
 
-            // Verifica se a unidade existe na lista
-            while (currentUnit != NULL) {
+            while (currentUnit != NULL && !unitFound) {
                 if (currentUnit->unitValue == unit) {
                     unitFound = 1;
-                    break;
                 }
                 currentUnit = currentUnit->nextNode;
             }
 
+        
             if (unitFound && strcmp(currentNode->englishWord, englishWord) == 0) {
-                printf("Palavra encontrada na árvore binária associada ao nó português: '%s'\n", rootNode->info.portugueseWord);
+                printf("Palavra encontrada na arvore binária associada ao no portugues: '%s'\n", rootNode->info.portugueseWord);
                 rbTreeOutput = rootNode;
-                break;
-            }
-
-            if (strcmp(englishWord, currentNode->englishWord) < 0) {
+                found = 1;
+            } else if (strcmp(englishWord, currentNode->englishWord) < 0) {
                 currentNode = currentNode->left;
             } else {
                 currentNode = currentNode->right;
             }
         }
 
-        // Se não encontrou no nó atual, verifica à esquerda
-        if (rbTreeOutput == NULL) {
-            rbTreeOutput = SearchEnglishWordInRBTree(rootNode->left, englishWord, unit);
-        }
-
-        // Se não encontrou na esquerda, verifica à direita
-        if (rbTreeOutput == NULL) {
-            rbTreeOutput = SearchEnglishWordInRBTree(rootNode->right, englishWord, unit);
+        if (!found) {
+            RedBlackTreePT *leftResult = SearchEnglishWordInRBTree(rootNode->left, englishWord, unit);
+            if (leftResult != NULL) {
+                rbTreeOutput = leftResult;
+            } else {
+                rbTreeOutput = SearchEnglishWordInRBTree(rootNode->right, englishWord, unit);
+            }
         }
     }
 
-    return rbTreeOutput; // Retorna o resultado armazenado
+    return rbTreeOutput;
 }
-void removeWordFromTree(RedBlackTreePT **node, char *wordToRemove, int *totalRemovido, RedBlackTreePT **rootNode) {
-    if (*node != NULL) {
-        // Percorre à esquerda
-        removeWordFromTree(&(*node)->left, wordToRemove, totalRemovido, rootNode);
 
-        // Remove a palavra da árvore binária associada
+void removeWordFromTree(RedBlackTreePT **node, char *wordToRemove, int *totalRemovido, RedBlackTreePT **rootNode, int unit) {
+    if (*node != NULL) {
+        removeWordFromTree(&(*node)->left, wordToRemove, totalRemovido, rootNode, unit);
+
         BinaryTreeNode *binaryRoot = (*node)->info.englishWordNode;
-        int removed = removeEnglishWord(&binaryRoot, wordToRemove);
+        int removed = removeEnglishWord(&binaryRoot, wordToRemove, unit);
         if (removed) {
             (*totalRemovido)++;
-            printf("[DEBUG] Palavra '%s' removida da árvore binária associada ao nó com palavra portuguesa: '%s'.\n",
-                   wordToRemove, (*node)->info.portugueseWord);
         }
 
-        // Verifica se a árvore binária ficou vazia após a remoção
         if (binaryRoot == NULL) {
-            printf("[DEBUG] Árvore binária associada ao nó '%s' ficou vazia. Removendo nó da Árvore Rubro-Negra.\n",
-                   (*node)->info.portugueseWord);
             removeRBTreeNode(rootNode, (*node)->info.portugueseWord);
         } else {
             (*node)->info.englishWordNode = binaryRoot;
         }
 
-        // Percorre à direita
-        removeWordFromTree(&(*node)->right, wordToRemove, totalRemovido, rootNode);
+        removeWordFromTree(&(*node)->right, wordToRemove, totalRemovido, rootNode, unit);
     }
 }
 void removeWordByUnit(RedBlackTreePT **node, char *wordToRemove, int unit, int *removidos, RedBlackTreePT **rootNode) {
-    if (*node == NULL) return; // Retorna se o nó for nulo
+    if (node != NULL && *node != NULL && wordToRemove != NULL && rootNode != NULL) {
+        // Percorre a subárvore esquerda
+        removeWordByUnit(&(*node)->left, wordToRemove, unit, removidos, rootNode);
 
-    // Remove da subárvore esquerda
-    removeWordByUnit(&(*node)->left, wordToRemove, unit, removidos, rootNode);
+        BinaryTreeNode *binaryRoot = (*node)->info.englishWordNode;
+        if (binaryRoot != NULL) {
+            BinaryTreeNode *currentNode = binaryRoot;
+            int found = 0;
 
-    // Verifica e remove a palavra na árvore binária associada
-    BinaryTreeNode *binaryRoot = (*node)->info.englishWordNode;
-    if (binaryRoot != NULL) {
-        BinaryTreeNode *currentNode = binaryRoot;
-        int removed = 0;
+            while (currentNode != NULL && !found) {
+                if (strcmp(currentNode->englishWord, wordToRemove) == 0) {
+                    // Remove a unidade associada
+                    Unit *novaLista = remove_unit(currentNode->unitValues, unit);
+                    currentNode->unitValues = novaLista;
 
-        // Busca e remove a palavra associada à unidade
-        while (currentNode != NULL) {
-            if (strcmp(currentNode->englishWord, wordToRemove) == 0) {
-                Unit *novaLista = remove_unit(currentNode->unitValues, unit);
-                currentNode->unitValues = novaLista;
-
-                // Remove o nó se não houver mais unidades associadas
-                if (currentNode->unitValues == NULL) {
-                    printf("[DEBUG] Palavra '%s' ficou sem unidades. Removendo nó.\n", wordToRemove);
-                    removed = removeEnglishWord(&binaryRoot, wordToRemove);
-                    if (removed) (*removidos)++;
+                    // Verifica se a lista de unidades está vazia
+                    if (currentNode->unitValues == NULL) {
+                        // Remove a palavra da árvore binária
+                        *removidos += removeEnglishWord(&binaryRoot, wordToRemove, unit);
+                    }
+                    found = 1;
+                } else if (strcmp(wordToRemove, currentNode->englishWord) < 0) {
+                    currentNode = currentNode->left;
+                } else {
+                    currentNode = currentNode->right;
                 }
-                break; // Sai do loop após tratar a palavra
             }
 
-            // Continua percorrendo a árvore binária
-            if (strcmp(wordToRemove, currentNode->englishWord) < 0) {
-                currentNode = currentNode->left;
-            } else {
-                currentNode = currentNode->right;
+            // Atualiza a referência na árvore binária
+            (*node)->info.englishWordNode = binaryRoot;
+
+            // Remove o nó rubro-negro se a árvore binária associada ficar vazia
+            if (binaryRoot == NULL) {
+                removeRBTreeNode(rootNode, (*node)->info.portugueseWord);
             }
         }
 
-        (*node)->info.englishWordNode = binaryRoot;
-
-        // Remove o nó da Árvore Rubro-Negra se a árvore binária estiver vazia
-        if (binaryRoot == NULL) {
-            printf("[DEBUG] Árvore binária associada ao nó '%s' ficou vazia. Removendo nó da Árvore Rubro-Negra.\n",
-                   (*node)->info.portugueseWord);
-            removeRBTreeNode(rootNode, (*node)->info.portugueseWord);
-            return; // Sai após remover o nó
-        }
+        // Percorre a subárvore direita
+        removeWordByUnit(&(*node)->right, wordToRemove, unit, removidos, rootNode);
     }
-
-    // Remove da subárvore direita
-    removeWordByUnit(&(*node)->right, wordToRemove, unit, removidos, rootNode);
 }
+
+
 
 void exibir_arvorebianria_dada_palavra_portuguesa(RedBlackTreePT *rootNode, char *portugueseWord)
 {
@@ -523,72 +500,59 @@ void exibir_arvorebianria_dada_palavra_portuguesa(RedBlackTreePT *rootNode, char
         exibir_arvorebianria_dada_palavra_portuguesa(rootNode->right, portugueseWord);
     }
 }
+void deleteWordFromTreeByUnit(RedBlackTreePT **redBlackTreeRoot, char *portugueseWord, int unit) {
+    int error = 0;
 
-void removerPalavraPortuguesaPorUnidade(RedBlackTreePT **redBlackTreeRoot, char *portugueseWord, int unidade) {
-    int isFound = 0; // Variável para armazenar o estado da busca
-    int isNodeRemoved = 0; // Variável para acompanhar a remoção na BST
+   
+    if (redBlackTreeRoot == NULL || *redBlackTreeRoot == NULL || portugueseWord == NULL) {
+        printf("Erro: Entrada invalida ou arvore vazia.\n");
+        error = 1;
+    }
 
-    if (*redBlackTreeRoot == NULL) {
-        printf("A árvore está vazia.\n");
-        isFound = 0;
-    } else {
-        printf("[DEBUG] Iniciando remoção da palavra '%s' na unidade %d.\n", portugueseWord, unidade);
+    RedBlackTreePT *noRBT = NULL;
+    if (!error) {
 
-        // Localiza o nó correspondente à palavra em português na RBT
-        RedBlackTreePT *noRBT = SearchWordInTree(redBlackTreeRoot, portugueseWord);
+        noRBT = SearchWordInTree(redBlackTreeRoot, portugueseWord);
         if (noRBT == NULL) {
-            printf("Palavra '%s' não encontrada na árvore rubro-negra.\n", portugueseWord);
-            isFound = 0;
-        } else {
-            isFound = 1;
-            printf("[DEBUG] Palavra '%s' encontrada na RBT. Iniciando remoção na BST.\n", portugueseWord);
-
-            // Remove a palavra em inglês associada à unidade na BST
-            BinaryTreeNode *raizBST = noRBT->info.englishWordNode;
-            if (raizBST != NULL) {
-                BinaryTreeNode *currentNode = raizBST;
-
-                while (currentNode != NULL) {
-                    Unit *novaLista = remove_unit(currentNode->unitValues, unidade);
-                    currentNode->unitValues = novaLista;
-
-                    // Se a lista de unidades ficar vazia, remova a palavra
-                    if (currentNode->unitValues == NULL) {
-                        printf("[DEBUG] Palavra '%s' ficou sem unidades. Removendo da BST.\n", currentNode->englishWord);
-                        isNodeRemoved = removeEnglishWord(&raizBST, currentNode->englishWord);
-                        break; // Palavra tratada, sair do loop
-                    }
-
-                    // Navega na BST
-                    if (strcmp(portugueseWord, currentNode->englishWord) < 0) {
-                        currentNode = currentNode->left;
-                    } else {
-                        currentNode = currentNode->right;
-                    }
-                }
-
-                // Atualiza a raiz da BST no nó da RBT
-                noRBT->info.englishWordNode = raizBST;
-
-                // Se a BST ficar vazia após a remoção, remova o nó correspondente na RBT
-                if (raizBST == NULL) {
-                    printf("[DEBUG] A BST ficou vazia. Removendo a palavra '%s' da RBT.\n", portugueseWord);
-                    removeRBTreeNode(redBlackTreeRoot, portugueseWord);
-                } else if (!isNodeRemoved) {
-                    printf("[DEBUG] Nenhuma palavra em inglês encontrada na BST para unidade %d.\n", unidade);
-                }
-            } else {
-                printf("[DEBUG] A BST associada à palavra '%s' está vazia.\n", portugueseWord);
-            }
+            printf("Palavra '%s' nao encontrada na arvore rubro-negra.\n", portugueseWord);
+            error = 1;
         }
     }
 
-    // Retorno unificado com mensagens baseadas nos estados
-    if (!isFound) {
-        printf("[DEBUG] Operação finalizada: Palavra não encontrada na RBT.\n");
-    } else if (isNodeRemoved) {
-        printf("[DEBUG] Operação finalizada: Palavra e unidade removidas com sucesso.\n");
+    if (!error && noRBT != NULL) {
+        BinaryTreeNode *raizBST = noRBT->info.englishWordNode;
+        if (raizBST != NULL) {
+            BinaryTreeNode *currentNode = raizBST;
+            BinaryTreeNode *nextNode = NULL;
+
+            while (currentNode != NULL) {
+                nextNode = (currentNode->left != NULL) ? currentNode->left : currentNode->right;
+
+                Unit *novaLista = remove_unit(currentNode->unitValues, unit);
+                currentNode->unitValues = novaLista;
+
+                if (currentNode->unitValues == NULL) {
+                    
+                    removeEnglishWord(&raizBST, currentNode->englishWord, unit);
+                }
+
+                currentNode = nextNode;
+            }
+
+            noRBT->info.englishWordNode = raizBST;
+
+        
+            if (raizBST == NULL) {
+                removeRBTreeNode(redBlackTreeRoot, portugueseWord);
+            }
+        } else {
+            printf("Nao ha palavras em ingles associadas ao no '%s'.\n", portugueseWord);
+        }
+    }
+
+    if (error) {
+        printf("Operacao nao concluida devido a erros.\n");
     } else {
-        printf("[DEBUG] Operação finalizada: Nenhuma palavra removida.\n");
+        printf("Operacao concluida com sucesso.\n");
     }
 }

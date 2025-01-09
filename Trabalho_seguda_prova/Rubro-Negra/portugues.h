@@ -57,6 +57,6 @@ void printTranslations(BinaryTreeNode *node, int unidade, char *palavraPortugues
 void showRedBlackTree(RedBlackTreePT *raiz);
 
 
-// void freeTree(PortuguesRB *no);
+
 
 #endif

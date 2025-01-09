@@ -1,13 +1,13 @@
 #ifndef ARVBIN_H
 #define ARVBIN_H
-#include "arv23.h"
+#include "portugues.h"
 #include "unidade.h"
 
 
 typedef struct Inglesbin {
-    char *palavraIngles;
-    struct Inglesbin *dir, *esq;
-    Unit *unidades; // Lista ligada de unidades
+    char *englishWord;
+    struct Inglesbin *rightChild, *leftChild;
+    Unit *unitList; 
 } Inglesbin;
 
 typedef struct PortugueseTree PortugueseTree;
@@ -16,7 +16,7 @@ typedef struct PortugueseTree PortugueseTree;
 
 Inglesbin* initializeNode(const char* word, int unit);
 
-// Função para inserir uma palavra em inglês na arvore binaria de busca
+
 Inglesbin* insertEnglishWord(Inglesbin* root, const char* word, int unit);
 
 void insertTranslation(PortugueseTree *no, const char *palavraPortugues, const char *palavraIngles, int unidade);

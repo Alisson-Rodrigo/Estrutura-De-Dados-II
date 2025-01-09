@@ -20,9 +20,8 @@ typedef struct {
 void initGraph(Graph *g, int numVertices) {
     g->numVertices = numVertices;
     g->numEdges = 0;
-    int i, j;
-    for (i = 0; i < numVertices; i++) {
-        for (j = 0; j < numVertices; j++) {
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
             g->edges[i][j].weight = (i == j) ? 0.0 : INF;
         }
     }
@@ -43,21 +42,20 @@ void dijkstra(Graph *g, int start, int end, int *path, double *probability) {
     int prev[MAX_VERTICES];
     int visited[MAX_VERTICES] = {0};
     int n = g->numVertices;
-    int continueLoop = 1; // Variável para controlar o loop principal
-    int i,j,v;
+    int continueLoop = 1; 
 
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         dist[i] = INF;
         prev[i] = -1;
     }
     dist[start] = 0.0;
 
-    i = 0;
-    while (i < n && continueLoop) { // Substitui o for com um controle adicional
+    int i = 0;
+    while (i < n && continueLoop) { 
         double minDist = INF;
         int u = -1;
 
-        for (j = 0; j < n; j++) {
+        for (int j = 0; j < n; j++) {
             if (!visited[j] && dist[j] < minDist) {
                 minDist = dist[j];
                 u = j;
@@ -65,11 +63,11 @@ void dijkstra(Graph *g, int start, int end, int *path, double *probability) {
         }
 
         if (u == -1) {
-            continueLoop = 0; // Atualiza o controle para encerrar o loop
+            continueLoop = 0; 
         } else {
             visited[u] = 1;
 
-            for (v = 0; v < n; v++) {
+            for (int v = 0; v < n; v++) {
                 if (!visited[v] && g->edges[u][v].weight < INF) {
                     double newDist = dist[u] + g->edges[u][v].weight;
                     if (newDist < dist[v]) {
@@ -91,7 +89,7 @@ void dijkstra(Graph *g, int start, int end, int *path, double *probability) {
 
     *probability = exp(-dist[end]);
 
-    for (i = 0; i < pathIndex / 2; i++) {
+    for (int i = 0; i < pathIndex / 2; i++) {
         int temp = path[i];
         path[i] = path[pathIndex - 1 - i];
         path[pathIndex - 1 - i] = temp;
@@ -104,7 +102,6 @@ void dijkstra(Graph *g, int start, int end, int *path, double *probability) {
 int main() {
     int repeat = 1;
     Graph g;
-    int i;
     while (repeat == 1) {
         int n, m;
         int erro = 0;
@@ -120,7 +117,7 @@ int main() {
             initGraph(&g, n);
 
             printf("Digite as arestas no formato (u v r):\n");
-            for (i = 0; i < m; i++) {
+            for (int i = 0; i < m; i++) {
                 int u, v;
                 double r;
                 if (scanf("%d %d %lf", &u, &v, &r) != 3 || u < 0 || v < 0 || u >= n || v >= n) {
@@ -147,7 +144,7 @@ int main() {
                 dijkstra(&g, start, end, path, &probability);
 
                 printf("Caminho mais confiavel: ");
-                for (i = 0; path[i] != -1; i++) {
+                for (int i = 0; path[i] != -1; i++) {
                     printf("%d ", path[i]);
                 }
 

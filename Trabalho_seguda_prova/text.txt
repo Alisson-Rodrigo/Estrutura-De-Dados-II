@@ -1,0 +1,27 @@
+% Unidade 1
+Car: carro, automovel;
+Error: falha, engano;
+Wheel: roda;
+Fan: ventilador, soprador;
+Web: teia, conexao;
+Structure: estrutura, organizacao;
+% Unidade 2
+Mistake: erro;
+Cycle: ciclo;
+Cooler: refrigerador;
+Community: comunidade, grupo;
+% Unidade 3
+Lock: cadeado;
+Fruit: fruta;
+Memory: memoria;
+Companion: companheiro;
+% Unidade 4
+Document: documento;
+Sphere: esfera;
+Wire: fio;
+Device: dispositivo;
+% Unidade 5
+Glass: vidro;
+Desk: escrivaninha;
+Cursor: cursor;
+Agreement: acordo;

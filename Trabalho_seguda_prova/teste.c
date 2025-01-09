@@ -41,8 +41,8 @@ void carregarArquivo(const char *nomeArquivo, Inglesbin **arvore) {
 
 void imprimirArvore(Inglesbin *raiz) {
     if (raiz != NULL) {
-        imprimirArvore(raiz->esq);
-        printf("Palavra: %s\n", raiz->palavraIngles);
+        imprimirArvore(raiz->leftChild);
+        printf("Palavra: %s\n", raiz->englishWord);
 
         Unidade *unidade = raiz->unidades;
         while (unidade != NULL) {
@@ -50,7 +50,7 @@ void imprimirArvore(Inglesbin *raiz) {
             unidade = unidade->prox;
         }
 
-        imprimirArvore(raiz->dir);
+        imprimirArvore(raiz->rightChild);
     }
 }
 

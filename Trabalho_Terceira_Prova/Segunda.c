@@ -11,46 +11,45 @@
 #define MAX_CONFIGURATIONS 81
 #define INF 1000000
 
-// Representação de uma configuração
+
 typedef struct {
-    int disks[4]; // 4 discos, cada posição indica o pino (0, 1 ou 2)
+    int disks[4]; 
 } Configuration;
 
-// Função para gerar todas as configurações possíveis
+
 void generateConfigurations(Configuration *configs) {
     int i, j;
     for (i = 0; i < MAX_CONFIGURATIONS; i++) {
         for (j = 0; j < 4; j++) {
-            configs[i].disks[j] = (i / (int)pow(3, j)) % 3; // Calcula a base 3
+            configs[i].disks[j] = (i / (int)pow(3, j)) % 3; 
         }
     }
 }
 
-// Exibir todas as configurações
+
 void displayConfigurations(Configuration *configs) {
     int i, j;
     printf("\nTodas as configurações:\n");
     for (i = 0; i < MAX_CONFIGURATIONS; i++) {
         printf("No %d: ", i);
         for (j = 0; j < 4; j++) {
-            printf("%d ", configs[i].disks[j] + 1); // Converte pino (0,1,2) para (1,2,3)
+            printf("%d ", configs[i].disks[j] + 1); 
         }
         printf("\n");
     }
 }
 
-// Verifica se um movimento entre duas configurações é válido
 int isValidMove(Configuration a, Configuration b) {
     int diffCount = 0;
     int from = -1, to = -1, smallestDisk = -1;
     int i;
-    int isValid = 1; // Inicialmente válido
+    int isValid = 1; 
 
     for (i = 0; i < 4 && isValid; i++) {
         if (a.disks[i] != b.disks[i]) {
             diffCount++;
             if (diffCount > 1) {
-                isValid = 0; // Mais de uma diferença detectada, inválido
+                isValid = 0; 
             } else {
                 from = a.disks[i];
                 to = b.disks[i];
@@ -60,12 +59,12 @@ int isValidMove(Configuration a, Configuration b) {
     }
 
     if (diffCount != 1) {
-        isValid = 0; // Deve haver exatamente uma diferença
+        isValid = 0; 
     }
 
     for (i = 0; i < smallestDisk && isValid; i++) {
         if (a.disks[i] == from || b.disks[i] == to) {
-            isValid = 0; // Condição inválida
+            isValid = 0; 
         }
     }
 
@@ -73,7 +72,6 @@ int isValidMove(Configuration a, Configuration b) {
 }
 
 
-// Constrói a matriz de adjacência do grafo
 void buildGraph(int graph[MAX_CONFIGURATIONS][MAX_CONFIGURATIONS], Configuration *configs) {
     int i, j;
     for (i = 0; i < MAX_CONFIGURATIONS; i++) {

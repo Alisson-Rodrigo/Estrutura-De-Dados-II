@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "arv23.c"
-#include "arvbin.c"
+#include "portugues.c"
+#include "ingles.c"
 #include "unidade.c"
 
 void clearCharacters(char *str)
@@ -30,39 +30,38 @@ void loadFile(const char *nomeArquivo, PortugueseTree **arvore)
     if (dataFile != NULL)
     {
         char inputLine[256];
-        int currentUnit = -1; // Inicia com um valor inválido
+        int currentUnit = -1; 
 
         while (fgets(inputLine, sizeof(inputLine), dataFile))
         {
-            inputLine[strcspn(inputLine, "\n")] = 0; // Remove o caractere de nova linha
+            inputLine[strcspn(inputLine, "\n")] = 0;
 
             if (inputLine[0] == '%')
             {
-                // Verifica a linha de unidade e extrai o número
+            
                 if (sscanf(inputLine, "%% Unidade %d", &currentUnit) != 1)
                 {
-                    currentUnit = -1; // Reseta para inválido
+                    currentUnit = -1; 
                 }
             }
             else if (currentUnit != -1)
             {
-                // Processa linhas de palavras e traduções
+              
                 char englishWord[50], portugueseTranslations[200];
 
                 if (sscanf(inputLine, "%[^:]: %[^\n]", englishWord, portugueseTranslations) == 2)
                 {
-                    clearCharacters(englishWord); // Limpa caracteres indesejados
+                    clearCharacters(englishWord); 
 
-                    // Divide as traduções em português separadas por vírgula
                     char *currentPortugueseTranslation = strtok(portugueseTranslations, ",");
                     while (currentPortugueseTranslation != NULL)
                     {
                         while (*currentPortugueseTranslation == ' ')
                         {
-                            currentPortugueseTranslation++; // Remove espaços no início
+                            currentPortugueseTranslation++; 
                         }
 
-                        clearCharacters(currentPortugueseTranslation); // Limpa caracteres indesejados
+                        clearCharacters(currentPortugueseTranslation); 
                         insertPortugueseTerm(arvore, currentPortugueseTranslation, englishWord, currentUnit);
 
                         currentPortugueseTranslation = strtok(NULL, ",");
@@ -99,14 +98,13 @@ int main()
     int unit;
     int option;
 
-    // Carrega o arquivo inicial
-    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/text.txt", &rootNode);
 
-    // Loop do menu principal
+    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_seguda_prova/Rubro-Negra/trabalhoEd2.txt", &rootNode);
+
     do
     {
         menu();
-        printf(">> "); // Indicador de entrada
+        printf(">> "); 
         scanf("%d", &option);
 
         switch (option)
@@ -129,7 +127,7 @@ int main()
         case 2:
             printf("\n---------------------------------------------------------------\n");
             printf("Digite a palavra em portugues para buscar as equivalentes em ingles: ");
-            scanf(" %[^\n]", userInput); // Lê uma linha inteira
+            scanf(" %[^\n]", userInput); 
 
             printAllTranslations(rootNode, userInput);
             printf("---------------------------------------------------------------\n");

@@ -2,7 +2,7 @@
 #define arv23_H
 
 
-#include "arvbin.h"
+#include "ingles.h"
 typedef struct info {
     char *portugueseWord;
     Inglesbin *englishWord;
