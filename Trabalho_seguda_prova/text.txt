@@ -7,6 +7,7 @@ Web: teia, conexao;
 Structure: estrutura, organizacao;
 % Unidade 2
 Mistake: erro;
+Wheel: roda;
 Cycle: ciclo;
 Cooler: refrigerador;
 Community: comunidade, grupo;
