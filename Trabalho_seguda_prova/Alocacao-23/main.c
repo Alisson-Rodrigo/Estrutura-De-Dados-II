@@ -4,7 +4,7 @@
 #include "remocao.c"
 #include "alocacao.c"
 
-#define MEMORY_SIZE (1024 * 1024) // Tamanho total da memória (1MB por bloco)
+#define MEMORY_SIZE (1024 * 1024) 
 
 int menu() {
     int op;
@@ -15,14 +15,13 @@ int menu() {
     printf("\n0 - Sair");
     printf("\nOpção escolhida: ");
     scanf("%d", &op);
-    while (getchar() != '\n'); // Limpa o buffer
+    while (getchar() != '\n'); 
     return op;
 }
 
 int main() {
     TreeNode23 *treeRoot = NULL;
 
-    // Define o tamanho máximo da memória
     int maximumMemorySize = MEMORY_SIZE;
 
     printf("---------------------------------\n");
