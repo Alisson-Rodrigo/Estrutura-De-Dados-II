@@ -133,29 +133,52 @@ Inglesbin *getMinimumChild(Inglesbin *raiz)
     return aux;
 }
 
-int removeEnglishWord(Inglesbin **root, const char *englishWord) {
-    if (*root == NULL) {
-        printf("Erro: Palavra '%s' não encontrada na árvore.\n", englishWord);
-        return 0;
+int removeEnglishWord(Inglesbin **raiz, const char *englishWord,int unit)
+{
+    Inglesbin *childPointer = NULL;
+    int isExists = 0;
+
+    if (*raiz)
+    {
+
+        if (strcmp(englishWord, (*raiz)->englishWord) == 0)
+        {
+            Inglesbin *aux = *raiz;
+            isExists = 1;
+
+            if (isLeafNode(*raiz))
+            {
+                free(aux);
+                *raiz = NULL;
+            }
+            else if ((childPointer = getSingleChild(*raiz)) != NULL)
+            {
+                free(aux);
+                *raiz = childPointer;
+            }
+            else
+            {
+                childPointer = getMinimumChild((*raiz)->rightChild);
+                strcpy((*raiz)->englishWord, childPointer->englishWord);
+                (*raiz)->unitList = childPointer->unitList;
+
+                removeEnglishWord(&(*raiz)->rightChild, childPointer->englishWord,unit);    
+            }
+        }
+        else if (strcmp(englishWord, (*raiz)->englishWord) < 0)
+        {
+
+            isExists = removeEnglishWord(&(*raiz)->leftChild, englishWord,unit);
+        }
+        else
+        {
+
+            isExists = removeEnglishWord(&(*raiz)->rightChild, englishWord,unit);
+        }
     }
 
-    if (strcmp((*root)->englishWord, englishWord) == 0) {
-        // Nó encontrado, remover
-        printf("Liberando nó com palavra: %s\n", (*root)->englishWord);
-        free((*root)->englishWord);
-        free(*root);
-        *root = NULL;
-        return 1;
-    }
-
-    if (strcmp(englishWord, (*root)->englishWord) < 0) {
-        return removeEnglishWord(&(*root)->leftChild, englishWord);
-    } else {
-        return removeEnglishWord(&(*root)->rightChild, englishWord);
-    }
+    return isExists;
 }
-
-
 
 void clear_binary_tree(Inglesbin *rootNode)
 {
@@ -262,71 +285,4 @@ void showEnglishTranslations(Inglesbin *englishRoot)
 
         showEnglishTranslations(englishRoot->rightChild);
     }
-}
-
-
-int Remove_english_word_from_unit(PortugueseTree **rootNode, const char *englishWord, int unit)
-{
-    int result = 1; 
-    result = remove_english_word_by_unit(*rootNode, englishWord, unit, rootNode);
-    return result;
-}
-
-int remove_english_unit(Inglesbin **rootNode, const char *englishWord, int unit) {
-    int result = 0;
-
-    if (*rootNode) {
-        if (strcmp((*rootNode)->englishWord, englishWord) == 0) {
-            // Encontrar unidade e removê-la
-            result = remove_unit(&(*rootNode)->unitList, unit);
-
-            // Se não restarem unidades, remova o nó
-            if (!(*rootNode)->unitList) {
-                result = removeEnglishWord(rootNode, englishWord) || result;
-            }
-        } else if (strcmp((*rootNode)->englishWord, englishWord) > 0) {
-            result = remove_english_unit(&(*rootNode)->leftChild, englishWord, unit);
-        } else {
-            result = remove_english_unit(&(*rootNode)->rightChild, englishWord, unit);
-        }
-    }
-
-    return result;
-}
-
-
-
-int remove_english_word_by_unit(PortugueseTree *rootNode, const char *englishWord, int unit, PortugueseTree **newTopNode) {
-    int result = 0;
-
-    if (rootNode) {
-        // Percorrer subárvore esquerda
-        result = remove_english_word_by_unit(rootNode->left, englishWord, unit, newTopNode);
-
-        // Percorrer subárvore central
-        result = remove_english_word_by_unit(rootNode->cent, englishWord, unit, newTopNode) || result;
-
-        // Subárvore direita, se existir
-        if (rootNode->nInfos == 2) {
-            result = remove_english_word_by_unit(rootNode->right, englishWord, unit, newTopNode) || result;
-
-            // Remover do info2
-            result = remove_english_unit(&(rootNode->info2.englishWord), englishWord, unit) || result;
-
-            // Se não restar árvore binária, remova do 2-3 tree
-            if (!rootNode->info2.englishWord) {
-                result = remove_node_from23_tree(newTopNode, rootNode->info2.portugueseWord) || result;
-            }
-        }
-
-        // Remover do info1
-        result = remove_english_unit(&(rootNode->info1.englishWord), englishWord, unit) || result;
-
-        // Se não restar árvore binária, remova do 2-3 tree
-        if (!rootNode->info1.englishWord) {
-            result = remove_node_from23_tree(newTopNode, rootNode->info1.portugueseWord) || result;
-        }
-    }
-
-    return result;
 }
