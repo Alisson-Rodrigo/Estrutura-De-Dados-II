@@ -4,41 +4,50 @@
 #include <string.h>
 #include "unidade.h"
 
-
-Inglesbin *initializeNode(const char *englishWord, int unit) {
+Inglesbin *initializeNode(const char *englishWord, int unit)
+{
     Inglesbin *novoNo = (Inglesbin *)malloc(sizeof(Inglesbin));
-    if (novoNo != NULL) {
+    if (novoNo != NULL)
+    {
         novoNo->englishWord = (char *)malloc(strlen(englishWord) + 1);
-        if (novoNo->englishWord != NULL) {
+        if (novoNo->englishWord != NULL)
+        {
             strcpy(novoNo->englishWord, englishWord);
         }
-        
 
         novoNo->unitList = create_unit(unit);
-        
 
         novoNo->leftChild = novoNo->rightChild = NULL;
     }
     return novoNo;
 }
 
-
-Inglesbin *insertEnglishWord(Inglesbin *root, const char *englishWord, int unit) {
+Inglesbin *insertEnglishWord(Inglesbin *root, const char *englishWord, int unit)
+{
     Inglesbin *result;
 
-    if (root == NULL) {
+    if (root == NULL)
+    {
 
         result = initializeNode(englishWord, unit);
-    } else {
-        
-        if (strcmp(englishWord, root->englishWord) == 0) {
+    }
+    else
+    {
+
+        if (strcmp(englishWord, root->englishWord) == 0)
+        {
             root->unitList = insert_unit_sorted(root->unitList, create_unit(unit));
             result = root;
-        } else {
-            
-            if (strcmp(englishWord, root->englishWord) < 0) {
+        }
+        else
+        {
+
+            if (strcmp(englishWord, root->englishWord) < 0)
+            {
                 root->leftChild = insertEnglishWord(root->leftChild, englishWord, unit);
-            } else {
+            }
+            else
+            {
                 root->rightChild = insertEnglishWord(root->rightChild, englishWord, unit);
             }
             result = root;
@@ -48,51 +57,53 @@ Inglesbin *insertEnglishWord(Inglesbin *root, const char *englishWord, int unit)
     return result;
 }
 
-void addEnglishTranslation(NodeInfo *info, const char *englishWord, int unit) {
+void addEnglishTranslation(NodeInfo *info, const char *englishWord, int unit)
+{
 
-    if (info->englishWord == NULL) {
-  
+    if (info->englishWord == NULL)
+    {
+
         info->englishWord = initializeNode(englishWord, unit);
-    } else {
-        
+    }
+    else
+    {
+
         info->englishWord = insertEnglishWord(info->englishWord, englishWord, unit);
     }
 
-
     info->englishWord->unitList = insert_unit_sorted(info->englishWord->unitList, create_unit(unit));
 }
-
 
 void printBinaryTree(Inglesbin *root)
 {
     if (root != NULL)
     {
-    
+
         printBinaryTree(root->leftChild);
-        
-       
+
         printf("\nPalavra em Inglês: %s\n", root->englishWord);
-        
-   
-        if (root->unitList != NULL) {
+
+        if (root->unitList != NULL)
+        {
             printf("Unidades associadas: ");
-            print_units(root->unitList);  
+            print_units(root->unitList);
         }
-        else {
+        else
+        {
             printf("Nenhuma unidade associada.\n");
         }
-        
-  
+
         printBinaryTree(root->rightChild);
     }
 }
 
-
-int isLeafNode(Inglesbin *raiz){
+int isLeafNode(Inglesbin *raiz)
+{
     return (raiz->leftChild == NULL && raiz->rightChild == NULL);
 }
 
-Inglesbin *getSingleChild(Inglesbin *raiz){
+Inglesbin *getSingleChild(Inglesbin *raiz)
+{
     Inglesbin *aux;
     aux = NULL;
 
@@ -108,7 +119,8 @@ Inglesbin *getSingleChild(Inglesbin *raiz){
     return aux;
 }
 
-Inglesbin *getMinimumChild(Inglesbin *raiz){
+Inglesbin *getMinimumChild(Inglesbin *raiz)
+{
     Inglesbin *aux;
     aux = raiz;
 
@@ -121,43 +133,45 @@ Inglesbin *getMinimumChild(Inglesbin *raiz){
     return aux;
 }
 
-int removeEnglishWord(Inglesbin **raiz, const char *englishWord, int unit) {
+int removeEnglishWord(Inglesbin **raiz, const char *englishWord, int unit)
+{
     Inglesbin *childPointer = NULL;
     int isExists = 0;
 
-    if (*raiz) {
-    
-        if (strcmp(englishWord, (*raiz)->englishWord) == 0) {
+    if (*raiz)
+    {
+
+        if (strcmp(englishWord, (*raiz)->englishWord) == 0)
+        {
             Inglesbin *aux = *raiz;
             isExists = 1;
 
-          
-            Unit *novaLista = remove_unit((*raiz)->unitList, unit);
-
-            if (novaLista != (*raiz)->unitList) {
-                (*raiz)->unitList = novaLista;
-
-            
-                if (novaLista == NULL) {
-                    if (isLeafNode(*raiz)) {
-                        free(aux);
-                        *raiz = NULL;
-                    } else if ((childPointer = getSingleChild(*raiz)) != NULL) {
-                        free(aux);
-                        *raiz = childPointer;
-                    } else {
-                        childPointer = getMinimumChild((*raiz)->rightChild);
-                        strcpy((*raiz)->englishWord, childPointer->englishWord);
-                        (*raiz)->unitList = childPointer->unitList;
-
-                        removeEnglishWord(&(*raiz)->rightChild, childPointer->englishWord, unit);
-                    }
-                }
+            if (isLeafNode(*raiz))
+            {
+                free(aux);
+                *raiz = NULL;
             }
-        } else if (strcmp(englishWord, (*raiz)->englishWord) < 0) {
+            else if ((childPointer = getSingleChild(*raiz)) != NULL)
+            {
+                free(aux);
+                *raiz = childPointer;
+            }
+            else
+            {
+                childPointer = getMinimumChild((*raiz)->rightChild);
+                strcpy((*raiz)->englishWord, childPointer->englishWord);
+                (*raiz)->unitList = childPointer->unitList;
+
+                removeEnglishWord(&(*raiz)->rightChild, childPointer->englishWord, unit);
+            }
+        }
+        else if (strcmp(englishWord, (*raiz)->englishWord) < 0)
+        {
 
             isExists = removeEnglishWord(&(*raiz)->leftChild, englishWord, unit);
-        } else {
+        }
+        else
+        {
 
             isExists = removeEnglishWord(&(*raiz)->rightChild, englishWord, unit);
         }
@@ -166,24 +180,20 @@ int removeEnglishWord(Inglesbin **raiz, const char *englishWord, int unit) {
     return isExists;
 }
 
+void clear_binary_tree(Inglesbin *rootNode)
+{
+    if (rootNode != NULL)
+    {
 
-
-
-void clear_binary_tree(Inglesbin *rootNode) {
-    if (rootNode != NULL) {
-      
         printf("Liberando nó da árvore binária com palavra: %s\n", rootNode->englishWord);
 
- 
         clear_binary_tree(rootNode->leftChild);
         clear_binary_tree(rootNode->rightChild);
 
-    
         free_list(rootNode->unitList);
 
         free(rootNode->englishWord);
 
-   
         free(rootNode);
     }
 }
@@ -192,39 +202,43 @@ void printTranslations(Inglesbin *node, int unit, const char *portugueseWord)
 {
     if (node)
     {
-       
+
         printTranslations(node->leftChild, unit, portugueseWord);
 
-   
-        if (find_unit(node->unitList, unit)) 
+        if (find_unit(node->unitList, unit))
         {
             printf("Palavra em Português: %s\n", portugueseWord);
             printf("Tradução em Inglês: %s\n", node->englishWord);
         }
 
-        
         printTranslations(node->rightChild, unit, portugueseWord);
     }
 }
 
-Inglesbin *findEnglishWord(Inglesbin *rootNode, const char *englishWord) {
+Inglesbin *findEnglishWord(Inglesbin *rootNode, const char *englishWord)
+{
     Inglesbin *englishResult = NULL;
 
-    if (rootNode != NULL) {
+    if (rootNode != NULL)
+    {
         int comparisonResult = strcmp(englishWord, rootNode->englishWord);
 
-        if (comparisonResult == 0) {
-            englishResult = rootNode; 
-        } else if (comparisonResult < 0) {
+        if (comparisonResult == 0)
+        {
+            englishResult = rootNode;
+        }
+        else if (comparisonResult < 0)
+        {
             englishResult = findEnglishWord(rootNode->leftChild, englishWord);
-        } else {
+        }
+        else
+        {
             englishResult = findEnglishWord(rootNode->rightChild, englishWord);
         }
     }
 
     return englishResult;
 }
-
 
 void FindEnglishWord(PortugueseTree **englishTreeRoot, char *englishWord, int unitIndex, PortugueseTree **parentNode)
 {
@@ -233,7 +247,6 @@ void FindEnglishWord(PortugueseTree **englishTreeRoot, char *englishWord, int un
 
         FindEnglishWord(&(*englishTreeRoot)->left, englishWord, unitIndex, parentNode);
 
- 
         if ((*englishTreeRoot)->info1.englishWord != NULL)
         {
             Inglesbin *traducaoEncontrada = findEnglishWord((*englishTreeRoot)->info1.englishWord, englishWord);
@@ -243,9 +256,7 @@ void FindEnglishWord(PortugueseTree **englishTreeRoot, char *englishWord, int un
             }
         }
 
-
         FindEnglishWord(&(*englishTreeRoot)->cent, englishWord, unitIndex, englishTreeRoot);
-
 
         if ((*englishTreeRoot)->nInfos == 2 && (*englishTreeRoot)->info2.englishWord != NULL)
         {
@@ -256,7 +267,6 @@ void FindEnglishWord(PortugueseTree **englishTreeRoot, char *englishWord, int un
             }
         }
 
- 
         if ((*englishTreeRoot)->nInfos == 2)
         {
             FindEnglishWord(&(*englishTreeRoot)->right, englishWord, unitIndex, englishTreeRoot);
@@ -268,13 +278,83 @@ void showEnglishTranslations(Inglesbin *englishRoot)
 {
     if (englishRoot)
     {
-     
-        showEnglishTranslations(englishRoot->leftChild);
 
+        showEnglishTranslations(englishRoot->leftChild);
 
         printf("- %s\n", englishRoot->englishWord);
 
-  
         showEnglishTranslations(englishRoot->rightChild);
     }
+}
+
+
+int Remove_english_word_from_unit(PortugueseTree **rootNode, const char *englishWord, int unit)
+{
+    int result = 1; 
+    result = remove_english_word_by_unit(*rootNode, englishWord, unit, rootNode);
+    return result;
+}
+
+int remove_english_unit(Inglesbin **rootNode, const char *englishWord, int unit)
+{
+    int result = 1;
+
+    if (*rootNode)
+    {
+       
+        if (strcmp((*rootNode)->englishWord, englishWord) == 0)
+        {
+            
+            result = remover_lista_encadeada_unidade(&(*rootNode)->unitList, unit);
+
+            if (!(*rootNode)->unitList)
+            {
+                result = removeEnglishWord(rootNode, englishWord, unit);
+            }
+        }
+        else if (strcmp((*rootNode)->englishWord, englishWord) > 0)
+        {
+            result = remove_english_unit(&(*rootNode)->leftChild, englishWord, unit);
+        }
+        else
+        {
+            result = remove_english_unit(&(*rootNode)->rightChild, englishWord, unit);
+        }
+    }
+
+    return result;
+}
+
+int remove_english_word_by_unit(PortugueseTree *rootNode, const char *englishWord, int unit, PortugueseTree **newTopNode)
+{
+    int result = 0; 
+
+    if (rootNode)
+    {
+     
+        result = remove_english_word_by_unit(rootNode->left, englishWord, unit, newTopNode);
+
+        result = remove_english_word_by_unit(rootNode->cent, englishWord, unit, newTopNode) || result;
+
+        if (rootNode->nInfos == 2)
+        {
+            result = remove_english_word_by_unit(rootNode->right, englishWord, unit, newTopNode) || result;
+
+            result = remove_english_unit(&(rootNode->info2.englishWord), englishWord, unit) || result;
+
+            if (!rootNode->info2.englishWord)
+            {
+                result = remove_node_from23_tree(newTopNode, rootNode->info2.portugueseWord) || result;
+            }
+        }
+
+        result = remove_english_unit(&(rootNode->info1.englishWord), englishWord, unit) || result;
+
+        if (!rootNode->info1.englishWord)
+        {
+            result = remove_node_from23_tree(newTopNode, rootNode->info1.portugueseWord) || result;
+        }
+    }
+
+    return result;
 }
