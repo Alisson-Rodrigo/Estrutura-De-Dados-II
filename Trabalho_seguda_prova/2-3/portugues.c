@@ -960,7 +960,7 @@ void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int 
 
             if (foundWord && find_unit(foundWord->unitList, unit))
             {
-                removeEnglishWord(&(*rootNode)->info1.englishWord, englishWord, unit);
+                removeEnglishWord(&(*rootNode)->info1.englishWord, englishWord);
 
                 // Verificar se a árvore binária está vazia
                 if ((*rootNode)->info1.englishWord == NULL)
@@ -982,7 +982,7 @@ void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int 
 
             if (foundWord && find_unit(foundWord->unitList, unit))
             {
-                removeEnglishWord(&(*rootNode)->info2.englishWord, englishWord, unit);
+                removeEnglishWord(&(*rootNode)->info2.englishWord, englishWord);
 
                 // Verificar se a árvore binária está vazia
                 if ((*rootNode)->info2.englishWord == NULL)
@@ -1076,7 +1076,7 @@ void removePortugueseWordByUnit(PortugueseTree **rootNode, char *portugueseWord,
                 if (find_unit(englishWordPtr->unitList, nodeLevel))
                 {
                     isFound = 1;
-                    removeEnglishWord(&(foundPortugueseNode->info1.englishWord), englishWordPtr->englishWord, nodeLevel);
+                    removeEnglishWord(&(foundPortugueseNode->info1.englishWord), englishWordPtr->englishWord);
 
                     if (foundPortugueseNode->info1.englishWord == NULL)
                     {
@@ -1097,7 +1097,7 @@ void removePortugueseWordByUnit(PortugueseTree **rootNode, char *portugueseWord,
                 if (find_unit(ingles->unitList, nodeLevel))
                 {
                     isFound = 1;
-                    removeEnglishWord(&(foundPortugueseNode->info2.englishWord), ingles->englishWord, nodeLevel);
+                    removeEnglishWord(&(foundPortugueseNode->info2.englishWord), ingles->englishWord);
 
                     if (foundPortugueseNode->info2.englishWord == NULL)
                     {
@@ -1129,7 +1129,7 @@ int Delete_portuguese_word_unit(Inglesbin **rootNode, char *portugueseWord, int 
 
         if (!(*rootNode)->unitList)
         {
-            isConfirmed = removeEnglishWord(rootNode, (*rootNode)->englishWord, unit);
+            isConfirmed = removeEnglishWord(rootNode, (*rootNode)->englishWord);
         }
     }
 

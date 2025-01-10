@@ -99,7 +99,7 @@ int main()
     int option;
 
 
-    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/Trabalho_seguda_prova/text.txt", &rootNode);
+    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_seguda_prova/Rubro-Negra/trabalhoEd2.txt", &rootNode);
 
     do
     {
@@ -149,6 +149,7 @@ int main()
         printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", userInput, unit);
     }
     else
+    
     {
         printf("\nFalha ao remover a palavra '%s' da unidade %d ou palavra não encontrada.\n", userInput, unit);
     }
