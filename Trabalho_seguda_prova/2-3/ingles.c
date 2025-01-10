@@ -288,6 +288,12 @@ void showEnglishTranslations(Inglesbin *englishRoot)
 }
 
 
+int Remove_english_word_from_unit(PortugueseTree **rootNode, const char *englishWord, int unit)
+{
+    int result = 1; 
+    result = remove_english_word_by_unit(*rootNode, englishWord, unit, rootNode);
+    return result;
+}
 
 int remove_english_unit(Inglesbin **rootNode, const char *englishWord, int unit)
 {

@@ -1177,3 +1177,9 @@ int delete_portuguese_word_in_unit(PortugueseTree *rootNode, char *portugueseWor
     return isConfirmed;
 }
 
+int Remove_word_from_portuguese_unit(PortugueseTree **rootNode, char *portugueseWord, int unit)
+{
+    int isConfirmed = 0;
+    isConfirmed = delete_portuguese_word_in_unit(*rootNode, portugueseWord, unit, rootNode);
+    return isConfirmed;
+}

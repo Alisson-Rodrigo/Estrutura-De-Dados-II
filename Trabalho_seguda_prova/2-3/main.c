@@ -30,7 +30,7 @@ void loadFile(const char *nomeArquivo, PortugueseTree **arvore)
     if (dataFile != NULL)
     {
         char inputLine[256];
-        int currentUnit = -1;
+        int currentUnit = -1; 
 
         while (fgets(inputLine, sizeof(inputLine), dataFile))
         {
@@ -38,30 +38,30 @@ void loadFile(const char *nomeArquivo, PortugueseTree **arvore)
 
             if (inputLine[0] == '%')
             {
-
+            
                 if (sscanf(inputLine, "%% Unidade %d", &currentUnit) != 1)
                 {
-                    currentUnit = -1;
+                    currentUnit = -1; 
                 }
             }
             else if (currentUnit != -1)
             {
-
+              
                 char englishWord[50], portugueseTranslations[200];
 
                 if (sscanf(inputLine, "%[^:]: %[^\n]", englishWord, portugueseTranslations) == 2)
                 {
-                    clearCharacters(englishWord);
+                    clearCharacters(englishWord); 
 
                     char *currentPortugueseTranslation = strtok(portugueseTranslations, ",");
                     while (currentPortugueseTranslation != NULL)
                     {
                         while (*currentPortugueseTranslation == ' ')
                         {
-                            currentPortugueseTranslation++;
+                            currentPortugueseTranslation++; 
                         }
 
-                        clearCharacters(currentPortugueseTranslation);
+                        clearCharacters(currentPortugueseTranslation); 
                         insertPortugueseTerm(arvore, currentPortugueseTranslation, englishWord, currentUnit);
 
                         currentPortugueseTranslation = strtok(NULL, ",");
@@ -73,6 +73,7 @@ void loadFile(const char *nomeArquivo, PortugueseTree **arvore)
         fclose(dataFile);
     }
 }
+
 
 void menu()
 {
@@ -92,20 +93,18 @@ int main()
 {
     PortugueseTree *rootNode = NULL;
 
+
     char userInput[50];
     int unit;
     int option;
-<<<<<<< Updated upstream
-    int removalResult = 0;
-=======
 
->>>>>>> Stashed changes
+
     loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_seguda_prova/Rubro-Negra/trabalhoEd2.txt", &rootNode);
 
     do
     {
         menu();
-        printf(">> ");
+        printf(">> "); 
         scanf("%d", &option);
 
         switch (option)
@@ -128,57 +127,44 @@ int main()
         case 2:
             printf("\n---------------------------------------------------------------\n");
             printf("Digite a palavra em portugues para buscar as equivalentes em ingles: ");
-            scanf(" %[^\n]", userInput);
+            scanf(" %[^\n]", userInput); 
 
             printAllTranslations(rootNode, userInput);
             printf("---------------------------------------------------------------\n");
             break;
 
-        case 3:
-            printf("\n---------------------------------------------------------------\n");
-            printf("Digite a palavra em ingles para remover: ");
-<<<<<<< Updated upstream
-            scanf(" %[^\n]", userInput);
-            printf("Informe a unidade associada: ");
-            scanf("%d", &unit);
+     case 3:
+    printf("\n---------------------------------------------------------------\n");
+    printf("Digite a palavra em ingles para remover: ");
+    scanf(" %[^\n]", userInput); // Entrada da palavra em inglês
+    printf("Informe a unidade associada: ");
+    scanf("%d", &unit); // Entrada da unidade
 
-        
-            removalResult = remove_english_word(rootNode, userInput, unit, &rootNode);
-=======
-            scanf(" %[^\n]", userInput); // Entrada da palavra em inglês
-            printf("Informe a unidade associada: ");
-            scanf("%d", &unit); // Entrada da unidade
+    // Tentar remover a palavra em inglês da unidade especificada
+    int removalResult = 0;
+    removalResult = Remove_english_word_from_unit(&rootNode, userInput, unit);
 
-            // Tentar remover a palavra em inglês da unidade especificada
-            int removalResult = 0;
-            removalResult = Remove_english_word_from_unit(&rootNode, userInput, unit);
->>>>>>> Stashed changes
+    if (removalResult)
+    {
+        printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", userInput, unit);
+    }
+    else
+    {
+        printf("\nFalha ao remover a palavra '%s' da unidade %d ou palavra não encontrada.\n", userInput, unit);
+    }
+    printf("---------------------------------------------------------------\n");
+    break;
 
-            if (removalResult)
-            {
-                printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", userInput, unit);
-            }
-            else
-            {
-                printf("\nFalha ao remover a palavra '%s' da unidade %d ou palavra não encontrada.\n", userInput, unit);
-            }
-            printf("---------------------------------------------------------------\n");
-            break;
 
         case 4:
             printf("\n---------------------------------------------------------------\n");
             printf("Digite a palavra em portugues para remover: ");
             scanf(" %[^\n]", userInput);
-<<<<<<< Updated upstream
-=======
-            // remove_node_from23_tree(&rootNode, userInput);
->>>>>>> Stashed changes
+            //remove_node_from23_tree(&rootNode, userInput);
             printf("Informe a unidade associada: ");
             scanf("%d", &unit);
 
-            removalResult = delete_portuguese_word_in_unit(rootNode, userInput, unit, &rootNode);
-
-            if (removalResult)
+            if (Remove_word_from_portuguese_unit(&rootNode, userInput, unit))
             {
                 printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", userInput, unit);
             }
@@ -188,7 +174,6 @@ int main()
             }
             printf("---------------------------------------------------------------\n");
             break;
-
         case 5:
             print_tree23(rootNode);
             break;
