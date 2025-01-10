@@ -139,9 +139,7 @@ int main()
             scanf(" %[^\n]", userInput);
             printf("Informe a unidade associada: ");
             scanf("%d", &unit);
-
             removeEnglishTranslation(&rootNode, userInput, unit, &parentNode);
-
             printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", userInput, unit);
             printf("---------------------------------------------------------------\n");
             break;
@@ -150,7 +148,6 @@ int main()
             printf("\n---------------------------------------------------------------\n");
             printf("Digite a palavra em portugues para remover: ");
             scanf(" %[^\n]", userInput);
-            //remove_node_from23_tree(&rootNode, userInput);
             printf("Informe a unidade associada: ");
             scanf("%d", &unit);
 

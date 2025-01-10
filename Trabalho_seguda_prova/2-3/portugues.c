@@ -972,6 +972,7 @@ void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int 
         {
             removeEnglishTranslation(&(*rootNode)->right, englishWord, unit, parentNode);
         }
+
     }
 }
 
