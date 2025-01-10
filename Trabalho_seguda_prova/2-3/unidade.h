@@ -22,6 +22,6 @@ void print_units(Unit *lista);
 
 
 void free_list(Unit *lista);
-int remover_lista_encadeada_unidade(Unit **lista, int nome);
+int remove_unit(Unit **lista, int nome);
 
 #endif 

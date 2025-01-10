@@ -95,8 +95,8 @@ int main()
     char userInput[50];
     int unit;
     int option;
-
-    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/Trabalho_seguda_prova/text.txt", &rootNode);
+    int removalResult = 0;
+    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_seguda_prova/Rubro-Negra/trabalhoEd2.txt", &rootNode);
 
     do
     {
@@ -137,8 +137,8 @@ int main()
             printf("Informe a unidade associada: ");
             scanf("%d", &unit);
 
-            int removalResult = 0;
-            removalResult = remove_english_word_by_unit(rootNode, userInput, unit, &rootNode);
+        
+            removalResult = remove_english_word(rootNode, userInput, unit, &rootNode);
 
             if (removalResult)
             {
@@ -158,7 +158,9 @@ int main()
             printf("Informe a unidade associada: ");
             scanf("%d", &unit);
 
-            if (Remove_word_from_portuguese_unit(&rootNode, userInput, unit))
+            removalResult = delete_portuguese_word_in_unit(rootNode, userInput, unit, &rootNode);
+
+            if (removalResult)
             {
                 printf("\nPalavra '%s' removida com sucesso da unidade %d.\n", userInput, unit);
             }
@@ -168,6 +170,7 @@ int main()
             }
             printf("---------------------------------------------------------------\n");
             break;
+
         case 5:
             print_tree23(rootNode);
             break;

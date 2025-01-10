@@ -1124,7 +1124,7 @@ int Delete_portuguese_word_unit(Inglesbin **rootNode, char *portugueseWord, int 
         isConfirmed = Delete_portuguese_word_unit(&(*rootNode)->rightChild, portugueseWord, unit) || isConfirmed;
 
        
-        isConfirmed = remover_lista_encadeada_unidade(&(*rootNode)->unitList, unit);
+        isConfirmed = remove_unit(&(*rootNode)->unitList, unit);
         
 
         if (!(*rootNode)->unitList)
@@ -1177,9 +1177,3 @@ int delete_portuguese_word_in_unit(PortugueseTree *rootNode, char *portugueseWor
     return isConfirmed;
 }
 
-int Remove_word_from_portuguese_unit(PortugueseTree **rootNode, char *portugueseWord, int unit)
-{
-    int isConfirmed = 0;
-    isConfirmed = delete_portuguese_word_in_unit(*rootNode, portugueseWord, unit, rootNode);
-    return isConfirmed;
-}

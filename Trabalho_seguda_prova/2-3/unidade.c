@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "unidade.h"
 
-int remover_lista_encadeada_unidade(Unit **lista, int nome) {
+int remove_unit(Unit **lista, int nome) {
     int confirmacao = 0;
 
     if (*lista) {
@@ -13,7 +13,7 @@ int remover_lista_encadeada_unidade(Unit **lista, int nome) {
             free(aux);
             confirmacao = 1;
         } else {
-            confirmacao = remover_lista_encadeada_unidade(&(*lista)->nextNode, nome);
+            confirmacao = remove_unit(&(*lista)->nextNode, nome);
         }
     }
 
