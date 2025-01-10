@@ -457,7 +457,8 @@ void removeWordByUnit(RedBlackTreePT **node, char *wordToRemove, int unit, int *
             int found = 0;
             printf("Procurando palavra '%s' na árvore binária.\n", wordToRemove);
 
-            while (currentNode != NULL && !found) {
+            // Remover todas as ocorrências da palavra dentro da árvore binária
+            while (currentNode != NULL) {
                 if (strcmp(currentNode->englishWord, wordToRemove) == 0) {
                     printf("Palavra '%s' encontrada na árvore binária.\n", wordToRemove);
                     // Remove a unidade associada
@@ -469,8 +470,11 @@ void removeWordByUnit(RedBlackTreePT **node, char *wordToRemove, int unit, int *
                         printf("Nenhuma unidade restante para a palavra '%s'. Removendo a palavra da árvore binária.\n", wordToRemove);
                         *removidos += removeEnglishWord(&binaryRoot, wordToRemove, unit);
                     }
-                    found = 1;
-                } else if (strcmp(wordToRemove, currentNode->englishWord) < 0) {
+                    // Não interromper a busca, pois podem haver outras instâncias da mesma palavra
+                }
+
+                // Continua procurando pela palavra em outros nós da árvore binária
+                if (strcmp(wordToRemove, currentNode->englishWord) < 0) {
                     currentNode = currentNode->left;
                 } else {
                     currentNode = currentNode->right;
