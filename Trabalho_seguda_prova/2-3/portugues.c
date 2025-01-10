@@ -953,13 +953,18 @@ void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int 
 
         // Tratar remoção de unidades em info1
         if ((*rootNode)->info1.englishWord != NULL) {
-            int removed = remove_unit_from_tree(&(*rootNode)->info1.englishWord, englishWord, unit);
+            int removed;
+            do {
+                removed = remove_unit_from_tree(&(*rootNode)->info1.englishWord, englishWord, unit);
 
-            // Verificar se a palavra portuguesa correspondente precisa ser removida
-            if (removed && (*rootNode)->info1.englishWord == NULL) {
-                Remove_word_from_portuguese_unit(rootNode, (*rootNode)->info1.portugueseWord, unit);
-                return; // Encerra após remover o nó
-            }
+                // Se a árvore binária ficou vazia, remover a palavra portuguesa correspondente
+                if (removed && (*rootNode)->info1.englishWord == NULL) {
+                    char *portugueseWord = strdup((*rootNode)->info1.portugueseWord); // Salvar palavra portuguesa
+                    remove_node_from23_tree(rootNode, portugueseWord); // Remover da árvore 2-3
+                    free(portugueseWord); // Liberar memória da palavra portuguesa
+                    return; // Encerrar após remover o nó
+                }
+            } while (removed); // Continuar enquanto houver unidades associadas
         }
 
         // Processar a subárvore central
@@ -967,13 +972,18 @@ void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int 
 
         // Tratar remoção de unidades em info2, se existir
         if ((*rootNode)->nInfos == 2 && (*rootNode)->info2.englishWord != NULL) {
-            int removed = remove_unit_from_tree(&(*rootNode)->info2.englishWord, englishWord, unit);
+            int removed;
+            do {
+                removed = remove_unit_from_tree(&(*rootNode)->info2.englishWord, englishWord, unit);
 
-            // Verificar se a palavra portuguesa correspondente precisa ser removida
-            if (removed && (*rootNode)->info2.englishWord == NULL) {
-                Remove_word_from_portuguese_unit(rootNode, (*rootNode)->info2.portugueseWord, unit);
-                return; // Encerra após remover o nó
-            }
+                // Se a árvore binária ficou vazia, remover a palavra portuguesa correspondente
+                if (removed && (*rootNode)->info2.englishWord == NULL) {
+                    char *portugueseWord = strdup((*rootNode)->info2.portugueseWord); // Salvar palavra portuguesa
+                    remove_node_from23_tree(rootNode, portugueseWord); // Remover da árvore 2-3
+                    free(portugueseWord); // Liberar memória da palavra portuguesa
+                    return; // Encerrar após remover o nó
+                }
+            } while (removed); // Continuar enquanto houver unidades associadas
         }
 
         // Processar a subárvore direita, se existir
@@ -982,6 +992,7 @@ void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int 
         }
     }
 }
+
 
 
 int remove_unit_from_tree(Inglesbin **root, const char *englishWord, int unit) {
