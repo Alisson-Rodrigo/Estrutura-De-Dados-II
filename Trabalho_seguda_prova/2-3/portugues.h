@@ -47,4 +47,6 @@ int Remove_word_from_portuguese_unit(PortugueseTree **rootNode, char *portuguese
 
 void printTranslationsInFormat(Inglesbin *node, int unidade, const char *palavraPortugues);
 int deleteFrom23Tree(PortugueseTree **raiz, char *info, PortugueseTree *pai, PortugueseTree **origem, PortugueseTree **maior);
+
+void printAllTranslations(PortugueseTree *rootNode, const char *portugueseWord);
 #endif
