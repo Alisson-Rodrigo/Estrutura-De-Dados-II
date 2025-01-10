@@ -161,9 +161,6 @@ int main()
             }
             printf("---------------------------------------------------------------\n");
             break;
-        case 5:
-            print_tree23(rootNode);
-            break;
         case 0:
             printf("\n===============================================================\n");
             printf("Saindo do programa... Ate logo!\n");
