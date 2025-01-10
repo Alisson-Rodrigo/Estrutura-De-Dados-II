@@ -96,7 +96,7 @@ int main()
     int unit;
     int option;
 
-    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_seguda_prova/Rubro-Negra/trabalhoEd2.txt", &rootNode);
+    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/Trabalho_seguda_prova/text.txt", &rootNode);
 
     do
     {
