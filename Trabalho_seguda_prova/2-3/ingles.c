@@ -133,46 +133,52 @@ Inglesbin *getMinimumChild(Inglesbin *raiz)
     return aux;
 }
 
-int removeEnglishWord(Inglesbin **root, const char *englishWord, int unit) {
-    if (*root != NULL) {
-        if (strcmp(englishWord, (*root)->englishWord) == 0) {
-            // Remover a unidade associada
-            int unitRemoved = remove_unit(&(*root)->unitList, unit);
+int removeEnglishWord(Inglesbin **raiz, const char *englishWord,int unit)
+{
+    Inglesbin *childPointer = NULL;
+    int isExists = 0;
 
-            // Se a lista de unidades ficar vazia, remover o nó da árvore binária
-            if (unitRemoved && (*root)->unitList == NULL) {
-                Inglesbin *temp = *root;
+    if (*raiz)
+    {
 
-                // Substituir o nó por seus filhos, se existirem
-                if ((*root)->leftChild == NULL) {
-                    *root = (*root)->rightChild;
-                } else if ((*root)->rightChild == NULL) {
-                    *root = (*root)->leftChild;
-                } else {
-                    // Substituir pelo menor nó da subárvore direita
-                    Inglesbin *minNode = getMinimumChild((*root)->rightChild);
-                    strcpy((*root)->englishWord, minNode->englishWord);
-                    (*root)->unitList = minNode->unitList;
-                    removeEnglishWord(&(*root)->rightChild, minNode->englishWord, unit);
-                }
+        if (strcmp(englishWord, (*raiz)->englishWord) == 0)
+        {
+            Inglesbin *aux = *raiz;
+            isExists = 1;
 
-                // Liberar memória do nó
-                free(temp->englishWord);
-                free(temp);
-                return 1; // Indicar que o nó foi removido
+            if (isLeafNode(*raiz))
+            {
+                free(aux);
+                *raiz = NULL;
             }
+            else if ((childPointer = getSingleChild(*raiz)) != NULL)
+            {
+                free(aux);
+                *raiz = childPointer;
+            }
+            else
+            {
+                childPointer = getMinimumChild((*raiz)->rightChild);
+                strcpy((*raiz)->englishWord, childPointer->englishWord);
+                (*raiz)->unitList = childPointer->unitList;
 
-            return unitRemoved; // Indicar que a unidade foi removida
-        } else if (strcmp(englishWord, (*root)->englishWord) < 0) {
-            return removeEnglishWord(&(*root)->leftChild, englishWord, unit);
-        } else {
-            return removeEnglishWord(&(*root)->rightChild, englishWord, unit);
+                removeEnglishWord(&(*raiz)->rightChild, childPointer->englishWord,unit);    
+            }
+        }
+        else if (strcmp(englishWord, (*raiz)->englishWord) < 0)
+        {
+
+            isExists = removeEnglishWord(&(*raiz)->leftChild, englishWord,unit);
+        }
+        else
+        {
+
+            isExists = removeEnglishWord(&(*raiz)->rightChild, englishWord,unit);
         }
     }
 
-    return 0; // Palavra ou unidade não encontrada
+    return isExists;
 }
-
 
 void clear_binary_tree(Inglesbin *rootNode)
 {
