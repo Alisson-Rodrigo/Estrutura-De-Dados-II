@@ -28,8 +28,8 @@ Inglesbin *getSingleChild(Inglesbin *raiz);
 Inglesbin *getMinimumChild(Inglesbin *raiz);
 
 void printBinaryTree(Inglesbin *root);
-
 int removeEnglishWord(Inglesbin **raiz, const char *englishWord,int unit);
+void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int unit, PortugueseTree **parentNode);
 Inglesbin *findEnglishWord(Inglesbin *raiz, const char *palavraIngles);
 
 void clear_binary_tree(Inglesbin *raiz);
