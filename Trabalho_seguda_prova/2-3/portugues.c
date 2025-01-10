@@ -988,11 +988,9 @@ void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int 
 int remove_unit_from_tree(Inglesbin **root, const char *englishWord, int unit) {
     if (*root != NULL) {
         if (strcmp(englishWord, (*root)->englishWord) == 0) {
-            // Remover unidade associada
             return remove_unit(&(*root)->unitList, unit);
         }
 
-        // Continuar na subárvore esquerda ou direita
         if (strcmp(englishWord, (*root)->englishWord) < 0) {
             return remove_unit_from_tree(&(*root)->leftChild, englishWord, unit);
         } else {
@@ -1000,7 +998,7 @@ int remove_unit_from_tree(Inglesbin **root, const char *englishWord, int unit) {
         }
     }
 
-    return 0; // Palavra ou unidade não encontrada
+    return 0; 
 }
 
 void printFormattedWordsByUnit(PortugueseTree *portugueseTree, int unit, int *printedUnit)
