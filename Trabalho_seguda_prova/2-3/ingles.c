@@ -305,7 +305,7 @@ int remove_english_unit(Inglesbin **rootNode, const char *englishWord, int unit)
         if (strcmp((*rootNode)->englishWord, englishWord) == 0)
         {
             
-            result = remover_lista_encadeada_unidade(&(*rootNode)->unitList, unit);
+            result = remove_from_linked_list(&(*rootNode)->unitList, unit);
 
             if (!(*rootNode)->unitList)
             {
