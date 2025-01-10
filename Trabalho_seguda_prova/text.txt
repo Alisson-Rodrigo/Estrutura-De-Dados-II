@@ -1,4 +1,5 @@
 % Unidade 1
+Car: carro, automovel;
 Error: falha, engano;
 Wheel: roda;
 Fan: ventilador, soprador;
