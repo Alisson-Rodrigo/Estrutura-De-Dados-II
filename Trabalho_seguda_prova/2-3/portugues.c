@@ -948,45 +948,36 @@ void deallocateTree(PortugueseTree **node)
 
 void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int unit, PortugueseTree **parentNode) {
     if (*rootNode != NULL) {
-        // Processar a subárvore esquerda
         removeEnglishTranslation(&(*rootNode)->left, englishWord, unit, parentNode);
 
-        // Tratar remoção de unidades em info1
         if ((*rootNode)->info1.englishWord != NULL) {
             int removed = remove_unit_from_tree(&(*rootNode)->info1.englishWord, englishWord, unit);
 
-            // Se a árvore binária ficou vazia, remover a palavra inglesa
             if (removed && (*rootNode)->info1.englishWord == NULL) {
                 removeEnglishWord(&(*rootNode)->info1.englishWord, englishWord, unit);
 
-                // Se não houver mais palavras inglesas associadas, removemos a palavra portuguesa
                 if ((*rootNode)->info1.englishWord == NULL) {
                     remove_node_from23_tree(rootNode, (*rootNode)->info1.portugueseWord);
-                    return; // Encerrar, pois o nó foi removido
+                    return; 
                 }
             }
         }
 
-        // Processar a subárvore central
         removeEnglishTranslation(&(*rootNode)->cent, englishWord, unit, parentNode);
 
-        // Tratar remoção de unidades em info2, se existir
         if ((*rootNode)->nInfos == 2 && (*rootNode)->info2.englishWord != NULL) {
             int removed = remove_unit_from_tree(&(*rootNode)->info2.englishWord, englishWord, unit);
 
-            // Se a árvore binária ficou vazia, remover a palavra inglesa
             if (removed && (*rootNode)->info2.englishWord == NULL) {
                 removeEnglishWord(&(*rootNode)->info2.englishWord, englishWord, unit);
 
-                // Se não houver mais palavras inglesas associadas, removemos a palavra portuguesa
                 if ((*rootNode)->info2.englishWord == NULL) {
                     remove_node_from23_tree(rootNode, (*rootNode)->info2.portugueseWord);
-                    return; // Encerrar, pois o nó foi removido
+                    return; 
                 }
             }
         }
 
-        // Processar a subárvore direita, se existir
         if ((*rootNode)->nInfos == 2) {
             removeEnglishTranslation(&(*rootNode)->right, englishWord, unit, parentNode);
         }

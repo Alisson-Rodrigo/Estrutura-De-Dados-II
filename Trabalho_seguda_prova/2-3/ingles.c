@@ -145,9 +145,6 @@ int removeEnglishWord(Inglesbin **raiz, const char *englishWord, int unit)
             Inglesbin *aux = *raiz;
             isExists = 1;
 
-            // Remover unidade associada
-            int removed = remove_unit(&(*raiz)->unitList, unit);
-
             // Se não houver mais unidades associadas, removemos a palavra inglesa
             if ((*raiz)->unitList == NULL)
             {
