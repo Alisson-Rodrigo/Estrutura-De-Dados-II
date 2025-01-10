@@ -133,52 +133,57 @@ Inglesbin *getMinimumChild(Inglesbin *raiz)
     return aux;
 }
 
-int removeEnglishWord(Inglesbin **raiz, const char *englishWord,int unit)
+int removeEnglishWord(Inglesbin **raiz, const char *englishWord, int unit)
 {
     Inglesbin *childPointer = NULL;
     int isExists = 0;
 
     if (*raiz)
     {
-
         if (strcmp(englishWord, (*raiz)->englishWord) == 0)
         {
             Inglesbin *aux = *raiz;
             isExists = 1;
 
-            if (isLeafNode(*raiz))
-            {
-                free(aux);
-                *raiz = NULL;
-            }
-            else if ((childPointer = getSingleChild(*raiz)) != NULL)
-            {
-                free(aux);
-                *raiz = childPointer;
-            }
-            else
-            {
-                childPointer = getMinimumChild((*raiz)->rightChild);
-                strcpy((*raiz)->englishWord, childPointer->englishWord);
-                (*raiz)->unitList = childPointer->unitList;
+            // Remover unidade associada
+            int removed = remove_unit(&(*raiz)->unitList, unit);
 
-                removeEnglishWord(&(*raiz)->rightChild, childPointer->englishWord,unit);    
+            // Se não houver mais unidades associadas, removemos a palavra inglesa
+            if ((*raiz)->unitList == NULL)
+            {
+                if (isLeafNode(*raiz))
+                {
+                    free(aux);
+                    *raiz = NULL;
+                }
+                else if ((childPointer = getSingleChild(*raiz)) != NULL)
+                {
+                    free(aux);
+                    *raiz = childPointer;
+                }
+                else
+                {
+                    // Remover o nó com dois filhos
+                    childPointer = getMinimumChild((*raiz)->rightChild);
+                    strcpy((*raiz)->englishWord, childPointer->englishWord);
+                    (*raiz)->unitList = childPointer->unitList;
+                    removeEnglishWord(&(*raiz)->rightChild, childPointer->englishWord, unit);
+                }
             }
         }
         else if (strcmp(englishWord, (*raiz)->englishWord) < 0)
         {
-
-            isExists = removeEnglishWord(&(*raiz)->leftChild, englishWord,unit);
+            isExists = removeEnglishWord(&(*raiz)->leftChild, englishWord, unit);
         }
         else
         {
-
-            isExists = removeEnglishWord(&(*raiz)->rightChild, englishWord,unit);
+            isExists = removeEnglishWord(&(*raiz)->rightChild, englishWord, unit);
         }
     }
 
     return isExists;
 }
+
 
 void clear_binary_tree(Inglesbin *rootNode)
 {
