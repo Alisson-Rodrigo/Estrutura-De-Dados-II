@@ -1095,9 +1095,8 @@ int Delete_portuguese_word_unit(Inglesbin **rootNode, char *portugueseWord, int 
         isConfirmed = Delete_portuguese_word_unit(&(*rootNode)->rightChild, portugueseWord, unit) || isConfirmed;
 
        
-        isConfirmed = remover_lista_encadeada_unidade(&(*rootNode)->unitList, unit);
+        isConfirmed = remove_from_linked_list(&(*rootNode)->unitList, unit);
         
-
         if (!(*rootNode)->unitList)
         {
             isConfirmed = removeEnglishWord(rootNode, (*rootNode)->englishWord, unit);
