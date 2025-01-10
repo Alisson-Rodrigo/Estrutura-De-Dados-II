@@ -28,6 +28,7 @@ PortugueseTree *updateNode23(PortugueseTree *no,  NodeInfo *informacao, Portugue
 PortugueseTree *splitNode(PortugueseTree **no, NodeInfo *informacao, NodeInfo *promove, PortugueseTree **filho);
 int isNodeLeaf(PortugueseTree *no);
 PortugueseTree *insertNode23(PortugueseTree **no, NodeInfo *informacao, NodeInfo *promove, PortugueseTree **pai);
+int remove_unit_from_tree(Inglesbin **root, const char *englishWord, int unit);
 
 
 void deleteInfo2_3(NodeInfo *info);
