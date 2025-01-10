@@ -301,32 +301,30 @@ int remove_english_word_by_unit(PortugueseTree *rootNode, const char *englishWor
 
     if (rootNode) {
         // Percorrer subárvore esquerda
-        result |= remove_english_word_by_unit(rootNode->left, englishWord, unit, newTopNode);
+        result = remove_english_word_by_unit(rootNode->left, englishWord, unit, newTopNode);
 
         // Percorrer subárvore central
-        result |= remove_english_word_by_unit(rootNode->cent, englishWord, unit, newTopNode);
+        result = remove_english_word_by_unit(rootNode->cent, englishWord, unit, newTopNode) || result;
 
         // Subárvore direita, se existir
         if (rootNode->nInfos == 2) {
-            result |= remove_english_word_by_unit(rootNode->right, englishWord, unit, newTopNode);
+            result = remove_english_word_by_unit(rootNode->right, englishWord, unit, newTopNode) || result;
 
             // Remover do info2
-            if (remove_english_unit(&(rootNode->info2.englishWord), englishWord, unit)) {
-                result = 1;
-                // Se árvore binária estiver vazia, remova nó da 2-3 tree
-                if (!rootNode->info2.englishWord) {
-                    result |= remove_node_from23_tree(newTopNode, rootNode->info2.portugueseWord);
-                }
+            result = remove_english_unit(&(rootNode->info2.englishWord), englishWord, unit) || result;
+
+            // Se não restar árvore binária, remova do 2-3 tree
+            if (!rootNode->info2.englishWord) {
+                result = remove_node_from23_tree(newTopNode, rootNode->info2.portugueseWord) || result;
             }
         }
 
         // Remover do info1
-        if (remove_english_unit(&(rootNode->info1.englishWord), englishWord, unit)) {
-            result = 1;
-            // Se árvore binária estiver vazia, remova nó da 2-3 tree
-            if (!rootNode->info1.englishWord) {
-                result |= remove_node_from23_tree(newTopNode, rootNode->info1.portugueseWord);
-            }
+        result = remove_english_unit(&(rootNode->info1.englishWord), englishWord, unit) || result;
+
+        // Se não restar árvore binária, remova do 2-3 tree
+        if (!rootNode->info1.englishWord) {
+            result = remove_node_from23_tree(newTopNode, rootNode->info1.portugueseWord) || result;
         }
     }
 

@@ -99,7 +99,7 @@ int main()
     int option;
 
 
-    loadFile("C:/Users/purolight/Documents/GitHub/Estrutura-De-Dados-II/Trabalho_seguda_prova/text.txt", &rootNode);
+    loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_seguda_prova/Rubro-Negra/trabalhoEd2.txt", &rootNode);
 
     do
     {
@@ -140,7 +140,7 @@ int main()
     printf("Informe a unidade associada: ");
     scanf("%d", &unit); // Entrada da unidade
 
-    // Tentar remover a palavra em inglês da unidade especificada
+
     int removalResult = 0;
     removalResult = Remove_english_word_from_unit(&rootNode, userInput, unit);
 
