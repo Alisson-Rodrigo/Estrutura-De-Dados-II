@@ -95,7 +95,11 @@ int main()
     char userInput[50];
     int unit;
     int option;
+<<<<<<< Updated upstream
     int removalResult = 0;
+=======
+
+>>>>>>> Stashed changes
     loadFile("C:/Users/jorge/OneDrive/Documentos/GitHub/EstruturaDeDadosII/Trabalho_seguda_prova/Rubro-Negra/trabalhoEd2.txt", &rootNode);
 
     do
@@ -133,12 +137,22 @@ int main()
         case 3:
             printf("\n---------------------------------------------------------------\n");
             printf("Digite a palavra em ingles para remover: ");
+<<<<<<< Updated upstream
             scanf(" %[^\n]", userInput);
             printf("Informe a unidade associada: ");
             scanf("%d", &unit);
 
         
             removalResult = remove_english_word(rootNode, userInput, unit, &rootNode);
+=======
+            scanf(" %[^\n]", userInput); // Entrada da palavra em inglês
+            printf("Informe a unidade associada: ");
+            scanf("%d", &unit); // Entrada da unidade
+
+            // Tentar remover a palavra em inglês da unidade especificada
+            int removalResult = 0;
+            removalResult = Remove_english_word_from_unit(&rootNode, userInput, unit);
+>>>>>>> Stashed changes
 
             if (removalResult)
             {
@@ -155,6 +169,10 @@ int main()
             printf("\n---------------------------------------------------------------\n");
             printf("Digite a palavra em portugues para remover: ");
             scanf(" %[^\n]", userInput);
+<<<<<<< Updated upstream
+=======
+            // remove_node_from23_tree(&rootNode, userInput);
+>>>>>>> Stashed changes
             printf("Informe a unidade associada: ");
             scanf("%d", &unit);
 
