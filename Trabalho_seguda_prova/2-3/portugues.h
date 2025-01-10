@@ -32,7 +32,7 @@ PortugueseTree *insertNode23(PortugueseTree **no, NodeInfo *informacao, NodeInfo
 
 void deleteInfo2_3(NodeInfo *info);
 void deallocateTree(PortugueseTree **no);
-int remove_palavra_ingles_unidade(PortugueseTree *raiz, const char *palavraIngles, int unidade, PortugueseTree **top);
+int remove_english_word_by_unit(PortugueseTree *raiz, const char *palavraIngles, int unidade, PortugueseTree **top);
 void print_tree23(PortugueseTree *raiz);
 void printWordsAtUnit(PortugueseTree *arvore, int unidade, int *unidadeImpressa);
 

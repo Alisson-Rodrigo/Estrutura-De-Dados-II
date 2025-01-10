@@ -950,30 +950,59 @@ void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int 
 {
     if (*rootNode != NULL)
     {
-     
+        // Percorrer a subárvore esquerda
         removeEnglishTranslation(&(*rootNode)->left, englishWord, unit, parentNode);
 
+        // Verificar e remover de info1
         if ((*rootNode)->info1.englishWord != NULL)
         {
-            removeEnglishWord(&(*rootNode)->info1.englishWord, englishWord, unit);
+            Inglesbin *foundWord = findEnglishWord((*rootNode)->info1.englishWord, englishWord);
+
+            if (foundWord && find_unit(foundWord->unitList, unit))
+            {
+                removeEnglishWord(&(*rootNode)->info1.englishWord, englishWord, unit);
+
+                // Verificar se a árvore binária está vazia
+                if ((*rootNode)->info1.englishWord == NULL)
+                {
+                    // Remover o nó do 2-3 tree
+                    remove_node_from23_tree(rootNode, (*rootNode)->info1.portugueseWord);
+                    return; // Encerrar após a remoção
+                }
+            }
         }
 
-  
+        // Percorrer a subárvore central
         removeEnglishTranslation(&(*rootNode)->cent, englishWord, unit, parentNode);
 
-    
+        // Verificar e remover de info2, se existir
         if ((*rootNode)->nInfos == 2 && (*rootNode)->info2.englishWord != NULL)
         {
-            removeEnglishWord(&(*rootNode)->info2.englishWord, englishWord, unit);
+            Inglesbin *foundWord = findEnglishWord((*rootNode)->info2.englishWord, englishWord);
+
+            if (foundWord && find_unit(foundWord->unitList, unit))
+            {
+                removeEnglishWord(&(*rootNode)->info2.englishWord, englishWord, unit);
+
+                // Verificar se a árvore binária está vazia
+                if ((*rootNode)->info2.englishWord == NULL)
+                {
+                    // Remover o nó do 2-3 tree
+                    remove_node_from23_tree(rootNode, (*rootNode)->info2.portugueseWord);
+                    return; // Encerrar após a remoção
+                }
+            }
         }
 
-      
+        // Percorrer a subárvore direita, se existir
         if ((*rootNode)->nInfos == 2)
         {
             removeEnglishTranslation(&(*rootNode)->right, englishWord, unit, parentNode);
         }
     }
 }
+
+
 
 void printFormattedWordsByUnit(PortugueseTree *portugueseTree, int unit, int *printedUnit)
 {
@@ -1095,12 +1124,8 @@ int Delete_portuguese_word_unit(Inglesbin **rootNode, char *portugueseWord, int 
         isConfirmed = Delete_portuguese_word_unit(&(*rootNode)->rightChild, portugueseWord, unit) || isConfirmed;
 
        
-        Unit *novaLista = remove_unit((*rootNode)->unitList, unit);
-        if (novaLista != (*rootNode)->unitList)
-        {
-            isConfirmed = 1; 
-        }
-        (*rootNode)->unitList = novaLista;
+        isConfirmed = remover_lista_encadeada_unidade(&(*rootNode)->unitList, unit);
+        
 
         if (!(*rootNode)->unitList)
         {
