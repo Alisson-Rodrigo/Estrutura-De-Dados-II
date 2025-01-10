@@ -39,8 +39,11 @@ void printWordsAtUnit(PortugueseTree *arvore, int unidade, int *unidadeImpressa)
 void printPortugueseTranslation(PortugueseTree **raiz, const char *palavraPortugues);
 void printTranslations(Inglesbin *node, int unidade, const char *palavraPortugues);
 
+int remove_unit_from_tree(Inglesbin **root, const char *englishWord, int unit);
 
 int removeNodeFrom23Tree(PortugueseTree **raiz, char *info, PortugueseTree *pai, PortugueseTree **origem, PortugueseTree **maior);
+int Remove_word_from_portuguese_unit(PortugueseTree **rootNode, char *portugueseWord, int unit);
+
 
 void printTranslationsInFormat(Inglesbin *node, int unidade, const char *palavraPortugues);
 int deleteFrom23Tree(PortugueseTree **raiz, char *info, PortugueseTree *pai, PortugueseTree **origem, PortugueseTree **maior);
