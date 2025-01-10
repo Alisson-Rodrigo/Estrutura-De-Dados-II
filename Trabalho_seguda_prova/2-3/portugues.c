@@ -946,33 +946,40 @@ void deallocateTree(PortugueseTree **node)
     }
 }
 
-void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int unit, PortugueseTree **parentNode)
-{
-    if (*rootNode != NULL)
-    {
-     
+void removeEnglishTranslation(PortugueseTree **rootNode, char *englishWord, int unit, PortugueseTree **parentNode) {
+    if (*rootNode != NULL) {
+        // Process left subtree
         removeEnglishTranslation(&(*rootNode)->left, englishWord, unit, parentNode);
 
-        if ((*rootNode)->info1.englishWord != NULL)
-        {
-            removeEnglishWord(&(*rootNode)->info1.englishWord, englishWord, unit);
+        // Handle info1 English words
+        if ((*rootNode)->info1.englishWord != NULL) {
+            int removed = removeEnglishWord(&(*rootNode)->info1.englishWord, englishWord, unit);
+
+            // If binary tree becomes empty, remove Portuguese word from 2-3 tree
+            if (removed && (*rootNode)->info1.englishWord == NULL) {
+                remove_node_from23_tree(rootNode, (*rootNode)->info1.portugueseWord);
+                return; // Exit early as the current node is removed
+            }
         }
 
-  
+        // Process central subtree
         removeEnglishTranslation(&(*rootNode)->cent, englishWord, unit, parentNode);
 
-    
-        if ((*rootNode)->nInfos == 2 && (*rootNode)->info2.englishWord != NULL)
-        {
-            removeEnglishWord(&(*rootNode)->info2.englishWord, englishWord, unit);
+        // Handle info2 English words if exists
+        if ((*rootNode)->nInfos == 2 && (*rootNode)->info2.englishWord != NULL) {
+            int removed = removeEnglishWord(&(*rootNode)->info2.englishWord, englishWord, unit);
+
+            // If binary tree becomes empty, remove Portuguese word from 2-3 tree
+            if (removed && (*rootNode)->info2.englishWord == NULL) {
+                remove_node_from23_tree(rootNode, (*rootNode)->info2.portugueseWord);
+                return; // Exit early as the current node is removed
+            }
         }
 
-      
-        if ((*rootNode)->nInfos == 2)
-        {
+        // Process right subtree if node has two infos
+        if ((*rootNode)->nInfos == 2) {
             removeEnglishTranslation(&(*rootNode)->right, englishWord, unit, parentNode);
         }
-
     }
 }
 
